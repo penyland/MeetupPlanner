@@ -1,10 +1,8 @@
-# MeetupPlanner - An Open Internal Developer Platform.
+# MeetupPlanner
 
-# Build and deploy
+## Build and deploy
 
-## Building MeetupPlanner.Api container image
-
-### Build image locally
+### Building MeetupPlanner.Api container image locally
 Run the following command:
 ```
 dotnet publish -t:PublishContainer -p:ContainerImageTags=latest --no-restore -p:ContainerRepository=meetupplanner/api -p:VersionSuffix=beta1
