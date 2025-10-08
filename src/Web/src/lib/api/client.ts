@@ -1,3 +1,5 @@
+import { API_BASE_URL } from '../config';
+
 import type {
   MeetupDto,
   SpeakerDto,
@@ -7,9 +9,8 @@ import type {
   SpeakerBioDto
 } from './types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5016';
-
 async function fetchApi<T>(endpoint: string): Promise<T> {
+  console.log(`Fetching from API: ${API_BASE_URL}${endpoint}`);
   const response = await fetch(`${API_BASE_URL}${endpoint}`);
   if (!response.ok) {
     throw new Error(`API request failed: ${response.statusText}`);
