@@ -92,11 +92,9 @@ public static class EndpointRouteBuilderExtensions
         {
             var result = await requestHandler.HandleAsync();
 
-            var mappedType = mapper(result);
-
             IResult response = result switch
             {
-                Success => TypedResults.Ok(mappedType),
+                Success => TypedResults.Ok(mapper(result)),
                 Failure => TypedResults.Problem(result.ToProblemDetails()),
                 _ => TypedResults.BadRequest("Failed to process request.")
             };
@@ -133,11 +131,9 @@ public static class EndpointRouteBuilderExtensions
                     Request = request
                 });
 
-            var mappedType = mapper(result);
-
             IResult response = result switch
             {
-                Success => TypedResults.Ok(mappedType),
+                Success => TypedResults.Ok(mapper(result)),
                 Failure => TypedResults.Problem(result.ToProblemDetails()),
                 _ => TypedResults.BadRequest("Failed to process request.")
             };
