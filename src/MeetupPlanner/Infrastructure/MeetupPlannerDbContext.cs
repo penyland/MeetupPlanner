@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MeetupPlanner.Infrastructure.Models;
+using MeetupPlanner.Features.Common;
 
 namespace MeetupPlanner.Infrastructure;
 
-public partial class MeetupPlannerContext : DbContext
+public partial class MeetupPlannerDbContext : DbContext
 {
-    public MeetupPlannerContext(DbContextOptions<MeetupPlannerContext> options)
+    public MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbContext> options)
         : base(options)
     {
     }
@@ -105,5 +106,34 @@ public partial class MeetupPlannerContext : DbContext
         modelBuilder.Entity<ScheduleSlot>()
             .HasIndex(ss => new { ss.MeetupId, ss.SortOrder })
             .IsUnique();
+    }
+
+    public async Task<List<LocationDto>> GetLocationsAsync(CancellationToken cancellationToken = default)
+    {
+        var result = await Database.SqlQuery<LocationDto>($"SELECT * FROM dbo.Locations ORDER BY [Name]")
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        return result;
+    }
+
+    public async Task<List<LocationDetailedDto>> GetLocationsByCityAsync(string city, CancellationToken cancellationToken = default)
+    {
+        var result = await Database.SqlQuery<LocationDetailedDto>($"SELECT * FROM dbo.Locations")
+            .Where(l => l.City == city)
+            .OrderBy(l => l.Name)
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        return result;
+    }
+
+    public async Task<List<LocationDetailedDto>> GetLocationByNameAsync(string name, CancellationToken cancellationToken = default)
+    {
+        var query = $"%{name}%";
+
+        var result = await Database.SqlQuery<LocationDetailedDto>($"SELECT * FROM dbo.Locations")
+            .Where(l => EF.Functions.Like(l.Name, query))
+            .ToListAsync(cancellationToken: cancellationToken);
+
+        return result;
     }
 }

@@ -10,7 +10,7 @@ public static class GetLocation
 {
     public sealed record Query(Guid LocationId);
     public sealed record Response(LocationDetailedDto Location);
-    internal class Handler(MeetupPlannerContext dbContext) : IRequestHandler<Query, Response>
+    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
     {
         public async Task<Result<Response>> HandleAsync(IHandlerContext<Query> context, CancellationToken cancellationToken = default)
         {

@@ -12,7 +12,7 @@ public static class GetMeetupPresentations
 
     public sealed record Response(IReadOnlyList<PresentationDto> Presentations);
 
-    internal class Handler(MeetupPlannerContext dbContext) : IRequestHandler<Query, Response>
+    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
     {
         public async Task<Result<Response>> HandleAsync(IHandlerContext<Query> context, CancellationToken cancellationToken)
         {

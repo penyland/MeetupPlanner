@@ -12,7 +12,7 @@ public static class GetMeetups
 
     public record Response(IReadOnlyList<MeetupDto> Meetups);
 
-    internal class Handler(MeetupPlannerContext dbContext) : IRequestHandler<Query, Response>
+    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
     {
         public async Task<Result<Response>> HandleAsync(IHandlerContext<Query> context, CancellationToken cancellationToken = default)
         {

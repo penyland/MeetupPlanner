@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using MeetupPlanner.Api.ExceptionHandlers;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Identity.Web;
-using MeetupPlanner.Api.ExceptionHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +19,7 @@ builder.Services.AddProblemDetails(options =>
         ctx.ProblemDetails.Instance = $"{ctx.HttpContext.Request.Method} {ctx.HttpContext.Request.Path}";
         ctx.ProblemDetails.Extensions.TryAdd("requestId", ctx.HttpContext.TraceIdentifier);
     });
+
 builder.Services.AddExceptionHandler<ExceptionToProblemDetailsHandler>();
 
 builder.Services.AddCors(options =>

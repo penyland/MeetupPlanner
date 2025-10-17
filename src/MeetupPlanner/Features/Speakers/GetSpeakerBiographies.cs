@@ -11,7 +11,7 @@ public static class GetSpeakerBiographies
 
     public sealed record Response(IReadOnlyList<SpeakerBiographyDto> SpeakerBiographies);
 
-    internal class Handler(MeetupPlannerContext dbContext) : IRequestHandler<Query, Response>
+    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
     {
         public async Task<Result<Response>> HandleAsync(IHandlerContext<Query> context, CancellationToken cancellationToken = default)
         {

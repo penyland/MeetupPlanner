@@ -1,33 +1,85 @@
-﻿using ModelContextProtocol.Server;
-using MeetupPlanner.Features.MeetupPlanner.Infrastructure.Dapper;
+﻿using MeetupPlanner.Features.Common;
+using MeetupPlanner.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using ModelContextProtocol.Server;
 using System.ComponentModel;
 using System.Text.Json;
-using MeetupPlanner.Infrastructure.Models;
+using System.Text.Json.Serialization;
 
 namespace MeetupPlanner.MCP;
 
 [McpServerToolType]
-public class MeetupPlannerMcpTools(IMeetupPlannerDb meetupPlannerDb)
+public class MeetupPlannerMcpTools(MeetupPlannerDbContext meetupPlannerDbContext)
 {
-    private readonly IMeetupPlannerDb meetupPlannerDb = meetupPlannerDb;
+    private readonly MeetupPlannerDbContext meetupPlannerDbContext = meetupPlannerDbContext;
 
-    [McpServerTool, Description("Get a list of locations where meetups have been or will be")]
+    [McpServerTool, Description("Get a list of locations/sponsors where meetups have been or will be")]
     public async Task<string> GetLocationsAsync()
     {
-        var locations = await meetupPlannerDb.GetLocationsAsync();
-        return JsonSerializer.Serialize(locations, MeetupPlannerDapperContext.Default.ListLocation);
+        var locations = await meetupPlannerDbContext.GetLocationsAsync();
+        var serializedLocations = JsonSerializer.Serialize(locations);
+        return serializedLocations;
     }
 
-    [McpServerTool, Description("Get a list of locations where meetups have been or will be in a given city")]
+    [McpServerTool, Description("Get a list of locations/sponsors where meetups have been or will be in a given city")]
     public async Task<string> GetLocationsByCityAsync([Description("The name of the city")] string city)
     {
-        var locations = await meetupPlannerDb.GetLocationsByCityAsync(city);
-        return JsonSerializer.Serialize(locations, MeetupPlannerDapperContext.Default.ListLocation);
+        var locations = await meetupPlannerDbContext.GetLocationsByCityAsync(city);
+        return JsonSerializer.Serialize(locations, MeetupPlannerSerializationContext.Default.ListLocationDetailedDto);
     }
 
-    [McpServerTool, Description("Get a list of locations where meetups have been or will be with a given name")]
-    public async Task<List<Location>> GetLocationsByNameAsync(string name)
+    [McpServerTool, Description("Get a location's/sponsor's details by its name")]
+    public async Task<string> GetLocationByNameAsync([Description("The name of the location/sponser to get details for.")] string name)
     {
-        return await meetupPlannerDb.GetLocationByNameAsync(name);
+        var location = await meetupPlannerDbContext.GetLocationByNameAsync(name);
+        return JsonSerializer.Serialize(location, MeetupPlannerSerializationContext.Default.ListLocationDetailedDto);
+    }
+
+    [McpServerTool, Description("Get a list of speakers that have had a presentation at any meetup event.")]
+    public async Task<string> GetSpeakersAsync()
+    {
+        var speakers = await meetupPlannerDbContext.Speakers
+            .AsNoTracking()
+            .Select(s => new SpeakerDto
+            {
+                SpeakerId = s.SpeakerId,
+                FullName = s.FullName,
+                ThumbnailUrl = s.ThumbnailUrl,
+            })
+            .ToListAsync();
+
+        return JsonSerializer.Serialize(speakers, MeetupPlannerSerializationContext.Default.ListSpeakerDto);
+    }
+
+    [McpServerTool, Description("Get detailed information about a speaker by name.")]
+    public async Task<string> GetSpeakerByNameAsync([Description("The name of the speaker to get details for.")] string name)
+    {
+        var speaker = await meetupPlannerDbContext.Speakers
+            .AsNoTracking()
+            .Where(s => s.FullName == name)
+            .Select(s => new SpeakerDetailedDto
+            {
+                SpeakerId = s.SpeakerId,
+                FullName = s.FullName,
+                ThumbnailUrl = s.ThumbnailUrl,
+                Company = s.Company,
+                Email = s.Email,
+                BlogUrl = s.BlogUrl,
+                TwitterUrl = s.TwitterUrl,
+                GitHubUrl = s.GitHubUrl,
+                LinkedInUrl = s.LinkedInUrl,
+                Bio = s.Bios.First(b => b.IsPrimary).Bio,
+            })
+            .SingleOrDefaultAsync();
+
+        return JsonSerializer.Serialize(speaker, MeetupPlannerSerializationContext.Default.SpeakerDetailedDto);
     }
 }
+
+[JsonSerializable(typeof(List<LocationDetailedDto>))]
+[JsonSerializable(typeof(List<SpeakerDto>))]
+[JsonSerializable(typeof(SpeakerDetailedDto))]
+[JsonSourceGenerationOptions(
+    PropertyNameCaseInsensitive = true,
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+internal sealed partial class MeetupPlannerSerializationContext :JsonSerializerContext;

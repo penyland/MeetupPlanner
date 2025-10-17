@@ -5,7 +5,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
-      "applicationUrl": "http://localhost:5016",
+      "applicationUrl": "http://meetupplanner.dev.localhost:5016;http://0.0.0.0:5017",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -14,7 +14,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
-      "applicationUrl": "https://localhost:7119;http://0.0.0.0:5016",
+      "applicationUrl": "https://meetupplanner.dev.localhost:7119;http://meetupplanner.dev.localhost:5016;http://0.0.0.0:5017",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

@@ -12,6 +12,8 @@ using MeetupPlanner.Extensions;
 using MeetupPlanner.Features.Presentations;
 using MeetupPlanner.Features.Meetups;
 using MeetupPlanner.Features.Common;
+using Microsoft.Extensions.DependencyInjection;
+using MeetupPlanner.MCP;
 
 namespace MeetupPlanner;
 
@@ -19,7 +21,7 @@ public class MeetupPlannerModule : WebFeatureModule
 {
     public override void RegisterModule(WebApplicationBuilder builder)
     {
-        builder.AddSqlServerDbContext<MeetupPlannerContext>("MeetupPlanner");
+        builder.AddSqlServerDbContext<MeetupPlannerDbContext>("MeetupPlanner");
 
         builder.Services.AddRequestHandler<GetLocations.Response, GetLocations.Handler>();
         builder.Services.AddRequestHandler<GetLocation.Query, GetLocation.Response, GetLocation.Handler>();
@@ -37,6 +39,10 @@ public class MeetupPlannerModule : WebFeatureModule
         builder.Services.AddRequestHandler<GetSpeaker.Query, GetSpeaker.Response, GetSpeaker.Handler>();
         builder.Services.AddRequestHandler<GetSpeakerBiographies.Query, GetSpeakerBiographies.Response, GetSpeakerBiographies.Handler>();
         builder.Services.AddRequestHandler<GetSpeakerPresentations.Query, GetSpeakerPresentations.Response, GetSpeakerPresentations.Handler>();
+
+        builder.Services.AddMcpServer()
+            .WithHttpTransport(o => o.Stateless = true)
+            .WithTools<MeetupPlannerMcpTools>();
     }
 
     public override void MapEndpoints(WebApplication app)
@@ -77,6 +83,8 @@ public class MeetupPlannerModule : WebFeatureModule
         group.MapGetHandler<GetSpeaker.Query, GetSpeaker.Response, SpeakerDetailedDto>("/speakers/{speakerId}", map => map.Speaker);
         group.MapGetHandler<GetSpeakerBiographies.Query, GetSpeakerBiographies.Response, IReadOnlyList<SpeakerBiographyDto>>("/speakers/{speakerId}/biographies", map => map.SpeakerBiographies);
         group.MapGetHandler<GetSpeakerPresentations.Query, GetSpeakerPresentations.Response, IReadOnlyList<PresentationDto>>("/speakers/{speakerId}/presentations", map => map.Presentations);
+
+        group.MapMcp("/mcp");
     }
 }
 

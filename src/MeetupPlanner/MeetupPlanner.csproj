@@ -16,11 +16,7 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0-preview1.25257.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0-rc.1.25451.107" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0-rc.1.25451.107" />
-    <PackageReference Include="ModelContextProtocol" Version="0.4.0-preview.1" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="MCP\" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.4.0-preview.2" />
   </ItemGroup>
   
 </Project>
