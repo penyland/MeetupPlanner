@@ -1,3 +1,7 @@
+using Azure.Identity;
+using Infinity.Toolkit;
+using Infinity.Toolkit.Azure;
+using Infinity.Toolkit.Azure.Identity;
 using MeetupPlanner.Api.ExceptionHandlers;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Identity.Web;
@@ -5,6 +9,19 @@ using Microsoft.Identity.Web;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+builder.ConfigureAzureAppConfiguration(configure: config =>
+{
+    // Check if we are running on Azure
+    if (EnvironmentHelper.IsRunningInAzureContainerApps)
+    {
+        config.TokenCredential = new ManagedIdentityCredential(ManagedIdentityId.FromUserAssignedClientId(Environment.GetEnvironmentVariable("AZURE_CLIENT_ID")));
+    }
+    else
+    {
+        config.TokenCredential = TokenCredentialHelper.GetTokenCredential();
+    }
+});
 
 // Add services to the container.
 builder.AddFeatureModules();
@@ -49,12 +66,10 @@ app.UseCors("AllowAll");
 app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapFeatureModules();
 
 app.Run();
-
-public partial class Program { }

@@ -84,7 +84,7 @@ public class MeetupPlannerModule : WebFeatureModule
         group.MapGetHandler<GetSpeakerBiographies.Query, GetSpeakerBiographies.Response, IReadOnlyList<SpeakerBiographyDto>>("/speakers/{speakerId}/biographies", map => map.SpeakerBiographies);
         group.MapGetHandler<GetSpeakerPresentations.Query, GetSpeakerPresentations.Response, IReadOnlyList<PresentationDto>>("/speakers/{speakerId}/presentations", map => map.Presentations);
 
-        group.MapMcp("/mcp");
+        group.MapMcp("/mcp").RequireAuthorization();
     }
 }
 

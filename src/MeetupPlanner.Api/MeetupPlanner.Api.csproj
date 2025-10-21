@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\infinity-toolkit\src\Infinity.Toolkit.Azure\Infinity.Toolkit.Azure.csproj" />
     <ProjectReference Include="..\MeetupPlanner.ServiceDefaults\MeetupPlanner.ServiceDefaults.csproj" />
     <ProjectReference Include="..\MeetupPlanner\MeetupPlanner.csproj" />
   </ItemGroup>

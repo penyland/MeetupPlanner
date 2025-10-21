@@ -6,14 +6,14 @@ var db = builder.AddConnectionString("MeetupPlanner");
 
 var api = builder.AddProject<Projects.MeetupPlanner_Api>("MeetupPlannerApi" )
     .WaitFor(db)
-    .WithReference(db)
-    .WithScalarCommand();
+    .WithReference(db);
 
 var web = builder.AddViteApp("web", "../Web")
     .WaitFor(api)
     .WithReference(api)
     .WithExternalHttpEndpoints()
-    .WithEnvironment("VITE_API_URL", api.GetEndpoint("http"));
+    .WithEnvironment("VITE_API_URL", api.GetEndpoint("https"))
+    .WithNpmPackageInstallation();
 
 var proxy = builder.AddProject<Projects.MeetupPlanner_Proxy>("meetupplanner-proxy")
     .WaitFor(api)
