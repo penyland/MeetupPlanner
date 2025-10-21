@@ -9,7 +9,7 @@ public static class GetMeetupRsvps
 {
     public sealed record Query(Guid MeetupId);
 
-    public sealed record Response(RsvpDto Rsvp);
+    public sealed record Response(Rsvp Rsvp);
 
     internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
     {
@@ -36,7 +36,7 @@ public static class GetMeetupRsvps
                         new Error("400", "No meetup found for the specified ID."));
                 }
 
-                var rsvp = new RsvpDto(
+                var rsvp = new Rsvp(
                     meetup.TotalSpots ?? 0,
                     meetup.RsvpYesCount ?? 0,
                     meetup.RsvpNoCount ?? 0,

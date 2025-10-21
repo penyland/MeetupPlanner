@@ -9,7 +9,7 @@ namespace MeetupPlanner.Features.Locations;
 public static class GetLocation
 {
     public sealed record Query(Guid LocationId);
-    public sealed record Response(LocationDetailedDto Location);
+    public sealed record Response(LocationDetailedResponse Location);
     internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
     {
         public async Task<Result<Response>> HandleAsync(IHandlerContext<Query> context, CancellationToken cancellationToken = default)
@@ -24,7 +24,7 @@ public static class GetLocation
                 {
                     return Result.Failure<Response>($"Location with ID {context.Request.LocationId} not found.");
                 }
-                var locationDto = new LocationDetailedDto
+                var locationDto = new LocationDetailedResponse
                 {
                     LocationId = location.LocationId,
                     Name = location.Name,

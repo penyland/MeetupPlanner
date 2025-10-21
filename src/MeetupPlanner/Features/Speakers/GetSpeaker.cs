@@ -10,7 +10,7 @@ public static class GetSpeaker
 {
     public sealed record Query(Guid SpeakerId);
 
-    public sealed record Response(SpeakerDetailedDto Speaker);
+    public sealed record Response(SpeakerDetailedResponse Speaker);
 
     internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
     {
@@ -28,7 +28,7 @@ public static class GetSpeaker
                     return Result.Failure<Response>($"Speaker with ID {context.Request.SpeakerId} not found.");
                 }
 
-                var response = new SpeakerDetailedDto
+                var response = new SpeakerDetailedResponse
                 {
                     SpeakerId = speaker.SpeakerId,
                     FullName = speaker.FullName,

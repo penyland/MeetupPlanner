@@ -10,7 +10,7 @@ public static class GetMeetup
 {
     public sealed record Query(Guid MeetupId);
 
-    public sealed record Response(MeetupDto Meetup);
+    public sealed record Response(MeetupResponse Meetup);
 
     internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
     {
@@ -27,18 +27,18 @@ public static class GetMeetup
                     .ThenInclude(sb => sb.Bios)
                     .AsNoTracking()
                     .Where(m => m.MeetupId == context.Request.MeetupId)
-                .Select(m => new MeetupDto(m.MeetupId,
+                .Select(m => new MeetupResponse(m.MeetupId,
                     m.Title,
                     m.Description,
                     m.StartUtc,
                     m.EndUtc,
-                    new RsvpDto(
+                    new Rsvp(
                         m.TotalSpots ?? 0,
                         m.RsvpYesCount ?? 0,
                         m.RsvpNoCount ?? 0,
                         m.RsvpWaitlistCount ?? 0,
                         m.AttendanceCount ?? 0),
-                    new LocationDto
+                    new LocationResponse
                         {
                             Name = m.Location.Name,
                             LocationId = m.Location.LocationId,
@@ -47,14 +47,14 @@ public static class GetMeetup
                         m.ScheduleSlots
                             .Where(slot => slot.Presentation != null)
                             .Select(slot => slot.Presentation)
-                            .Select(p => new PresentationDto
+                            .Select(p => new PresentationResponse
                             {
                                 PresentationId = p.PresentationId,
                                 Title = p.Title,
                                 Abstract = p.Abstract,
                                 Speakers = p.PresentationSpeakers
                                     .Select(ps => ps.Speaker)
-                                    .Select(s => new SpeakerDto
+                                    .Select(s => new SpeakerResponse
                                     {
                                         SpeakerId = s.SpeakerId,
                                         FullName = s.FullName,

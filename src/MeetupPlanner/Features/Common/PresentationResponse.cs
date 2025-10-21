@@ -2,7 +2,7 @@
 
 namespace MeetupPlanner.Features.Common;
 
-public record PresentationDto
+public record PresentationResponse
 {
     [Description("The unique identifier of the presentation.")]
     public Guid PresentationId { get; init; }
@@ -14,10 +14,10 @@ public record PresentationDto
     public string Abstract { get; init; }
 
     [Description("List of speakers for the presentation.")]
-    public IReadOnlyList<SpeakerDto>? Speakers { get; init; }
+    public IReadOnlyList<SpeakerResponse>? Speakers { get; init; }
 }
 
-public record PresentationDetailedDto : PresentationDto
+public record PresentationDetailedResponse : PresentationResponse
 {
     [Description("The duration of the presentation in minutes.")]
     public int DurationMinutes { get; init; } = 45;

@@ -10,7 +10,7 @@ public static class GetSpeakers
 {
     public sealed record Query();
 
-    public sealed record Response(IReadOnlyList<SpeakerDto> Speakers);
+    public sealed record Response(IReadOnlyList<SpeakerResponse> Speakers);
 
     internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Response>
     {
@@ -22,7 +22,7 @@ public static class GetSpeakers
                     .Include(s => s.Bios)
                     .AsNoTracking()
                     .ToListAsync(cancellationToken: cancellationToken);
-                var response = speakers.Select(s => new SpeakerDto
+                var response = speakers.Select(s => new SpeakerResponse
                 {
                     SpeakerId = s.SpeakerId,
                     FullName = s.FullName,

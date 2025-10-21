@@ -108,17 +108,17 @@ public partial class MeetupPlannerDbContext : DbContext
             .IsUnique();
     }
 
-    public async Task<List<LocationDto>> GetLocationsAsync(CancellationToken cancellationToken = default)
+    public async Task<List<LocationResponse>> GetLocationsAsync(CancellationToken cancellationToken = default)
     {
-        var result = await Database.SqlQuery<LocationDto>($"SELECT * FROM dbo.Locations ORDER BY [Name]")
+        var result = await Database.SqlQuery<LocationResponse>($"SELECT * FROM dbo.Locations ORDER BY [Name]")
             .ToListAsync(cancellationToken: cancellationToken);
 
         return result;
     }
 
-    public async Task<List<LocationDetailedDto>> GetLocationsByCityAsync(string city, CancellationToken cancellationToken = default)
+    public async Task<List<LocationDetailedResponse>> GetLocationsByCityAsync(string city, CancellationToken cancellationToken = default)
     {
-        var result = await Database.SqlQuery<LocationDetailedDto>($"SELECT * FROM dbo.Locations")
+        var result = await Database.SqlQuery<LocationDetailedResponse>($"SELECT * FROM dbo.Locations")
             .Where(l => l.City == city)
             .OrderBy(l => l.Name)
             .ToListAsync(cancellationToken: cancellationToken);
@@ -126,11 +126,11 @@ public partial class MeetupPlannerDbContext : DbContext
         return result;
     }
 
-    public async Task<List<LocationDetailedDto>> GetLocationByNameAsync(string name, CancellationToken cancellationToken = default)
+    public async Task<List<LocationDetailedResponse>> GetLocationByNameAsync(string name, CancellationToken cancellationToken = default)
     {
         var query = $"%{name}%";
 
-        var result = await Database.SqlQuery<LocationDetailedDto>($"SELECT * FROM dbo.Locations")
+        var result = await Database.SqlQuery<LocationDetailedResponse>($"SELECT * FROM dbo.Locations")
             .Where(l => EF.Functions.Like(l.Name, query))
             .ToListAsync(cancellationToken: cancellationToken);
 
