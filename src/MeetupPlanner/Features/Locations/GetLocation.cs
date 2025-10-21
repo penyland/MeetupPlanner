@@ -1,8 +1,10 @@
 ﻿using Infinity.Toolkit;
 using Infinity.Toolkit.Handlers;
-using Microsoft.EntityFrameworkCore;
-using MeetupPlanner.Infrastructure;
+using MeetupPlanner.Extensions;
 using MeetupPlanner.Features.Common;
+using MeetupPlanner.Infrastructure;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeetupPlanner.Features.Locations;
 
@@ -44,5 +46,10 @@ public static class GetLocation
                 return Result.Failure<Response>(ex);
             }
         }
+    }
+
+    public static void MapGetLocation(this RouteGroupBuilder builder)
+    {
+        builder.MapGetHandler<Query, Response, LocationDetailedResponse>("/locations/{locationId}", map => map.Location);
     }
 }

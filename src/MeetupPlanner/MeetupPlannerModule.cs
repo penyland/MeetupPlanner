@@ -2,18 +2,18 @@
 using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.FeatureModules;
 using Infinity.Toolkit.Handlers;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
+using MeetupPlanner.Extensions;
+using MeetupPlanner.Features.Common;
+using MeetupPlanner.Features.Locations;
+using MeetupPlanner.Features.Meetups;
+using MeetupPlanner.Features.Presentations;
 using MeetupPlanner.Features.Speakers;
 using MeetupPlanner.Infrastructure;
-using MeetupPlanner.Features.Locations;
-using MeetupPlanner.Extensions;
-using MeetupPlanner.Features.Presentations;
-using MeetupPlanner.Features.Meetups;
-using MeetupPlanner.Features.Common;
-using Microsoft.Extensions.DependencyInjection;
 using MeetupPlanner.MCP;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace MeetupPlanner;
 
@@ -54,7 +54,9 @@ public class MeetupPlannerModule : WebFeatureModule
 
         group.MapGetHandler<GetLocations.Response, IReadOnlyList<LocationResponse>>("/locations", map => map.Locations);
 
-        group.MapGetHandler<GetLocation.Query, GetLocation.Response, LocationDetailedResponse>("/locations/{locationId}", map => map.Location);
+        //group.MapGetHandler<GetLocation.Query, GetLocation.Response, LocationDetailedResponse>("/locations/{locationId}", map => map.Location);
+
+        group.MapGetLocation();
 
         group.MapGet("/meetups", async (IRequestHandler<GetMeetups.Query, GetMeetups.Response> handler, [AsParameters] MeetupQueryParameters queryParams) =>
         {
