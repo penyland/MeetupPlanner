@@ -1,6 +1,5 @@
 ﻿using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Microsoft.AspNetCore.Http.HttpResults;
-using MeetupPlanner.Api.Features.OpenApi;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -9,7 +8,7 @@ namespace MeetupPlanner.Api.Features.Info;
 
 public class InfoModule : WebFeatureModule
 {
-    public override IModuleInfo ModuleInfo { get; } = new FeatureModuleInfo(typeof(OpenApiModule).FullName, Assembly.GetExecutingAssembly().GetName().Version?.ToString());
+    public override IModuleInfo ModuleInfo { get; } = new FeatureModuleInfo(typeof(InfoModule).FullName, Assembly.GetExecutingAssembly().GetName().Version?.ToString());
 
     public override void MapEndpoints(WebApplication app) => app.MapInfoEndpoints();
 }
@@ -37,7 +36,7 @@ public static class InfoEndpoints
         return group;
     }
 
-    private static JsonHttpResult<IEnumerable<FeatureModuleInfo>> GetFeatureModuleInfos(IEnumerable<IFeatureModule> featureModules)
+    private static JsonHttpResult<IEnumerable<FeatureModuleInfo>> GetFeatureModuleInfos(IEnumerable<IFeatureModuleBase> featureModules)
     {
         var modules = featureModules.Select(t => new FeatureModuleInfo(t?.ModuleInfo?.Name,t?.ModuleInfo?.Version));
         return TypedResults.Json<IEnumerable<FeatureModuleInfo>>(modules);

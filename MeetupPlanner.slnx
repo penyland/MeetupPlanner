@@ -6,9 +6,6 @@
     <Project Path="src/MeetupPlanner.ServiceDefaults/MeetupPlanner.ServiceDefaults.csproj" />
     <Project Path="src/MeetupPlanner/MeetupPlanner.csproj" Id="0e023452-e2b7-4ce4-ae2b-6689bfe58958" />
   </Folder>
-  <Folder Name="/src/Toolkit/">
-    <Project Path="../infinity-toolkit/src/Infinity.Toolkit.Azure/Infinity.Toolkit.Azure.csproj" />
-  </Folder>
   <Folder Name="/src/Web/" />
   <Folder Name="/tests/">
     <Project Path="tests/MeetupPlanner.Api.IntegrationTests/MeetupPlanner.Api.IntegrationTests.csproj" />

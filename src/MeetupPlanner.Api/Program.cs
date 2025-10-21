@@ -1,7 +1,4 @@
-using Azure.Identity;
-using Infinity.Toolkit;
 using Infinity.Toolkit.Azure;
-using Infinity.Toolkit.Azure.Identity;
 using MeetupPlanner.Api.ExceptionHandlers;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Identity.Web;
@@ -10,18 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.ConfigureAzureAppConfiguration(configure: config =>
-{
-    // Check if we are running on Azure
-    if (EnvironmentHelper.IsRunningInAzureContainerApps)
-    {
-        config.TokenCredential = new ManagedIdentityCredential(ManagedIdentityId.FromUserAssignedClientId(Environment.GetEnvironmentVariable("AZURE_CLIENT_ID")));
-    }
-    else
-    {
-        config.TokenCredential = TokenCredentialHelper.GetTokenCredential();
-    }
-});
+builder.ConfigureAzureAppConfiguration();
 
 // Add services to the container.
 builder.AddFeatureModules();

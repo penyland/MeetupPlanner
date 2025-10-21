@@ -35,8 +35,7 @@ public class OpenApiModule : IWebFeatureModule
 {
     public IModuleInfo ModuleInfo { get; } = new FeatureModuleInfo(typeof(OpenApiModule).FullName, Assembly.GetExecutingAssembly().GetName().Version?.ToString());
 
-
-    public void RegisterModule(WebApplicationBuilder builder)
+    public void RegisterModule(IHostApplicationBuilder builder)
     {
         builder.Services.AddOpenApi(options =>
         {

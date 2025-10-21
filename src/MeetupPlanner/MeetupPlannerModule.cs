@@ -19,7 +19,9 @@ namespace MeetupPlanner;
 
 public class MeetupPlannerModule : WebFeatureModule
 {
-    public override void RegisterModule(WebApplicationBuilder builder)
+    public override IModuleInfo? ModuleInfo { get; } = new FeatureModuleInfo(nameof(MeetupPlannerModule), typeof(MeetupPlannerModule).Assembly.GetName().Version?.ToString());
+
+    public override void RegisterModule(IHostApplicationBuilder builder)
     {
         builder.AddSqlServerDbContext<MeetupPlannerDbContext>("MeetupPlanner");
 
