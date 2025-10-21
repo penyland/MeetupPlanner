@@ -10,7 +10,7 @@ public static class GetMeetupLocation
 {
     public sealed record Query(Guid MeetupId);
 
-    public sealed record Response(LocationDetailedDto Location);
+    public sealed record Response(LocationDetailedResponse Location);
 
     internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
     {
@@ -29,7 +29,7 @@ public static class GetMeetupLocation
                 }
 
                 var location = meetup.Location;
-                var response = new LocationDetailedDto
+                var response = new LocationDetailedResponse
                 {
                     LocationId = location.LocationId,
                     Name = location.Name,

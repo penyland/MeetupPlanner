@@ -1,6 +1,6 @@
 ﻿namespace MeetupPlanner.Features.Common;
 
-public record LocationDto
+public record LocationResponse
 {
     public Guid LocationId { get; init; }
     public string Name { get; init; }
@@ -8,7 +8,7 @@ public record LocationDto
     public bool IsActive { get; init; } = true;
 }
 
-public record LocationDetailedDto
+public record LocationDetailedResponse
 {
     public Guid LocationId { get; init; }
     public string Name { get; init; }

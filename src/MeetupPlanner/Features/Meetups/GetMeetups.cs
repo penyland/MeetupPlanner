@@ -10,7 +10,7 @@ public static class GetMeetups
 {
     public sealed record Query(MeetupStatus Status);
 
-    public record Response(IReadOnlyList<MeetupDto> Meetups);
+    public record Response(IReadOnlyList<MeetupResponse> Meetups);
 
     internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
     {
@@ -36,30 +36,30 @@ public static class GetMeetups
                     .AsNoTracking()
                     .ToListAsync(cancellationToken: cancellationToken);
 
-                var getMeetupsResponse = meetups.Select(m => new MeetupDto(
+                var getMeetupsResponse = meetups.Select(m => new MeetupResponse(
                 m.MeetupId,
                 m.Title,
                 m.Description,
                 m.StartUtc,
                 m.EndUtc,
-                new RsvpDto(
+                new Rsvp(
                     m.TotalSpots ?? 0,
                     m.RsvpYesCount ?? 0,
                     m.RsvpNoCount ?? 0,
                     m.RsvpWaitlistCount ?? 0,
                     m.AttendanceCount ?? 0),
-                new LocationDto
+                new LocationResponse
                 {
                     LocationId = m.Location.LocationId,
                     Name = m.Location.Name
                 },
-                [.. m.ScheduleSlots.Select(s => new PresentationDto
+                [.. m.ScheduleSlots.Select(s => new PresentationResponse
                 {
                     PresentationId = s.Presentation.PresentationId,
                     Title = s.Presentation.Title,
                     Speakers = [.. s.Presentation.PresentationSpeakers
                         .Select(ps => ps.Speaker)
-                        .Select(s => new SpeakerDto
+                        .Select(s => new SpeakerResponse
                         {
                             SpeakerId = s.SpeakerId,
                             FullName = s.FullName

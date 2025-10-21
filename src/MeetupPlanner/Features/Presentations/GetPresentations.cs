@@ -10,7 +10,7 @@ public static class GetPresentations
 {
     public sealed record Query();
 
-    public sealed record Response(IReadOnlyList<PresentationDto> Presentations);
+    public sealed record Response(IReadOnlyList<PresentationResponse> Presentations);
 
     internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Response>
     {
@@ -23,13 +23,13 @@ public static class GetPresentations
                     .ThenInclude(ps => ps.Speaker)
                     .AsNoTracking()
                     .ToListAsync(cancellationToken: cancellationToken);
-                var response = presentations.Select(p => new PresentationDto
+                var response = presentations.Select(p => new PresentationResponse
                 {
                     PresentationId = p.PresentationId,
                     Title = p.Title,
                     Abstract = p.Abstract,
                     Speakers = [.. p.PresentationSpeakers
-                    .Select(ps => new SpeakerDto
+                    .Select(ps => new SpeakerResponse
                     {
                          SpeakerId = ps.Speaker.SpeakerId,
                          FullName = ps.Speaker.FullName,

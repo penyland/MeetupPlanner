@@ -10,7 +10,7 @@ public static class GetMeetupPresentations
 {
     public sealed record Query(Guid MeetupId);
 
-    public sealed record Response(IReadOnlyList<PresentationDto> Presentations);
+    public sealed record Response(IReadOnlyList<PresentationResponse> Presentations);
 
     internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
     {
@@ -34,14 +34,14 @@ public static class GetMeetupPresentations
                         new Error("400", "No presentations found for the specified meetup."));
                 }
 
-                var response = presentations.Select(p => new PresentationDto
+                var response = presentations.Select(p => new PresentationResponse
                 {
                     PresentationId = p.PresentationId,
                     Title = p.Title,
                     Abstract = p.Abstract,
                     Speakers = [.. p.PresentationSpeakers
                         .Select(ps => ps.Speaker)
-                        .Select(s => new SpeakerDto
+                        .Select(s => new SpeakerResponse
                         {
                             SpeakerId = s.SpeakerId,
                             FullName = s.FullName,

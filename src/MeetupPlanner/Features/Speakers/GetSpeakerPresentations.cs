@@ -10,7 +10,7 @@ public static class GetSpeakerPresentations
 {
     public sealed record Query(Guid SpeakerId);
 
-    public sealed record Response(IReadOnlyList<PresentationDto> Presentations);
+    public sealed record Response(IReadOnlyList<PresentationResponse> Presentations);
 
     internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
     {
@@ -32,7 +32,7 @@ public static class GetSpeakerPresentations
                         : $"No presentations found for speaker with ID {context.Request.SpeakerId}.");
                 }
 
-                var response = presentations.Select(p => new PresentationDto
+                var response = presentations.Select(p => new PresentationResponse
                 {
                     PresentationId = p.PresentationId,
                     Title = p.Title,

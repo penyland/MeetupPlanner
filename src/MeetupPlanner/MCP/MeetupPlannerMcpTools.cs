@@ -25,14 +25,14 @@ public class MeetupPlannerMcpTools(MeetupPlannerDbContext meetupPlannerDbContext
     public async Task<string> GetLocationsByCityAsync([Description("The name of the city")] string city)
     {
         var locations = await meetupPlannerDbContext.GetLocationsByCityAsync(city);
-        return JsonSerializer.Serialize(locations, MeetupPlannerSerializationContext.Default.ListLocationDetailedDto);
+        return JsonSerializer.Serialize(locations, MeetupPlannerSerializationContext.Default.ListLocationDetailedResponse);
     }
 
     [McpServerTool, Description("Get a location's/sponsor's details by its name")]
     public async Task<string> GetLocationByNameAsync([Description("The name of the location/sponser to get details for.")] string name)
     {
         var location = await meetupPlannerDbContext.GetLocationByNameAsync(name);
-        return JsonSerializer.Serialize(location, MeetupPlannerSerializationContext.Default.ListLocationDetailedDto);
+        return JsonSerializer.Serialize(location, MeetupPlannerSerializationContext.Default.ListLocationDetailedResponse);
     }
 
     [McpServerTool, Description("Get a list of speakers that have had a presentation at any meetup event.")]
@@ -40,7 +40,7 @@ public class MeetupPlannerMcpTools(MeetupPlannerDbContext meetupPlannerDbContext
     {
         var speakers = await meetupPlannerDbContext.Speakers
             .AsNoTracking()
-            .Select(s => new SpeakerDto
+            .Select(s => new SpeakerResponse
             {
                 SpeakerId = s.SpeakerId,
                 FullName = s.FullName,
@@ -48,7 +48,7 @@ public class MeetupPlannerMcpTools(MeetupPlannerDbContext meetupPlannerDbContext
             })
             .ToListAsync();
 
-        return JsonSerializer.Serialize(speakers, MeetupPlannerSerializationContext.Default.ListSpeakerDto);
+        return JsonSerializer.Serialize(speakers, MeetupPlannerSerializationContext.Default.ListSpeakerResponse);
     }
 
     [McpServerTool, Description("Get detailed information about a speaker by name.")]
@@ -57,7 +57,7 @@ public class MeetupPlannerMcpTools(MeetupPlannerDbContext meetupPlannerDbContext
         var speaker = await meetupPlannerDbContext.Speakers
             .AsNoTracking()
             .Where(s => s.FullName == name)
-            .Select(s => new SpeakerDetailedDto
+            .Select(s => new SpeakerDetailedResponse
             {
                 SpeakerId = s.SpeakerId,
                 FullName = s.FullName,
@@ -72,13 +72,13 @@ public class MeetupPlannerMcpTools(MeetupPlannerDbContext meetupPlannerDbContext
             })
             .SingleOrDefaultAsync();
 
-        return JsonSerializer.Serialize(speaker, MeetupPlannerSerializationContext.Default.SpeakerDetailedDto);
+        return JsonSerializer.Serialize(speaker, MeetupPlannerSerializationContext.Default.SpeakerDetailedResponse);
     }
 }
 
-[JsonSerializable(typeof(List<LocationDetailedDto>))]
-[JsonSerializable(typeof(List<SpeakerDto>))]
-[JsonSerializable(typeof(SpeakerDetailedDto))]
+[JsonSerializable(typeof(List<LocationDetailedResponse>))]
+[JsonSerializable(typeof(List<SpeakerResponse>))]
+[JsonSerializable(typeof(SpeakerDetailedResponse))]
 [JsonSourceGenerationOptions(
     PropertyNameCaseInsensitive = true,
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]

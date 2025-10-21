@@ -2,18 +2,18 @@
 
 namespace MeetupPlanner.Features.Meetups;
 
-public record MeetupDto(
+public record MeetupResponse(
     Guid MeetupId,
     string Title,
     string Description,
     DateTimeOffset StartUtc,
     DateTimeOffset EndUtc,
-    RsvpDto Rsvp,
-    LocationDto Location,
-    IReadOnlyList<PresentationDto>? Presentations = null
+    Rsvp Rsvp,
+    LocationResponse Location,
+    IReadOnlyList<PresentationResponse>? Presentations = null
 );
 
-public record RsvpDto(
+public record Rsvp(
     int TotalSpots,
     int RsvpYesCount,
     int RsvpNoCount,

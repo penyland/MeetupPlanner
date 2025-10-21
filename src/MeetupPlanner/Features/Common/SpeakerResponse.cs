@@ -1,6 +1,6 @@
 ﻿namespace MeetupPlanner.Features.Common;
 
-public record SpeakerDto
+public record SpeakerResponse
 {
     public Guid SpeakerId { get; init; }
     public string FullName { get; init; }
@@ -8,7 +8,7 @@ public record SpeakerDto
 }
 
 
-public record SpeakerDetailedDto
+public record SpeakerDetailedResponse
 {
     public Guid SpeakerId { get; init; }
     public string FullName { get; init; }

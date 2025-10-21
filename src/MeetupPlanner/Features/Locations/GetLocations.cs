@@ -8,7 +8,7 @@ namespace MeetupPlanner.Features.Locations;
 
 public static class GetLocations
 {
-    public sealed record Response(IReadOnlyList<LocationDto> Locations);
+    public sealed record Response(IReadOnlyList<LocationResponse> Locations);
 
     internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Response>
     {
@@ -18,7 +18,7 @@ public static class GetLocations
             {
                 var locations = await dbContext.Locations.AsNoTracking().ToListAsync(cancellationToken: cancellationToken);
 
-                var locationDtos = locations.Select(l => new LocationDto
+                var locationDtos = locations.Select(l => new LocationResponse
                 {
                     LocationId = l.LocationId,
                     Name = l.Name,
