@@ -25,7 +25,7 @@ public static class AddLocation
             try
             {
                 // Validate input
-                var newLocation = new Infrastructure.Models.Location
+                var location = new Infrastructure.Models.Location
                 {
                     LocationId = Guid.NewGuid(),
                     Name = context.Request.Location.Name,
@@ -38,10 +38,10 @@ public static class AddLocation
                     IsActive = context.Request.Location.IsActive,
                 };
 
-                dbContext.Locations.Add(newLocation);
+                dbContext.Locations.Add(location);
                 await dbContext.SaveChangesAsync(cancellationToken);
 
-                return Result.Success(new Response(newLocation.LocationId));
+                return Result.Success(new Response(location.LocationId));
             }
             catch (Exception ex)
             {
@@ -60,8 +60,9 @@ public static class AddLocation
 
             if (!validationResult.IsValid)
             {
-                var errors = validationResult.Errors.Select(e => new ValidationError(e.PropertyName, e.ErrorCode, e.ErrorMessage)).ToList();
-                var result = Result.Failure<Response>("Validation failed", errors);
+                var errors = validationResult.Errors.Select(e => new ValidationError(e.PropertyName, e.ErrorMessage)).ToList();
+                var result = Result.Failure<Response>("Validation failed for AddLocation.", errors);
+
                 return Task.FromResult(result);
             }
 
@@ -129,8 +130,8 @@ public static class AddLocation
 
             IResult response = result switch
             {
+                ErrorResult<Response> failure => TypedResults.Problem(failure.ToProblemDetails()),
                 Success => TypedResults.Created($"/locations/{result.Value.LocationId}", result.Value.LocationId),
-                Failure => TypedResults.Problem(result.ToProblemDetails()),
                 _ => TypedResults.BadRequest("Failed to process request.")
             };
 
@@ -141,14 +142,4 @@ public static class AddLocation
 
         return builder;
     }
-}
-
-public class ValidationError : Error
-{
-    public ValidationError(string propertyName, string code, string details) : base(code, details)
-    {
-        PropertyName = propertyName;
-    }
-
-    public string PropertyName { get; }
 }

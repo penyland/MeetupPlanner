@@ -33,7 +33,7 @@ public static class GetMeetupRsvps
                 if (meetup == null)
                 {
                     return Result.Failure<Response>(
-                        new Error("400", "No meetup found for the specified ID."));
+                        new Error("NotFound", "No meetup found for the specified ID.", ErrorType.Validation));
                 }
 
                 var rsvp = new Rsvp(
