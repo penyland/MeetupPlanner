@@ -1,4 +1,5 @@
-﻿using Infinity.Toolkit;
+﻿using FluentValidation;
+using Infinity.Toolkit;
 using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.FeatureModules;
 using Infinity.Toolkit.Handlers;
@@ -24,6 +25,11 @@ public class MeetupPlannerModule : WebFeatureModule
     public override void RegisterModule(IHostApplicationBuilder builder)
     {
         builder.AddSqlServerDbContext<MeetupPlannerDbContext>("MeetupPlanner");
+
+        builder.Services.AddRequestHandler<AddLocation.Command, AddLocation.Response, AddLocation.Handler>()
+            .Decorate<AddLocation.ValidatorHandler>();
+
+        builder.Services.AddScoped<IValidator<AddLocation.Command>, AddLocation.CommandValidator>();
 
         builder.Services.AddRequestHandler<GetLocations.Response, GetLocations.Handler>();
         builder.Services.AddRequestHandler<GetLocation.Query, GetLocation.Response, GetLocation.Handler>();
@@ -57,6 +63,7 @@ public class MeetupPlannerModule : WebFeatureModule
         //group.MapGetHandler<GetLocation.Query, GetLocation.Response, LocationDetailedResponse>("/locations/{locationId}", map => map.Location);
 
         group.MapGetLocation();
+        group.MapPostLocation().RequireAuthorization();
 
         group.MapGet("/meetups", async (IRequestHandler<GetMeetups.Query, GetMeetups.Response> handler, [AsParameters] MeetupQueryParameters queryParams) =>
         {

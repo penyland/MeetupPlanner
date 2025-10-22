@@ -26,7 +26,8 @@ public static class GetLocation
                 {
                     return Result.Failure<Response>($"Location with ID {context.Request.LocationId} not found.");
                 }
-                var locationDto = new LocationDetailedResponse
+
+                var locationResponse = new LocationDetailedResponse
                 {
                     LocationId = location.LocationId,
                     Name = location.Name,
@@ -39,7 +40,7 @@ public static class GetLocation
                     IsActive = location.IsActive,
                 };
 
-                return Result.Success(new Response(locationDto));
+                return Result.Success(new Response(locationResponse));
             }
             catch (Exception ex)
             {
