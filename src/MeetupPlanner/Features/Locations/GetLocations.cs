@@ -1,8 +1,10 @@
 ﻿using Infinity.Toolkit;
+using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.Handlers;
-using Microsoft.EntityFrameworkCore;
-using MeetupPlanner.Infrastructure;
 using MeetupPlanner.Features.Common;
+using MeetupPlanner.Infrastructure;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeetupPlanner.Features.Locations;
 
@@ -10,7 +12,7 @@ public static class GetLocations
 {
     public sealed record Response(IReadOnlyList<LocationResponse> Locations);
 
-    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Response>
+    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Result<Response>>
     {
         public async Task<Result<Response>> HandleAsync(CancellationToken cancellationToken)
         {
@@ -33,5 +35,10 @@ public static class GetLocations
                 return Result.Failure<Response>(ex);
             }
         }
+    }
+
+    public static void MapGetLocations(this RouteGroupBuilder builder, string path)
+    {
+        builder.MapGetRequestHandlerWithResult<Response, IReadOnlyList<LocationResponse>>(path, map => map.Locations);
     }
 }

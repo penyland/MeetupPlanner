@@ -18,13 +18,12 @@ public static class AddLocation
 
     public sealed record Response(Guid LocationId);
 
-    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Command, Response>
+    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Command, Result<Response>>
     {
         public async Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
         {
             try
             {
-                // Validate input
                 var location = new Infrastructure.Models.Location
                 {
                     LocationId = Guid.NewGuid(),
@@ -50,7 +49,7 @@ public static class AddLocation
         }
     }
 
-    internal class ValidatorHandler(IRequestHandler<AddLocation.Command, AddLocation.Response> innerHandler, IValidator<AddLocation.Command> validator, ILogger<ValidatorHandler> logger) : IRequestHandler<Command, Response>
+    internal class ValidatorHandler(IRequestHandler<AddLocation.Command, Result<AddLocation.Response>> innerHandler, IValidator<AddLocation.Command> validator, ILogger<ValidatorHandler> logger) : IRequestHandler<Command, Result<Response>>
     {
         public Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
         {
@@ -114,9 +113,9 @@ public static class AddLocation
         public bool IsActive { get; init; }
     }
 
-    public static RouteGroupBuilder MapPostLocation(this RouteGroupBuilder builder)
+    public static RouteGroupBuilder MapPostLocation(this RouteGroupBuilder builder, string path)
     {
-        builder.MapPost("/locations", async (LocationRequest request, [FromServices] IRequestHandler<AddLocation.Command, AddLocation.Response> handler) =>
+        builder.MapPost(path, async (LocationRequest request, [FromServices] IRequestHandler<AddLocation.Command, Result<AddLocation.Response>> handler) =>
         {
             var command = new AddLocation.Command(request);
 
@@ -131,14 +130,15 @@ public static class AddLocation
             IResult response = result switch
             {
                 ErrorResult<Response> failure => TypedResults.Problem(failure.ToProblemDetails()),
-                Success => TypedResults.Created($"/locations/{result.Value.LocationId}", result.Value.LocationId),
+                Success => TypedResults.Created($"/{path}/{result.Value.LocationId}", result.Value.LocationId),
                 _ => TypedResults.BadRequest("Failed to process request.")
             };
 
             return response;
         })
         .Produces<Guid>(StatusCodes.Status201Created)
-        .ProducesProblem(StatusCodes.Status400BadRequest);
+        .ProducesProblem(StatusCodes.Status400BadRequest)
+        .RequireAuthorization();
 
         return builder;
     }

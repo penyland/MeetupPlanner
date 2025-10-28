@@ -8,6 +8,7 @@
   </Folder>
   <Folder Name="/src/Toolkit/">
     <Project Path="../infinity-toolkit/src/Infinity.Toolkit.AspNetCore/Infinity.Toolkit.AspNetCore.csproj" />
+    <Project Path="../infinity-toolkit/src/Infinity.Toolkit.Azure/Infinity.Toolkit.Azure.csproj" />
     <Project Path="../infinity-toolkit/src/Infinity.Toolkit/Infinity.Toolkit.csproj" />
   </Folder>
   <Folder Name="/src/Web/" />

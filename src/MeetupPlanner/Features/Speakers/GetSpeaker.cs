@@ -12,7 +12,7 @@ public static class GetSpeaker
 
     public sealed record Response(SpeakerDetailedResponse Speaker);
 
-    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
+    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Result<Response>>
     {
         public async Task<Result<Response>> HandleAsync(IHandlerContext<Query> context, CancellationToken cancellationToken = default)
         {

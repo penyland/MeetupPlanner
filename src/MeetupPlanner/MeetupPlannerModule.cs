@@ -3,7 +3,6 @@ using Infinity.Toolkit;
 using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.FeatureModules;
 using Infinity.Toolkit.Handlers;
-using MeetupPlanner.Extensions;
 using MeetupPlanner.Features.Common;
 using MeetupPlanner.Features.Locations;
 using MeetupPlanner.Features.Meetups;
@@ -26,27 +25,21 @@ public class MeetupPlannerModule : WebFeatureModule
     {
         builder.AddSqlServerDbContext<MeetupPlannerDbContext>("MeetupPlanner");
 
-        builder.Services.AddRequestHandler<AddLocation.Command, AddLocation.Response, AddLocation.Handler>()
-            .Decorate<AddLocation.ValidatorHandler>();
+        builder.Services.RegisterAddMeetup();
 
-        builder.Services.AddScoped<IValidator<AddLocation.Command>, AddLocation.CommandValidator>();
+        builder.Services.AddRequestHandler<GetMeetups.Query, Result<GetMeetups.Response>, GetMeetups.Handler>();
+        builder.Services.AddRequestHandler<GetMeetup.Query, Result<GetMeetup.Response>, GetMeetup.Handler>();
+        builder.Services.AddRequestHandler<GetMeetupLocation.Query, Result<GetMeetupLocation.Response>, GetMeetupLocation.Handler>();
+        builder.Services.AddRequestHandler<GetMeetupPresentations.Query, Result<GetMeetupPresentations.Response>, GetMeetupPresentations.Handler>();
+        builder.Services.AddRequestHandler<GetMeetupRsvps.Query, Result<GetMeetupRsvps.Response>, GetMeetupRsvps.Handler>();
 
-        builder.Services.AddRequestHandler<GetLocations.Response, GetLocations.Handler>();
-        builder.Services.AddRequestHandler<GetLocation.Query, GetLocation.Response, GetLocation.Handler>();
+        builder.Services.AddRequestHandler<Result<GetPresentations.Response>, GetPresentations.Handler>();
+        builder.Services.AddRequestHandler<GetPresentation.Query, Result<GetPresentation.Response>, GetPresentation.Handler>();
 
-        builder.Services.AddRequestHandler<GetMeetups.Query, GetMeetups.Response, GetMeetups.Handler>();
-        builder.Services.AddRequestHandler<GetMeetup.Query, GetMeetup.Response, GetMeetup.Handler>();
-        builder.Services.AddRequestHandler<GetMeetupLocation.Query, GetMeetupLocation.Response, GetMeetupLocation.Handler>();
-        builder.Services.AddRequestHandler<GetMeetupPresentations.Query, GetMeetupPresentations.Response, GetMeetupPresentations.Handler>();
-        builder.Services.AddRequestHandler<GetMeetupRsvps.Query, GetMeetupRsvps.Response, GetMeetupRsvps.Handler>();
-
-        builder.Services.AddRequestHandler<GetPresentations.Response, GetPresentations.Handler>();
-        builder.Services.AddRequestHandler<GetPresentation.Query, GetPresentation.Response, GetPresentation.Handler>();
-
-        builder.Services.AddRequestHandler<GetSpeakers.Response, GetSpeakers.Handler>();
-        builder.Services.AddRequestHandler<GetSpeaker.Query, GetSpeaker.Response, GetSpeaker.Handler>();
-        builder.Services.AddRequestHandler<GetSpeakerBiographies.Query, GetSpeakerBiographies.Response, GetSpeakerBiographies.Handler>();
-        builder.Services.AddRequestHandler<GetSpeakerPresentations.Query, GetSpeakerPresentations.Response, GetSpeakerPresentations.Handler>();
+        builder.Services.AddRequestHandler<Result<GetSpeakers.Response>, GetSpeakers.Handler>();
+        builder.Services.AddRequestHandler<GetSpeaker.Query, Result<GetSpeaker.Response>, GetSpeaker.Handler>();
+        builder.Services.AddRequestHandler<GetSpeakerBiographies.Query, Result<GetSpeakerBiographies.Response>, GetSpeakerBiographies.Handler>();
+        builder.Services.AddRequestHandler<GetSpeakerPresentations.Query, Result<GetSpeakerPresentations.Response>, GetSpeakerPresentations.Handler>();
 
         builder.Services.AddMcpServer()
             .WithHttpTransport(o => o.Stateless = true)
@@ -58,14 +51,13 @@ public class MeetupPlannerModule : WebFeatureModule
         var group = app.MapGroup("/meetupplanner")
             .WithTags("Meetup Planner");
 
-        group.MapGetHandler<GetLocations.Response, IReadOnlyList<LocationResponse>>("/locations", map => map.Locations);
+        //group.MapGetLocations("/locations");
+        //group.MapGetLocation("/locations/{locationId}");
+        //group.MapPostLocation("/locations");
 
-        //group.MapGetHandler<GetLocation.Query, GetLocation.Response, LocationDetailedResponse>("/locations/{locationId}", map => map.Location);
+        group.MapPostMeetup("/meetups");
 
-        group.MapGetLocation();
-        group.MapPostLocation().RequireAuthorization();
-
-        group.MapGet("/meetups", async (IRequestHandler<GetMeetups.Query, GetMeetups.Response> handler, [AsParameters] MeetupQueryParameters queryParams) =>
+        group.MapGet("/meetups", async (IRequestHandler<GetMeetups.Query, Result<GetMeetups.Response>> handler, [AsParameters] MeetupQueryParameters queryParams) =>
         {
             var meetupStatus = MeetupStatus.All;
             if (queryParams.Status is not null && !queryParams.TryParseStatus(out meetupStatus))
@@ -82,20 +74,20 @@ public class MeetupPlannerModule : WebFeatureModule
         .Produces<IReadOnlyList<MeetupResponse>>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status400BadRequest);
 
-        group.MapGetHandler<GetMeetup.Query, GetMeetup.Response, MeetupResponse>("/meetups/{meetupId}", map => map.Meetup);
-        group.MapGetHandler<GetMeetupLocation.Query, GetMeetupLocation.Response, LocationDetailedResponse>("/meetups/{meetupId}/location", map => map.Location);
-        group.MapGetHandler<GetMeetupPresentations.Query, GetMeetupPresentations.Response, IReadOnlyList<PresentationResponse>>("/meetups/{meetupId}/presentations", map => map.Presentations);
-        group.MapGetHandler<GetMeetupRsvps.Query, GetMeetupRsvps.Response, Rsvp>("/meetups/{meetupId}/rsvps", map => map.Rsvp);
+        group.MapGetRequestHandlerWithResult<GetMeetup.Query, GetMeetup.Response, MeetupResponse>("/meetups/{meetupId}", map => map.Meetup);
+        group.MapGetRequestHandlerWithResult<GetMeetupLocation.Query, GetMeetupLocation.Response, LocationDetailedResponse>("/meetups/{meetupId}/location", map => map.Location);
+        group.MapGetRequestHandlerWithResult<GetMeetupPresentations.Query, GetMeetupPresentations.Response, IReadOnlyList<PresentationResponse>>("/meetups/{meetupId}/presentations", map => map.Presentations);
+        group.MapGetRequestHandlerWithResult<GetMeetupRsvps.Query, GetMeetupRsvps.Response, Rsvp>("/meetups/{meetupId}/rsvps", map => map.Rsvp);
 
-        group.MapGetHandler<GetPresentations.Response, IReadOnlyList<PresentationResponse>>("/presentations", map => map.Presentations);
-        group.MapGetHandler<GetPresentation.Query, GetPresentation.Response, PresentationDetailedResponse>("/presentations/{presentationId}", map => map.Presentation);
+        group.MapGetRequestHandlerWithResult<GetPresentations.Response, IReadOnlyList<PresentationResponse>>("/presentations", map => map.Presentations);
+        group.MapGetRequestHandlerWithResult<GetPresentation.Query, GetPresentation.Response, PresentationDetailedResponse>("/presentations/{presentationId}", map => map.Presentation);
 
-        group.MapGetHandler<GetSpeakers.Response, IReadOnlyList<SpeakerResponse>>("/speakers", map => map.Speakers);
-        group.MapGetHandler<GetSpeaker.Query, GetSpeaker.Response, SpeakerDetailedResponse>("/speakers/{speakerId}", map => map.Speaker);
-        group.MapGetHandler<GetSpeakerBiographies.Query, GetSpeakerBiographies.Response, IReadOnlyList<SpeakerBiographyDto>>("/speakers/{speakerId}/biographies", map => map.SpeakerBiographies);
-        group.MapGetHandler<GetSpeakerPresentations.Query, GetSpeakerPresentations.Response, IReadOnlyList<PresentationResponse>>("/speakers/{speakerId}/presentations", map => map.Presentations);
+        group.MapGetRequestHandlerWithResult<GetSpeakers.Response, IReadOnlyList<SpeakerResponse>>("/speakers", map => map.Speakers);
+        group.MapGetRequestHandlerWithResult<GetSpeaker.Query, GetSpeaker.Response, SpeakerDetailedResponse>("/speakers/{speakerId}", map => map.Speaker);
+        group.MapGetRequestHandlerWithResult<GetSpeakerBiographies.Query, GetSpeakerBiographies.Response, IReadOnlyList<SpeakerBiographyDto>>("/speakers/{speakerId}/biographies", map => map.SpeakerBiographies);
+        group.MapGetRequestHandlerWithResult<GetSpeakerPresentations.Query, GetSpeakerPresentations.Response, IReadOnlyList<PresentationResponse>>("/speakers/{speakerId}/presentations", map => map.Presentations);
 
-        group.MapMcp("/mcp").RequireAuthorization();
+        //group.MapMcp("/mcp").RequireAuthorization();
     }
 }
 
