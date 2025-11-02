@@ -1,8 +1,10 @@
 ﻿using Infinity.Toolkit;
+using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.Handlers;
-using Microsoft.EntityFrameworkCore;
-using MeetupPlanner.Infrastructure;
 using MeetupPlanner.Features.Common;
+using MeetupPlanner.Infrastructure;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeetupPlanner.Features.Locations;
 
@@ -10,7 +12,7 @@ public static class GetLocation
 {
     public sealed record Query(Guid LocationId);
     public sealed record Response(LocationDetailedResponse Location);
-    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
+    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Result<Response>>
     {
         public async Task<Result<Response>> HandleAsync(IHandlerContext<Query> context, CancellationToken cancellationToken = default)
         {
@@ -24,7 +26,8 @@ public static class GetLocation
                 {
                     return Result.Failure<Response>($"Location with ID {context.Request.LocationId} not found.");
                 }
-                var locationDto = new LocationDetailedResponse
+
+                var locationResponse = new LocationDetailedResponse
                 {
                     LocationId = location.LocationId,
                     Name = location.Name,
@@ -37,12 +40,17 @@ public static class GetLocation
                     IsActive = location.IsActive,
                 };
 
-                return Result.Success(new Response(locationDto));
+                return Result.Success(new Response(locationResponse));
             }
             catch (Exception ex)
             {
                 return Result.Failure<Response>(ex);
             }
         }
+    }
+
+    public static void MapGetLocation(this RouteGroupBuilder builder, string path)
+    {
+        builder.MapGetRequestHandlerWithResult<Query, Response, LocationDetailedResponse>(path, map => map.Location);
     }
 }

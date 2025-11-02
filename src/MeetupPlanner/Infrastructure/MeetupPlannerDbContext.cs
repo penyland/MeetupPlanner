@@ -1,16 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MeetupPlanner.Features.Common;
 using MeetupPlanner.Infrastructure.Models;
-using MeetupPlanner.Features.Common;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace MeetupPlanner.Infrastructure;
 
-public partial class MeetupPlannerDbContext : DbContext
+public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbContext> options) : DbContext(options)
 {
-    public MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbContext> options)
-        : base(options)
-    {
-    }
-
     public DbSet<Speaker> Speakers { get; set; }
     public DbSet<SpeakerBio> SpeakerBios { get; set; }
     public DbSet<Location> Locations { get; set; }
@@ -74,6 +70,22 @@ public partial class MeetupPlannerDbContext : DbContext
             .HasOne(m => m.Location)
             .WithMany(l => l.Meetups)
             .HasForeignKey(m => m.LocationId);
+
+        modelBuilder.Entity<Meetup>()
+            .Property(m => m.CreatedBy)
+            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Meetup>()
+            .Property(m => m.CreatedBy)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Meetup>()
+            .Property(m => m.UpdatedBy)
+            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Meetup>()
+            .Property(m => m.UpdatedBy)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
         // MeetupSpeaker (junction)
         modelBuilder.Entity<MeetupSpeaker>()

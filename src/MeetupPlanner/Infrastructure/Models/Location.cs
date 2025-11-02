@@ -14,7 +14,7 @@ public partial class Location : Entity
 
     public string Country { get; set; }
 
-    public int? MaxCapacity { get; set; }
+    public int MaxCapacity { get; set; }
 
     public bool IsActive { get; set; }
 

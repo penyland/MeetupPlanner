@@ -12,7 +12,7 @@ public static class GetMeetupPresentations
 
     public sealed record Response(IReadOnlyList<PresentationResponse> Presentations);
 
-    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
+    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Result<Response>>
     {
         public async Task<Result<Response>> HandleAsync(IHandlerContext<Query> context, CancellationToken cancellationToken)
         {
@@ -31,7 +31,7 @@ public static class GetMeetupPresentations
                 if (presentations == null || presentations.Count == 0)
                 {
                     return Result.Failure<Response>(
-                        new Error("400", "No presentations found for the specified meetup."));
+                        new Error("NotFound", "No presentations found for the specified meetup.", ErrorType.Validation));
                 }
 
                 var response = presentations.Select(p => new PresentationResponse

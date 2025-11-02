@@ -11,7 +11,7 @@ public static class GetMeetupRsvps
 
     public sealed record Response(Rsvp Rsvp);
 
-    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Response>
+    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Result<Response>>
     {
         public async Task<Result<Response>> HandleAsync(IHandlerContext<Query> context, CancellationToken cancellationToken)
         {
@@ -33,7 +33,7 @@ public static class GetMeetupRsvps
                 if (meetup == null)
                 {
                     return Result.Failure<Response>(
-                        new Error("400", "No meetup found for the specified ID."));
+                        new Error("NotFound", "No meetup found for the specified ID.", ErrorType.Validation));
                 }
 
                 var rsvp = new Rsvp(
