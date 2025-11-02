@@ -8,10 +8,10 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="9.5.1" />
+    <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="9.5.2" />
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="FluentValidation" Version="12.0.0" />
-    <PackageReference Include="Infinity.Toolkit" Version="1.2.0" Condition="'$(Configuration)' == 'Release'"/>
+    <PackageReference Include="Infinity.Toolkit" Version="1.2.0" Condition="'$(Configuration)' == 'Release'" />
     <PackageReference Include="Infinity.Toolkit.AspNetCore" Version="1.1.0" Condition="'$(Configuration)' == 'Release'" />
     <PackageReference Include="Infinity.Toolkit.FeatureModules" Version="1.3.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0-preview1.25257.1" />
@@ -21,8 +21,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\..\infinity-toolkit\src\Infinity.Toolkit.AspNetCore\Infinity.Toolkit.AspNetCore.csproj" Condition="'$(Configuration)' != 'Release'"/>
-    <ProjectReference Include="..\..\..\infinity-toolkit\src\Infinity.Toolkit\Infinity.Toolkit.csproj" Condition="'$(Configuration)' != 'Release'"/>
+    <ProjectReference Include="..\..\..\infinity-toolkit\src\Infinity.Toolkit.AspNetCore\Infinity.Toolkit.AspNetCore.csproj" Condition="'$(Configuration)' != 'Release'" />
+    <ProjectReference Include="..\..\..\infinity-toolkit\src\Infinity.Toolkit\Infinity.Toolkit.csproj" Condition="'$(Configuration)' != 'Release'" />
   </ItemGroup>
   
 </Project>

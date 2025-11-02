@@ -12,7 +12,7 @@ var web = builder.AddViteApp("web", "../Web")
     .WaitFor(api)
     .WithReference(api)
     .WithExternalHttpEndpoints()
-    .WithEnvironment("VITE_API_URL", api.GetEndpoint("https"))
+    //.WithEnvironment("VITE_API_URL", api.GetEndpoint("https"))
     .WithNpmPackageInstallation();
 
 var proxy = builder.AddProject<Projects.MeetupPlanner_Proxy>("meetupplanner-proxy")
@@ -20,11 +20,7 @@ var proxy = builder.AddProject<Projects.MeetupPlanner_Proxy>("meetupplanner-prox
     .WithReference(api)
     .WithExternalHttpEndpoints();
 
-builder.AddMcpInspector("mcp-inspector",
-    options =>
-    {
-        options.InspectorVersion = "0.17.1";
-    })
+builder.AddMcpInspector("mcp-inspector")
     .WaitFor(api)
     .WithMcpServer(api, path: "/meetupplanner/mcp");
 

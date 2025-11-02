@@ -6,34 +6,12 @@ using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace MeetupPlanner.MCP;
+namespace MeetupPlanner.Features.Speakers;
 
 [McpServerToolType]
-public class MeetupPlannerMcpTools(MeetupPlannerDbContext meetupPlannerDbContext)
+public class McpTools(MeetupPlannerDbContext meetupPlannerDbContext)
 {
     private readonly MeetupPlannerDbContext meetupPlannerDbContext = meetupPlannerDbContext;
-
-    [McpServerTool, Description("Get a list of locations/sponsors where meetups have been or will be")]
-    public async Task<string> GetLocationsAsync()
-    {
-        var locations = await meetupPlannerDbContext.GetLocationsAsync();
-        var serializedLocations = JsonSerializer.Serialize(locations);
-        return serializedLocations;
-    }
-
-    [McpServerTool, Description("Get a list of locations/sponsors where meetups have been or will be in a given city")]
-    public async Task<string> GetLocationsByCityAsync([Description("The name of the city")] string city)
-    {
-        var locations = await meetupPlannerDbContext.GetLocationsByCityAsync(city);
-        return JsonSerializer.Serialize(locations, MeetupPlannerSerializationContext.Default.ListLocationDetailedResponse);
-    }
-
-    [McpServerTool, Description("Get a location's/sponsor's details by its name")]
-    public async Task<string> GetLocationByNameAsync([Description("The name of the location/sponser to get details for.")] string name)
-    {
-        var location = await meetupPlannerDbContext.GetLocationByNameAsync(name);
-        return JsonSerializer.Serialize(location, MeetupPlannerSerializationContext.Default.ListLocationDetailedResponse);
-    }
 
     [McpServerTool, Description("Get a list of speakers that have had a presentation at any meetup event.")]
     public async Task<string> GetSpeakersAsync()
@@ -76,10 +54,9 @@ public class MeetupPlannerMcpTools(MeetupPlannerDbContext meetupPlannerDbContext
     }
 }
 
-[JsonSerializable(typeof(List<LocationDetailedResponse>))]
 [JsonSerializable(typeof(List<SpeakerResponse>))]
 [JsonSerializable(typeof(SpeakerDetailedResponse))]
 [JsonSourceGenerationOptions(
     PropertyNameCaseInsensitive = true,
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
-internal sealed partial class MeetupPlannerSerializationContext :JsonSerializerContext;
+internal sealed partial class MeetupPlannerSerializationContext : JsonSerializerContext;

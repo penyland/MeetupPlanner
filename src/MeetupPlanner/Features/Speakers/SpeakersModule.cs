@@ -5,6 +5,7 @@ using Infinity.Toolkit.Handlers;
 using MeetupPlanner.Features.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace MeetupPlanner.Features.Speakers;
@@ -19,6 +20,10 @@ internal class SpeakersModule : WebFeatureModule
         builder.Services.AddRequestHandler<GetSpeaker.Query, Result<GetSpeaker.Response>, GetSpeaker.Handler>();
         builder.Services.AddRequestHandler<GetSpeakerBiographies.Query, Result<GetSpeakerBiographies.Response>, GetSpeakerBiographies.Handler>();
         builder.Services.AddRequestHandler<GetSpeakerPresentations.Query, Result<GetSpeakerPresentations.Response>, GetSpeakerPresentations.Handler>();
+
+        builder.Services.AddMcpServer()
+            .WithHttpTransport(o => o.Stateless = true)
+            .WithTools<McpTools>();
     }
 
     public override void MapEndpoints(WebApplication app)

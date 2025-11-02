@@ -22,6 +22,10 @@ public class LocationsModule : WebFeatureModule
 
         builder.Services.AddRequestHandler<Result<GetLocations.Response>, GetLocations.Handler>();
         builder.Services.AddRequestHandler<GetLocation.Query, Result<GetLocation.Response>, GetLocation.Handler>();
+
+        builder.Services.AddMcpServer()
+            .WithHttpTransport(o => o.Stateless = true)
+            .WithTools<McpTools>();
     }
 
     public override void MapEndpoints(WebApplication app)
