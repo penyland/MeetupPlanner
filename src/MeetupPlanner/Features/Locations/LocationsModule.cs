@@ -1,15 +1,7 @@
 ﻿using FluentValidation;
 using Infinity.Toolkit;
-using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.FeatureModules;
 using Infinity.Toolkit.Handlers;
-using MeetupPlanner.Features.Common;
-using MeetupPlanner.Features.Locations;
-using MeetupPlanner.Features.Meetups;
-using MeetupPlanner.Features.Presentations;
-using MeetupPlanner.Features.Speakers;
-using MeetupPlanner.Infrastructure;
-using MeetupPlanner.MCP;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
