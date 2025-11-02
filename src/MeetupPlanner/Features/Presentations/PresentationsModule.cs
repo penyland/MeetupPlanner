@@ -11,7 +11,7 @@ namespace MeetupPlanner.Features.Presentations;
 
 internal class PresentationsModule : WebFeatureModule
 {
-    public override IModuleInfo? ModuleInfo { get; } = new FeatureModuleInfo(typeof(PresentationsModule).FullName, typeof(PresentationsModule).Assembly.GetName().Version?.ToString());
+    public override IModuleInfo ModuleInfo { get; } = new FeatureModuleInfo(typeof(PresentationsModule).FullName, typeof(PresentationsModule).Assembly.GetName().Version?.ToString());
 
     public override void RegisterModule(IHostApplicationBuilder builder)
     {

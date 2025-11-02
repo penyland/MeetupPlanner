@@ -12,7 +12,7 @@ namespace MeetupPlanner.Features.Speakers;
 
 internal class SpeakersModule : WebFeatureModule
 {
-    public override IModuleInfo? ModuleInfo { get; } = new FeatureModuleInfo(typeof(SpeakersModule).FullName, typeof(SpeakersModule).Assembly.GetName().Version?.ToString());
+    public override IModuleInfo ModuleInfo { get; } = new FeatureModuleInfo(typeof(SpeakersModule).FullName, typeof(SpeakersModule).Assembly.GetName().Version?.ToString());
 
     public override void RegisterModule(IHostApplicationBuilder builder)
     {

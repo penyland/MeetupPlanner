@@ -22,6 +22,6 @@ var proxy = builder.AddProject<Projects.MeetupPlanner_Proxy>("meetupplanner-prox
 
 builder.AddMcpInspector("mcp-inspector")
     .WaitFor(api)
-    .WithMcpServer(api, path: "/meetupplanner/mcp");
+    .WithMcpServer(api, path: "/mcp");
 
 builder.Build().Run();

@@ -11,7 +11,7 @@ namespace MeetupPlanner.Features.Meetups;
 
 public class MeetupsModule : WebFeatureModule
 {
-    public override IModuleInfo? ModuleInfo { get; } = new FeatureModuleInfo(typeof(MeetupsModule).FullName, typeof(MeetupsModule).Assembly.GetName().Version?.ToString());
+    public override IModuleInfo ModuleInfo { get; } = new FeatureModuleInfo(typeof(MeetupsModule).FullName, typeof(MeetupsModule).Assembly.GetName().Version?.ToString());
 
     public override void RegisterModule(IHostApplicationBuilder builder)
     {

@@ -11,7 +11,7 @@ namespace MeetupPlanner.Features.Locations;
 
 public class LocationsModule : WebFeatureModule
 {
-    public override IModuleInfo? ModuleInfo { get; } = new FeatureModuleInfo(typeof(LocationsModule).FullName, typeof(LocationsModule).Assembly.GetName().Version?.ToString());
+    public override IModuleInfo ModuleInfo { get; } = new FeatureModuleInfo(typeof(LocationsModule).FullName, typeof(LocationsModule).Assembly.GetName().Version?.ToString());
 
     public override void RegisterModule(IHostApplicationBuilder builder)
     {
