@@ -28,7 +28,7 @@ public class McpTools(MeetupPlannerDbContext meetupPlannerDbContext)
     }
 
     [McpServerTool, Description("Get a location's/sponsor's details by its name")]
-    public async Task<string> GetLocationByNameAsync([Description("The name of the location/sponser to get details for.")] string name)
+    public async Task<string> GetLocationByNameAsync([Description("The name of the location/sponsor to get details for.")] string name)
     {
         var location = await meetupPlannerDbContext.GetLocationByNameAsync(name);
         return JsonSerializer.Serialize(location, LocationsSerializationContext.Default.ListLocationDetailedResponse);

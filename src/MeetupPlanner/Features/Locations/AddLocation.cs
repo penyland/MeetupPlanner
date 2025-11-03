@@ -85,7 +85,7 @@ public static class AddLocation
                 .NotEmpty().WithMessage("City is required.")
                 .MinimumLength(4)
                 .MaximumLength(100)
-                .WithMessage("City cannot exceed 100 characters.");
+                .WithMessage("City must be between 4 and 100 characters.");
 
             RuleFor(x => x.Location.PostalCode)
                 .NotEmpty().WithMessage("Postal code is required.")

@@ -1,10 +1,8 @@
-﻿
-
-namespace MeetupPlanner.Api.Features.Mcp;
+﻿namespace MeetupPlanner.Api.Features.Mcp;
 
 public class McpModule : WebFeatureModule
 {
-    public override IModuleInfo ModuleInfo { get; }
+    public override IModuleInfo ModuleInfo { get; } = new FeatureModuleInfo(typeof(McpModule).FullName, typeof(McpModule).Assembly.GetName().Version?.ToString());
 
     public override void RegisterModule(IHostApplicationBuilder builder)
     {
@@ -14,7 +12,7 @@ public class McpModule : WebFeatureModule
 
     public override void MapEndpoints(WebApplication app)
     {
-        // Mapping MCP endpoints here because mapping in the feature modules causes Ambigous routes exception.
+        // Mapping MCP endpoints here because mapping in the feature modules causes Ambiguous routes exception.
         app.MapMcp("/mcp");//.RequireAuthorization();
     }
 }

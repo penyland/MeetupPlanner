@@ -54,7 +54,7 @@ public static class AddMeetup
                 dbContext.Meetups.Add(meetup);
                 await dbContext.SaveChangesAsync(cancellationToken);
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
                 return Result.Failure<Response>(ex);
             }

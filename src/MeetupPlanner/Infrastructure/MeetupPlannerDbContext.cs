@@ -76,7 +76,7 @@ public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbCont
             .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
         modelBuilder.Entity<Meetup>()
-            .Property(m => m.CreatedBy)
+            .Property(m => m.CreatedUtc)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
         modelBuilder.Entity<Meetup>()
@@ -84,7 +84,7 @@ public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbCont
             .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
         modelBuilder.Entity<Meetup>()
-            .Property(m => m.UpdatedBy)
+            .Property(m => m.UpdatedUtc)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
         // MeetupSpeaker (junction)
