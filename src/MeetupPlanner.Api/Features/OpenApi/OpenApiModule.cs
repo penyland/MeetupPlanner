@@ -49,7 +49,6 @@ public class OpenApiModule : IWebFeatureModule
                 });
 
             options.AddDocumentTransformer<OAuth2SecuritySchemeDefinitionDocumentTransformer>();
-            options.AddDocumentTransformer<BearerSecuritySchemeDefinitionDocumentTransformer>();
             options.AddDocumentTransformer<AddServersDocumentTransformer>();
             options.AddOperationTransformer<SecuritySchemeOperationTransformer>();
         });
@@ -70,7 +69,6 @@ public class OpenApiModule : IWebFeatureModule
             {
                 options
                     .WithDefaultHttpClient(ScalarTarget.Shell, ScalarClient.Curl)
-                    .AddPreferredSecuritySchemes("bearer")
                     .AddAuthorizationCodeFlow("oauth2", flow =>
                     {
                         flow.ClientId = openApiOptions?.Value.ClientId;
@@ -94,14 +92,7 @@ public class OpenApiModule : IWebFeatureModule
             {
                 Type = SecuritySchemeType.OAuth2,
                 Name = "oauth2",
-                Scheme = "oauth2",                
-                //Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" },
-                Extensions = new Dictionary<string, IOpenApiExtension>
-                {
-                    ["x-ms-authorization-url"] = new JsonNodeExtension(azureAdOptions.AuthorizationUrl),
-                    ["x-ms-token-url"] = new JsonNodeExtension(azureAdOptions.TokenUrl),
-                },
-                OpenIdConnectUrl = new Uri($"{azureAdOptions.Instance}{azureAdOptions.TenantId}/v2.0/.well-known/openid-configuration"),
+                Scheme = "oauth2",
                 Flows = new OpenApiOAuthFlows
                 {
                     AuthorizationCode = new OpenApiOAuthFlow
@@ -118,7 +109,8 @@ public class OpenApiModule : IWebFeatureModule
             };
 
             document.Components ??= new();
-            document.Components?.SecuritySchemes?.Add("oauth2", securityScheme);
+            document.AddComponent("oauth2", securityScheme);
+
             return Task.CompletedTask;
         }
     }
@@ -132,7 +124,6 @@ public class OpenApiModule : IWebFeatureModule
                 Type = SecuritySchemeType.Http,
                 Name = "bearer",
                 Scheme = "bearer",
-                //Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearer" }
             };
             document.Components ??= new();
             document.Components?.SecuritySchemes?.Add("bearer", securityScheme);
@@ -165,23 +156,19 @@ public class OpenApiModule : IWebFeatureModule
         {
             if (context.Description.ActionDescriptor.EndpointMetadata.OfType<IAuthorizeData>().Any())
             {
-                //operation.Responses["401"] = new OpenApiResponse { Description = "Unauthorized" };
-                //operation.Responses["403"] = new OpenApiResponse { Description = "Forbidden" };
+                operation.Responses ??= [];
+                operation.Responses["401"] = new OpenApiResponse { Description = "Unauthorized" };
+                operation.Responses["403"] = new OpenApiResponse { Description = "Forbidden" };
 
-                //var oauth2Scheme = new OpenApiSecurityScheme
-                //{
-                //    Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" },
-                //};
+                var oauth2SecurityRequirement = new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecuritySchemeReference("oauth2"), [.. GetScopes(configuration)]
+                    }
+                };
 
-                //var bearerScheme = new OpenApiSecurityScheme
-                //{
-                //    Reference = new OpenApiReference{Type = ReferenceType.SecurityScheme,Id = "bearer"}
-                //};
-
-                var scopes = GetScopes(configuration);
-                //operation.Security ??= [];
-                //operation.Security.Add(new() { [oauth2Scheme] = [.. scopes] });
-                //operation.Security.Add(new() { [bearerScheme] = [.. scopes] });
+                operation.Security ??= [];
+                operation.Security.Add(oauth2SecurityRequirement);
             }
 
             return Task.CompletedTask;
