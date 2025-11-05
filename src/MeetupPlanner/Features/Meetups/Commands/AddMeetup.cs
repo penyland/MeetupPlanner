@@ -2,6 +2,7 @@
 using Infinity.Toolkit;
 using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.Handlers;
+using MeetupPlanner.Extensions;
 using MeetupPlanner.Features.Common;
 using MeetupPlanner.Infrastructure;
 using Microsoft.AspNetCore.Builder;
@@ -11,12 +12,45 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MeetupPlanner.Features.Meetups;
+namespace MeetupPlanner.Features.Meetups.Commands;
 
 public static class AddMeetup
 {
     public sealed record Command(MeetupRequest Meetup);
     public sealed record Response(Guid MeetupId);
+
+    internal sealed class AddMeetupValidator : AbstractValidator<Command>
+    {
+        public AddMeetupValidator()
+        {
+            RuleFor(x => x.Meetup.Title)
+                .NotEmpty().WithMessage("Title is required.")
+                .MaximumLength(200).WithMessage("Title cannot exceed 200 characters.");
+
+            RuleFor(x => x.Meetup.Description)
+                .NotEmpty().WithMessage("Description is required.")
+                .MaximumLength(1000).WithMessage("Description cannot exceed 1000 characters.");
+
+            RuleFor(x => x.Meetup.StartUtc)
+                .NotEmpty().WithMessage("StartUtc is required.")
+                .Must(date => date > DateTime.UtcNow).WithMessage("StartUtc must be in the future.");
+
+            RuleFor(x => x.Meetup.EndUtc)
+                .NotEmpty().WithMessage("EndUtc is required.")
+                .GreaterThan(x => x.Meetup.StartUtc).WithMessage("EndUtc must be after StartUtc.");
+
+            RuleFor(x => x.Meetup.TotalSpots)
+                .GreaterThan(0).WithMessage("TotalSpots must be greater than zero.");
+
+            RuleFor(x => x.Meetup.Status)
+                .NotEmpty().WithMessage("Status is required.")
+                .IsInEnum().WithMessage("Status must be a valid enum value.");
+
+            RuleFor(x => x.Meetup.LocationName)
+                .NotEmpty().WithMessage("Location is required.")
+                .MaximumLength(300).WithMessage("Location cannot exceed 300 characters.");
+        }
+    }
 
     internal sealed class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Command, Result<Response>>
     {
@@ -35,7 +69,7 @@ public static class AddMeetup
 
             var meetup = new Infrastructure.Models.Meetup
             {
-                MeetupId = Guid.NewGuid(),
+                MeetupId = context.Request.Meetup.MeetupId ?? Guid.NewGuid(),
                 Title = context.Request.Meetup.Title,
                 Description = context.Request.Meetup.Description,
                 StartUtc = context.Request.Meetup.StartUtc,
@@ -79,41 +113,10 @@ public static class AddMeetup
         }
     }
 
-    internal sealed class CommandValidator : AbstractValidator<Command>
-    {
-        public CommandValidator()
-        {
-            RuleFor(x => x.Meetup.Title)
-                .NotEmpty().WithMessage("Title is required.")
-                .MaximumLength(200).WithMessage("Title cannot exceed 200 characters.");
-
-            RuleFor(x => x.Meetup.Description)
-                .NotEmpty().WithMessage("Description is required.")
-                .MaximumLength(1000).WithMessage("Description cannot exceed 1000 characters.");
-
-            RuleFor(x => x.Meetup.StartUtc)
-                .NotEmpty().WithMessage("StartUtc is required.")
-                .Must(date => date > DateTime.UtcNow).WithMessage("StartUtc must be in the future.");
-
-            RuleFor(x => x.Meetup.EndUtc)
-                .NotEmpty().WithMessage("EndUtc is required.")
-                .GreaterThan(x => x.Meetup.StartUtc).WithMessage("EndUtc must be after StartUtc.");
-
-            RuleFor(x => x.Meetup.TotalSpots)
-                .GreaterThan(0).WithMessage("TotalSpots must be greater than zero.");
-
-            RuleFor(x => x.Meetup.Status)
-                .NotEmpty().WithMessage("Status is required.")
-                .IsInEnum().WithMessage("Status must be a valid enum value.");
-
-            RuleFor(x => x.Meetup.LocationName)
-                .NotEmpty().WithMessage("Location is required.")
-                .MaximumLength(300).WithMessage("Location cannot exceed 300 characters.");
-        }
-    }
-
     public record MeetupRequest
     {
+        public Guid? MeetupId { get; init; } = Guid.NewGuid();
+
         public string Title { get; init; } = string.Empty;
 
         public string Description { get; init; } = string.Empty;
@@ -140,7 +143,7 @@ public static class AddMeetup
 
     public static void RegisterAddMeetup(this IServiceCollection services)
     {
-        services.AddScoped<IValidator<AddMeetup.Command>, AddMeetup.CommandValidator>();
+        services.AddScoped<IValidator<AddMeetup.Command>, AddMeetup.AddMeetupValidator>();
         services.AddRequestHandler<AddMeetup.Command, Result<AddMeetup.Response>, AddMeetup.Handler>()
             .Decorate<AddMeetup.ValidatorHandler>();
     }
@@ -149,16 +152,9 @@ public static class AddMeetup
     {
         //builder.MapPostRequestHandlerWithResult<Command, Response, Guid>(path, map => map.MeetupId);
 
-        builder.MapPost(path, async (MeetupRequest request, [FromServices] IRequestHandler<AddMeetup.Command, Result<AddMeetup.Response>> handler) =>
+        builder.MapPost(path, async (MeetupRequest request, [FromServices] IRequestHandler<Command, Result<Response>> handler) =>
         {
-            var command = new AddMeetup.Command(request);
-
-            var context = new HandlerContext<AddMeetup.Command>
-            {
-                Body = BinaryData.FromObjectAsJson(command),
-                Request = command
-            };
-
+            var context = HandlerContextExtensions.Create<Command>(new(request));
             var result = await handler.HandleAsync(context);
 
             IResult response = result switch
