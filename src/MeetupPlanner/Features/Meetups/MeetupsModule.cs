@@ -2,10 +2,15 @@
 using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.FeatureModules;
 using Infinity.Toolkit.Handlers;
+using MeetupPlanner.Extensions;
 using MeetupPlanner.Features.Common;
+using MeetupPlanner.Features.Meetups.Commands;
+using MeetupPlanner.Features.Meetups.Queries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using System.IO;
 
 namespace MeetupPlanner.Features.Meetups;
 
@@ -16,6 +21,7 @@ public class MeetupsModule : WebFeatureModule
     public override void RegisterModule(IHostApplicationBuilder builder)
     {
         builder.Services.RegisterAddMeetup();
+        builder.Services.RegisterUpdateMeetupRsvps();
 
         builder.Services.AddRequestHandler<GetMeetups.Query, Result<GetMeetups.Response>, GetMeetups.Handler>();
         builder.Services.AddRequestHandler<GetMeetup.Query, Result<GetMeetup.Response>, GetMeetup.Handler>();
@@ -29,6 +35,12 @@ public class MeetupsModule : WebFeatureModule
         var group = app.MapGroup("/meetupplanner").WithTags("Meetup Planner");
 
         group.MapPostMeetup("/meetups");
+
+        group.MapPut("/meetups/{meetupId}/rsvps", async ([FromRoute] Guid meetupId, UpdateMeetupRsvps.Command command, IRequestHandler<UpdateMeetupRsvps.Command, Result<UpdateMeetupRsvps.Response>> handler) =>
+        {
+            var result = await handler.HandleAsync(HandlerContextExtensions.Create(command with { MeetupId = meetupId }));
+            return result.Succeeded ? TypedResults.NoContent() : Results.BadRequest(result.Errors);
+        });
 
         group.MapGet("/meetups", async (IRequestHandler<GetMeetups.Query, Result<GetMeetups.Response>> handler, [AsParameters] MeetupQueryParameters queryParams) =>
         {
@@ -53,7 +65,6 @@ public class MeetupsModule : WebFeatureModule
         group.MapGetRequestHandlerWithResult<GetMeetupRsvps.Query, GetMeetupRsvps.Response, Rsvp>("/meetups/{meetupId}/rsvps", map => map.Rsvp);
     }
 }
-
 
 
 // Model for query parameters

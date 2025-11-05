@@ -40,6 +40,22 @@ public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbCont
         modelBuilder.Entity<Location>()
             .HasKey(l => l.LocationId);
 
+        modelBuilder.Entity<Location>()
+            .Property(m => m.CreatedBy)
+            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Location>()
+            .Property(m => m.CreatedUtc)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Location>()
+            .Property(m => m.UpdatedBy)
+            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Location>()
+            .Property(m => m.UpdatedUtc)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+
         // Presentation
         modelBuilder.Entity<Presentation>()
             .HasKey(p => p.PresentationId);
@@ -66,10 +82,14 @@ public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbCont
         // Meetup
         modelBuilder.Entity<Meetup>()
             .HasKey(m => m.MeetupId);
+
         modelBuilder.Entity<Meetup>()
             .HasOne(m => m.Location)
             .WithMany(l => l.Meetups)
             .HasForeignKey(m => m.LocationId);
+
+        modelBuilder.Entity<Meetup>()
+            .ToTable(tb => tb.UseSqlOutputClause(false));
 
         modelBuilder.Entity<Meetup>()
             .Property(m => m.CreatedBy)

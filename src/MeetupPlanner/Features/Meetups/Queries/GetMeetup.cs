@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MeetupPlanner.Features.Common;
 using MeetupPlanner.Infrastructure;
 
-namespace MeetupPlanner.Features.Meetups;
+namespace MeetupPlanner.Features.Meetups.Queries;
 
 public static class GetMeetup
 {

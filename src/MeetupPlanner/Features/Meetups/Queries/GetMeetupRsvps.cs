@@ -3,7 +3,7 @@ using Infinity.Toolkit.Handlers;
 using Microsoft.EntityFrameworkCore;
 using MeetupPlanner.Infrastructure;
 
-namespace MeetupPlanner.Features.Meetups;
+namespace MeetupPlanner.Features.Meetups.Queries;
 
 public static class GetMeetupRsvps
 {
