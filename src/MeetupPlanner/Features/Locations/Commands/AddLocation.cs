@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace MeetupPlanner.Features.Locations;
+namespace MeetupPlanner.Features.Locations.Commands;
 
 public static class AddLocation
 {

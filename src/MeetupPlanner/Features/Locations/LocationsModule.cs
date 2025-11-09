@@ -2,6 +2,8 @@
 using Infinity.Toolkit;
 using Infinity.Toolkit.FeatureModules;
 using Infinity.Toolkit.Handlers;
+using MeetupPlanner.Features.Locations.Commands;
+using MeetupPlanner.Features.Locations.Queries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;

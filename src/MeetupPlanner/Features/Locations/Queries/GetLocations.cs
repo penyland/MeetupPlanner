@@ -6,7 +6,7 @@ using MeetupPlanner.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 
-namespace MeetupPlanner.Features.Locations;
+namespace MeetupPlanner.Features.Locations.Queries;
 
 public static class GetLocations
 {
