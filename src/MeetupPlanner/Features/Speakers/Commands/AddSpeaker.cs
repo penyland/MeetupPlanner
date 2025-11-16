@@ -73,8 +73,8 @@ public static class AddSpeaker
                 .When(x => !string.IsNullOrEmpty(x.Speaker.Company));
 
             RuleFor(x => x.Speaker.Email)
-                .EmailAddress().WithMessage("Email must be a valid email address.")
-                .When(x => !string.IsNullOrEmpty(x.Speaker.Email));
+                .NotEmpty().WithMessage("Email is required.")
+                .EmailAddress().WithMessage("Email must be a valid email address.");
 
             RuleFor(x => x.Speaker.TwitterUrl)
                 .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))

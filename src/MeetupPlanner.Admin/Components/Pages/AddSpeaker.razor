@@ -23,7 +23,11 @@
 			<label for="company" class="form-label">Company</label>
 			<InputText id="company" class="form-control" @bind-Value="Model!.Company" />
 		</div>
-
+		
+		<div class="mb-3">
+			<label for="githuburl" class="form-label">GitHub URL</label>
+			<InputText id="githuburl" class="form-control" @bind-Value="Model!.GitHubUrl" />
+		</div>
 
 		<div class="mb-3">
 			<label for="bio" class="form-label">Bio</label>
@@ -57,6 +61,7 @@
 			FullName = Model.FullName,
 			Email = Model.Email,
 			Company = Model.Company,
+			GitHubUrl = Model.GitHubUrl,
 			Bio = Model.Bio,
 			IsPrimaryBiography = Model!.IsPrimaryBiography
 		};
@@ -72,6 +77,8 @@
 		[EmailAddress]
 		public string Email { get; set; } = string.Empty;
 		public string? Company { get; set; }
+		[Url]
+		public string? GitHubUrl { get; set; }
 		public string? Bio { get; set; }
 		public bool IsPrimaryBiography { get; set; } = true;
 	}
