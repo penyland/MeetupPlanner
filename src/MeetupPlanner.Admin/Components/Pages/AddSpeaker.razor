@@ -1,5 +1,6 @@
 ﻿@page "/add-speaker"
 @using MeetupPlanner.Admin.Features.Speakers
+@using System.ComponentModel.DataAnnotations
 @inject SpeakersHttpClient SpeakersHttpClient
 <h3>AddSpeaker</h3>
 
@@ -12,6 +13,12 @@
 			<label for="name" class="form-label">Fullname</label>
 			<InputText id="name" class="form-control" @bind-Value="Model!.FullName" />
 		</div>
+
+		<div class="mb-3">
+			<label for="email" class="form-label">Email</label>
+			<InputText id="email" class="form-control" @bind-Value="Model!.Email" />
+		</div>
+
 		<div class="mb-3">
 			<label for="company" class="form-label">Company</label>
 			<InputText id="company" class="form-control" @bind-Value="Model!.Company" />
@@ -47,10 +54,11 @@
 
 		var speaker = new SpeakerRequest
 		{
-			FullName = Model.FullName!,
+			FullName = Model.FullName,
+			Email = Model.Email,
 			Company = Model.Company,
 			Bio = Model.Bio,
-			//IsPrimaryBiography = Model!.IsPrimaryBiography
+			IsPrimaryBiography = Model!.IsPrimaryBiography
 		};
 
 		await SpeakersHttpClient.AddSpeakerAsync(speaker);
@@ -58,7 +66,11 @@
 
 	record SpeakerEditFormModel
 	{
-		public string? FullName { get; set; }
+		[Required]
+		public string FullName { get; set; } = string.Empty;
+		[Required]
+		[EmailAddress]
+		public string Email { get; set; } = string.Empty;
 		public string? Company { get; set; }
 		public string? Bio { get; set; }
 		public bool IsPrimaryBiography { get; set; } = true;

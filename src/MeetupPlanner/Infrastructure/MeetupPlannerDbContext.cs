@@ -22,6 +22,22 @@ public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbCont
         modelBuilder.Entity<Speaker>()
             .HasKey(s => s.SpeakerId);
 
+        modelBuilder.Entity<Speaker>()
+            .Property(m => m.CreatedBy)
+            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Speaker>()
+            .Property(m => m.CreatedUtc)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Speaker>()
+            .Property(m => m.UpdatedBy)
+            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Speaker>()
+            .Property(m => m.UpdatedUtc)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+
         // SpeakerBio
         modelBuilder.Entity<SpeakerBio>()
             .HasKey(b => b.SpeakerBioId);

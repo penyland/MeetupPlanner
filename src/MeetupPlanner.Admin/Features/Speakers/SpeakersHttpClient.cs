@@ -50,6 +50,7 @@ public record SpeakerRequest
     public string? BlogUrl { get; set; }
     public string? ThumbnailUrl { get; set; }
     public string? Bio { get; set; }
+    public bool IsPrimaryBiography { get; set; } = false;
 }
 
 public record SpeakerBiographiesResponse
