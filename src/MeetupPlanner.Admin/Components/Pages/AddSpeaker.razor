@@ -2,7 +2,10 @@
 @using MeetupPlanner.Admin.Features.Speakers
 @using System.ComponentModel.DataAnnotations
 @inject SpeakersHttpClient SpeakersHttpClient
-<h3>AddSpeaker</h3>
+@inject ILogger<AddSpeaker> Logger
+@inject IJSRuntime JSRuntime
+
+<h3>Add a new speaker</h3>
 
 <div class="w-50">
 
@@ -39,34 +42,118 @@
 			<InputCheckbox id="primaryBiography" class="form-check-input" @bind-Value="Model!.IsPrimaryBiography" />
 		</div>
 
-		<button type="submit" class="btn btn-primary">Add Speaker</button>
+		<button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+			@if (isSubmitting)
+			{
+				<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+				<text>Adding Speaker...</text>
+			}
+			else
+			{
+				<text>Add Speaker</text>
+			}
+		</button>
 
 	</EditForm>
 </div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="successModalLabel">Success</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				@successMessage
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="errorModalLabel">Error</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				@errorMessage
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 @code {
 	[SupplyParameterFromForm]
 	private SpeakerEditFormModel? Model { get; set; }
+
+	private bool isSubmitting = false;
+	private string successMessage = string.Empty;
+	private string errorMessage = string.Empty;
 
 	protected override void OnInitialized() => Model ??= new SpeakerEditFormModel();
 
 	private async Task HandleValidSubmit()
 	{
-		if (Model == null)
+		if (Model == null || isSubmitting)
 		{
 			return;
 		}
 
-		var speaker = new SpeakerRequest
-		{
-			FullName = Model.FullName,
-			Email = Model.Email,
-			Company = Model.Company,
-			GitHubUrl = Model.GitHubUrl,
-			Bio = Model.Bio,
-			IsPrimaryBiography = Model!.IsPrimaryBiography
-		};
+		isSubmitting = true;
+		StateHasChanged();
 
-		await SpeakersHttpClient.AddSpeakerAsync(speaker);
+		try
+		{
+			var speaker = new SpeakerRequest
+			{
+				FullName = Model.FullName,
+				Email = Model.Email,
+				Company = Model.Company,
+				GitHubUrl = Model.GitHubUrl,
+				Bio = Model.Bio,
+				IsPrimaryBiography = Model!.IsPrimaryBiography
+			};
+
+			var speakerId = await SpeakersHttpClient.AddSpeakerAsync(speaker);
+			Logger.LogInformation("Added new speaker with ID {SpeakerId}", speakerId);
+
+			// Show success message
+			successMessage = $"Speaker '{Model.FullName}' was successfully added.";
+			await JSRuntime.InvokeVoidAsync("eval", "new bootstrap.Modal(document.getElementById('successModal')).show()");
+
+			// Reset the form
+			Model = new SpeakerEditFormModel();
+		}
+		catch (Exception ex)
+		{
+			Logger.LogError(ex, "Failed to add speaker");
+			
+			// Show error message
+			errorMessage = $"Failed to add speaker '{Model.FullName}'. Please try again.";
+			await JSRuntime.InvokeVoidAsync("eval", "new bootstrap.Modal(document.getElementById('errorModal')).show()");
+		}
+		finally
+		{
+			isSubmitting = false;
+			StateHasChanged();
+		}
+
+		// Save speaker biography if provided
+		// if (!string.IsNullOrEmpty(Model.Bio))
+		// {
+		// 	await SpeakersHttpClient.AddSpeakerBiographyAsync(speakerId, Model.Bio);
+		// }
 	}
 
 	record SpeakerEditFormModel

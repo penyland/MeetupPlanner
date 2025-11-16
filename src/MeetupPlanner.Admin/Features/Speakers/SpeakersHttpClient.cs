@@ -20,10 +20,12 @@ public class SpeakersHttpClient(HttpClient httpClient)
         return response ?? [];
     }
 
-    public async Task AddSpeakerAsync(SpeakerRequest speaker, CancellationToken cancellationToken = default)
+    public async Task<Guid> AddSpeakerAsync(SpeakerRequest speaker, CancellationToken cancellationToken = default)
     {
         var response = await httpClient.PostAsJsonAsync("meetupplanner/speakers", speaker, cancellationToken);
         response.EnsureSuccessStatusCode();
+        var speakerId = await response.Content.ReadFromJsonAsync<AddSpeakerResponse>(cancellationToken: cancellationToken);
+        return speakerId!.SpeakerId;
     }
 }
 
@@ -59,3 +61,5 @@ public record SpeakerBiographiesResponse
     public string Biography { get; init; } = string.Empty;
     public bool IsPrimary { get; init; }
 }
+
+public record AddSpeakerResponse(Guid SpeakerId);
