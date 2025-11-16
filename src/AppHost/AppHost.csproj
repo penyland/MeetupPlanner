@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MeetupPlanner.Admin\MeetupPlanner.Admin.csproj" />
     <ProjectReference Include="..\MeetupPlanner.Api\MeetupPlanner.Api.csproj" />
     <ProjectReference Include="..\MeetupPlanner.Proxy\MeetupPlanner.Proxy.csproj" />
   </ItemGroup>

@@ -5,7 +5,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
-      "applicationUrl": "http://meetupplanner.dev.localhost:5016;http://0.0.0.0:5017",
+      "applicationUrl": "http://api.dev.localhost:5016;http://0.0.0.0:5017",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -14,7 +14,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": false,
-      "applicationUrl": "https://meetupplanner.dev.localhost:7119;http://meetupplanner.dev.localhost:5016;http://0.0.0.0:5017",
+      "applicationUrl": "https://api.dev.localhost:7119;http://api.dev.localhost:5016;http://0.0.0.0:5017",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "AZURE_APP_CONFIG_ENDPOINT": "https://odin-appcs.azconfig.io",
