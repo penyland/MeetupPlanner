@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MeetupPlanner.Infrastructure;
 using MeetupPlanner.Features.Common;
 
-namespace MeetupPlanner.Features.Speakers;
+namespace MeetupPlanner.Features.Speakers.Queries;
 
 public static class GetSpeakers
 {

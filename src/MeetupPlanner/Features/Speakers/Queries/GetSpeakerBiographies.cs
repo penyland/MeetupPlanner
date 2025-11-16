@@ -3,7 +3,7 @@ using Infinity.Toolkit.Handlers;
 using Microsoft.EntityFrameworkCore;
 using MeetupPlanner.Infrastructure;
 
-namespace MeetupPlanner.Features.Speakers;
+namespace MeetupPlanner.Features.Speakers.Queries;
 
 public static class GetSpeakerBiographies
 {

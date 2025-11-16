@@ -3,6 +3,7 @@ using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.FeatureModules;
 using Infinity.Toolkit.Handlers;
 using MeetupPlanner.Features.Common;
+using MeetupPlanner.Features.Speakers.Queries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
