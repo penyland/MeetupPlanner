@@ -1,4 +1,4 @@
-using MeetupPlanner.AppHost;
+using Aspire.Hosting.Yarp.Transforms;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -10,10 +10,7 @@ var api = builder.AddProject<Projects.MeetupPlanner_Api>("MeetupPlannerApi" )
 
 var web = builder.AddViteApp("web", "../Web")
     .WaitFor(api)
-    .WithReference(api)
-    .WithExternalHttpEndpoints()
-    //.WithEnvironment("VITE_API_URL", api.GetEndpoint("https"))
-    .WithNpmPackageInstallation();
+    .WithReference(api);
 
 var proxy = builder.AddProject<Projects.MeetupPlanner_Proxy>("meetupplanner-proxy")
     .WaitFor(api)
@@ -23,5 +20,16 @@ var proxy = builder.AddProject<Projects.MeetupPlanner_Proxy>("meetupplanner-prox
 builder.AddMcpInspector("mcp-inspector")
     .WaitFor(api)
     .WithMcpServer(api, path: "/mcp");
+
+var reverse_proxy = builder.AddYarp("reverse-proxy")
+    .WithConfiguration(config =>
+    {
+        config.AddRoute("/api/{**catch-all}", api)
+            .WithTransformPathRemovePrefix("/api");
+
+        config.AddRoute("/{**catch-all}", web);
+    })
+    .WithExternalHttpEndpoints()
+    .PublishWithStaticFiles(web);
 
 builder.Build().Run();

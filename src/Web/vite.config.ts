@@ -5,6 +5,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [tailwindcss(), sveltekit()],
   server: {
+    allowedHosts: ['host.docker.internal'],
     port: parseInt(process.env.PORT ?? '5173'),
     proxy: {
       '/api': {
