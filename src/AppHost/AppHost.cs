@@ -8,7 +8,8 @@ var api = builder.AddProject<Projects.MeetupPlanner_Api>("meetupplanner-api" )
     .WaitFor(db)
     .WithReference(db);
 
-var adminApp = builder.AddProject<Projects.MeetupPlanner_Admin>("meetupplanner-admin");
+var adminApp = builder.AddProject<Projects.MeetupPlanner_Admin>("meetupplanner-admin")
+    .WithReference(api);
 
 var web = builder.AddViteApp("web", "../Web")
     .WaitFor(api)
@@ -30,9 +31,14 @@ var reverse_proxy = builder.AddYarp("reverse-proxy")
             .WithTransformPathRemovePrefix("/api");
 
         config.AddRoute("/admin/{**catch-all}", adminApp)
-            .WithTransformPathRemovePrefix("/admin");
+            .WithTransformPathRemovePrefix("/admin")
+            .WithTransformForwarded()
+            .WithTransformUseOriginalHostHeader()
+            .WithTransformRequestHeader("X-Forwarded-Prefix", "/admin")
+            .WithTransformXForwarded(xPrefix: Yarp.ReverseProxy.Transforms.ForwardedTransformActions.Append);
 
-        config.AddRoute("/{**catch-all}", web);
+        config.AddRoute("/web/{**catch-all}", web)
+            .WithTransformPathRemovePrefix("/web");
     })
     .WithExternalHttpEndpoints()
     .PublishWithStaticFiles(web);

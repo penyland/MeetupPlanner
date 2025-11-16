@@ -1,7 +1,30 @@
 ﻿@page "/"
+@using MeetupPlanner.Admin.Features.Meetups
+@inject MeetupsHttpClient meetupsHttpClient
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+@if (meetups.Length == 0)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h3>All meetups</h3>
+    <ul>
+        @foreach (var meetup in meetups)
+        {
+            <li>@meetup.Title - @meetup.StartUtc.ToString("d")</li>
+        }
+    </ul>
+}
 
-Welcome to your new app.
+
+@code {
+    private MeetupResponse[] meetups = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        //meetups = await meetupsHttpClient.GetAllMeetupsAsync();
+    }
+}
