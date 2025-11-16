@@ -2,6 +2,7 @@ using MeetupPlanner.Admin.Components;
 using MeetupPlanner.Admin.Features.Meetups;
 using MeetupPlanner.Admin.Features.Speakers;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.FluentUI.AspNetCore.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,8 @@ builder.Services.AddSpeakersHttpClient();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddFluentUIComponents();
 
 var app = builder.Build();
 

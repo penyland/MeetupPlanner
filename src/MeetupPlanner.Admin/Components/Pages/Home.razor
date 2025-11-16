@@ -6,17 +6,19 @@
 
 @if (meetups.Length == 0)
 {
-    <p><em>Loading...</em></p>
+    <FluentProgressRing>Loading...</FluentProgressRing>
 }
 else
 {
-    <h3>All meetups</h3>
-    <ul>
+    <FluentLabel Typo="Typography.H3">All meetups</FluentLabel>
+    <FluentStack Orientation="Orientation.Vertical" VerticalGap="8" Style="margin-top: 16px;">
         @foreach (var meetup in meetups)
         {
-            <li>@meetup.Title - @meetup.StartUtc.ToString("d")</li>
+            <FluentCard>
+                <FluentLabel Typo="Typography.Body">@meetup.Title - @meetup.StartUtc.ToString("d")</FluentLabel>
+            </FluentCard>
         }
-    </ul>
+    </FluentStack>
 }
 
 

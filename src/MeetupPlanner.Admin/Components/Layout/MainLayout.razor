@@ -1,20 +1,24 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+<FluentLayout>
+    <FluentHeader>
+        <div style="padding: 0 1rem;">
+            <FluentLabel Typo="Typography.H5">Meetup Planner Admin</FluentLabel>
         </div>
-
-        <article class="content px-4">
+        <FluentSpacer />
+        <div style="padding: 0 1rem;">
+            <FluentAnchor Href="https://learn.microsoft.com/aspnet/core/" Target="_blank">About</FluentAnchor>
+        </div>
+    </FluentHeader>
+    <FluentStack Orientation="Orientation.Horizontal" Style="height: 100%;">
+        <NavMenu />
+        <FluentBodyContent Style="padding: 1rem; flex: 1;">
             @Body
-        </article>
-    </main>
-</div>
+        </FluentBodyContent>
+    </FluentStack>
+</FluentLayout>
+
+<FluentDialogProvider />
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
