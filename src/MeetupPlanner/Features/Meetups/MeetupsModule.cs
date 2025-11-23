@@ -26,6 +26,7 @@ public class MeetupsModule : WebFeatureModule
         builder.Services.AddRequestHandler<GetMeetupLocation.Query, Result<GetMeetupLocation.Response>, GetMeetupLocation.Handler>();
         builder.Services.AddRequestHandler<GetMeetupPresentations.Query, Result<GetMeetupPresentations.Response>, GetMeetupPresentations.Handler>();
         builder.Services.AddRequestHandler<GetMeetupRsvps.Query, Result<GetMeetupRsvps.Response>, GetMeetupRsvps.Handler>();
+        builder.Services.AddRequestHandler<GetRsvps.Query, Result<GetRsvps.Response>, GetRsvps.Handler>();
     }
 
     public override void MapEndpoints(WebApplication app)
@@ -61,6 +62,7 @@ public class MeetupsModule : WebFeatureModule
         group.MapGetRequestHandlerWithResult<GetMeetupLocation.Query, GetMeetupLocation.Response, LocationDetailedResponse>("/meetups/{meetupId}/location", map => map.Location);
         group.MapGetRequestHandlerWithResult<GetMeetupPresentations.Query, GetMeetupPresentations.Response, IReadOnlyList<PresentationResponse>>("/meetups/{meetupId}/presentations", map => map.Presentations);
         group.MapGetRequestHandlerWithResult<GetMeetupRsvps.Query, GetMeetupRsvps.Response, Rsvp>("/meetups/{meetupId}/rsvps", map => map.Rsvp);
+        group.MapGetRequestHandlerWithResult<GetRsvps.Query, GetRsvps.Response, IReadOnlyList<RsvpResponse>>("/meetups/rsvps", map => map.Rsvps);
     }
 }
 
