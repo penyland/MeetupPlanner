@@ -1,5 +1,4 @@
-﻿using MeetupPlanner.Features.Common;
-using MeetupPlanner.Infrastructure.Models;
+﻿using MeetupPlanner.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 

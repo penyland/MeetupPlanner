@@ -1,32 +1,42 @@
 ﻿@page "/"
 @using MeetupPlanner.Admin.Features.Meetups
+@using MeetupPlanner.Shared
 @inject MeetupsHttpClient meetupsHttpClient
 
 <PageTitle>Home</PageTitle>
 
 @if (meetups.Length == 0)
 {
-    <FluentProgressRing>Loading...</FluentProgressRing>
+	<FluentProgressRing>Loading...</FluentProgressRing>
 }
 else
 {
-    <FluentLabel Typo="Typography.H3">All meetups</FluentLabel>
-    <FluentStack Orientation="Orientation.Vertical" VerticalGap="8" Style="margin-top: 16px;">
-        @foreach (var meetup in meetups)
-        {
-            <FluentCard>
-                <FluentLabel Typo="Typography.Body">@meetup.Title - @meetup.StartUtc.ToString("d")</FluentLabel>
-            </FluentCard>
-        }
-    </FluentStack>
+	<FluentLabel Typo="Typography.H2">Scheduled meetups</FluentLabel>
+	<FluentStack Orientation="Orientation.Vertical" VerticalGap="8" Style="margin-top: 16px;">
+		@foreach (var meetup in meetups)
+		{
+			var meetupId = meetup.MeetupId.ToString();
+			<a href="@meetupId"></a>
+			<FluentCard>
+				<a Href="/meetup/@meetupId">
+					<FluentLabel Typo="Typography.Body">@meetup.Title - @meetup.StartUtc.ToString("d")</FluentLabel>
+				</a>
+			</FluentCard>
+		}
+	</FluentStack>
+
+	// TODO: Add ability to schedule new meetups
+	<FluentLabel Typo="Typography.Body" Style="margin-top: 24px; font-style: italic;">
+		(Scheduling new meetups coming soon!)
+	</FluentLabel>
 }
 
 
 @code {
-    private MeetupResponse[] meetups = [];
+	private MeetupResponse[] meetups = [];
 
-    protected override async Task OnInitializedAsync()
-    {
-        //meetups = await meetupsHttpClient.GetAllMeetupsAsync();
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		meetups = await meetupsHttpClient.GetScheduledMeetupsAsync();
+	}
 }

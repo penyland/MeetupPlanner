@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace MeetupPlanner.Features.Common;
+namespace MeetupPlanner.Shared;
 
 public record PresentationResponse
 {

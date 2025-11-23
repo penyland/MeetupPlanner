@@ -1,6 +1,4 @@
-﻿using MeetupPlanner.Features.Common;
-
-namespace MeetupPlanner.Features.Meetups;
+﻿namespace MeetupPlanner.Shared;
 
 public record MeetupResponse(
     Guid MeetupId,

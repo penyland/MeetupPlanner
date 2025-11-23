@@ -1,4 +1,6 @@
-﻿namespace MeetupPlanner.Admin.Features.Meetups;
+﻿using MeetupPlanner.Shared;
+
+namespace MeetupPlanner.Admin.Features.Meetups;
 
 public static class MeetupHttpClientExtensions
 {
@@ -20,10 +22,16 @@ public class MeetupsHttpClient(HttpClient httpClient)
         var response = await httpClient.GetFromJsonAsync<MeetupResponse[]>("meetupplanner/meetups", cancellationToken);
         return response ?? [];
     }
-}
 
-public record MeetupResponse(Guid MeetupId,
-    string Title,
-    string Description,
-    DateTimeOffset StartUtc,
-    DateTimeOffset EndUtc);
+    public async Task<MeetupResponse[]> GetScheduledMeetupsAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await httpClient.GetFromJsonAsync<MeetupResponse[]>("meetupplanner/meetups?status=scheduled", cancellationToken);
+        return response ?? [];
+    }
+
+    public async Task<MeetupResponse?> GetMeetupByIdAsync(Guid meetupId, CancellationToken cancellationToken = default)
+    {
+        var response = await httpClient.GetFromJsonAsync<MeetupResponse>($"meetupplanner/meetups/{meetupId}", cancellationToken);
+        return response;
+    }
+}

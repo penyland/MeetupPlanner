@@ -4,7 +4,6 @@ using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.FeatureModules;
 using Infinity.Toolkit.Handlers;
 using MeetupPlanner.Extensions;
-using MeetupPlanner.Features.Common;
 using MeetupPlanner.Features.Speakers.Commands;
 using MeetupPlanner.Features.Speakers.Queries;
 using Microsoft.AspNetCore.Builder;

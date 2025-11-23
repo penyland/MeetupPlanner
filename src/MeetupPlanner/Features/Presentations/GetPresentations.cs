@@ -2,7 +2,6 @@
 using Infinity.Toolkit.Handlers;
 using Microsoft.EntityFrameworkCore;
 using MeetupPlanner.Infrastructure;
-using MeetupPlanner.Features.Common;
 
 namespace MeetupPlanner.Features.Presentations;
 

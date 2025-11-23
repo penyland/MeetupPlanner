@@ -5,130 +5,126 @@
 @inject ILogger<AddSpeaker> Logger
 @inject IDialogService DialogService
 
-<FluentLabel Typo="Typography.H3">Add a new speaker</FluentLabel>
+<FluentLabel Typo="Typography.H1">Add a new speaker</FluentLabel>
 
 <div style="max-width: 600px; margin-top: 20px;">
-    <EditForm Model="Model" OnValidSubmit="HandleValidSubmit" FormName="AddSpeakerForm">
-        <DataAnnotationsValidator />
-        <FluentValidationSummary />
-        
-        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
-            <FluentTextField 
-                Label="Fullname" 
-                @bind-Value="Model!.FullName" 
-                Required="true"
-                Style="width: 100%;" />
+	<FluentCard>
 
-            <FluentTextField 
-                Label="Email" 
-                @bind-Value="Model!.Email" 
-                Required="true"
-                TextFieldType="TextFieldType.Email"
-                Style="width: 100%;" />
+		<EditForm Model="Model" OnValidSubmit="HandleValidSubmit" FormName="AddSpeakerForm">
+			<DataAnnotationsValidator />
+			<FluentValidationSummary />
 
-            <FluentTextField 
-                Label="Company" 
-                @bind-Value="Model!.Company"
-                Style="width: 100%;" />
-            
-            <FluentTextField 
-                Label="GitHub URL" 
-                @bind-Value="Model!.GitHubUrl"
-                TextFieldType="TextFieldType.Url"
-                Style="width: 100%;" />
+			<FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+				<FluentTextField Label="Fullname"
+								 @bind-Value="Model!.FullName"
+								 Required="true"
+								 Style="width: 100%;" />
 
-            <FluentTextArea 
-                Label="Bio" 
-                @bind-Value="Model!.Bio"
-                Rows="5"
-                Style="width: 100%;" />
+				<FluentTextField Label="Email"
+								 @bind-Value="Model!.Email"
+								 Required="true"
+								 TextFieldType="TextFieldType.Email"
+								 Style="width: 100%;" />
 
-            <FluentCheckbox 
-                Label="Set as Primary Biography" 
-                @bind-Value="Model!.IsPrimaryBiography" />
+				<FluentTextField Label="Company"
+								 @bind-Value="Model!.Company"
+								 Style="width: 100%;" />
 
-            <FluentButton 
-                Type="ButtonType.Submit" 
-                Appearance="Appearance.Accent"
-                Disabled="@isSubmitting">
-                @if (isSubmitting)
-                {
-                    <text>Adding Speaker...</text>
-                }
-                else
-                {
-                    <text>Add Speaker</text>
-                }
-            </FluentButton>
-        </FluentStack>
-    </EditForm>
+				<FluentTextField Label="GitHub URL"
+								 @bind-Value="Model!.GitHubUrl"
+								 TextFieldType="TextFieldType.Url"
+								 Style="width: 100%;" />
+
+				<FluentTextArea Label="Bio"
+								@bind-Value="Model!.Bio"
+								Rows="5"
+								Style="width: 100%;" />
+
+				<FluentCheckbox Label="Set as Primary Biography"
+								@bind-Value="Model!.IsPrimaryBiography" />
+
+				<FluentButton Type="ButtonType.Submit"
+							  Appearance="Appearance.Accent"
+							  Disabled="@isSubmitting">
+					@if (isSubmitting)
+					{
+						<text>Adding Speaker...</text>
+					}
+					else
+					{
+						<text>Add Speaker</text>
+					}
+				</FluentButton>
+			</FluentStack>
+		</EditForm>
+	</FluentCard>
 </div>
 
 @code {
-    [SupplyParameterFromForm]
-    private SpeakerEditFormModel? Model { get; set; }
+	[SupplyParameterFromForm]
+	private SpeakerEditFormModel? Model { get; set; }
 
-    private bool isSubmitting = false;
+	private bool isSubmitting = false;
 
-    protected override void OnInitialized() => Model ??= new SpeakerEditFormModel();
+	protected override void OnInitialized() => Model ??= new SpeakerEditFormModel();
 
-    private async Task HandleValidSubmit()
-    {
-        if (Model == null || isSubmitting)
-        {
-            return;
-        }
+	private async Task HandleValidSubmit()
+	{
+		if (Model == null || isSubmitting)
+		{
+			return;
+		}
 
-        isSubmitting = true;
-        StateHasChanged();
+		isSubmitting = true;
+		StateHasChanged();
 
-        try
-        {
-            var speaker = new SpeakerRequest
-            {
-                FullName = Model.FullName,
-                Email = Model.Email,
-                Company = Model.Company,
-                GitHubUrl = Model.GitHubUrl,
-                Bio = Model.Bio,
-                IsPrimaryBiography = Model!.IsPrimaryBiography
-            };
+		try
+		{
+			var speaker = new SpeakerRequest
+			{
+				FullName = Model.FullName,
+				Email = Model.Email,
+				Company = Model.Company,
+				GitHubUrl = Model.GitHubUrl,
+				Bio = Model.Bio,
+				IsPrimaryBiography = Model!.IsPrimaryBiography
+			};
 
-            var speakerId = await SpeakersHttpClient.AddSpeakerAsync(speaker);
-            Logger.LogInformation("Added new speaker with ID {SpeakerId}", speakerId);
+			var speakerId = await SpeakersHttpClient.AddSpeakerAsync(speaker);
+			Logger.LogInformation("Added new speaker with ID {SpeakerId}", speakerId);
 
-            // Show success message
-            var dialog = await DialogService.ShowSuccessAsync($"Speaker '{Model.FullName}' was successfully added.");
-            await dialog.Result;
+			// Show success message
+			var dialog = await DialogService.ShowSuccessAsync($"Speaker '{Model.FullName}' was successfully added.");
+			await dialog.Result;
 
-            // Reset the form
-            Model = new SpeakerEditFormModel();
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Failed to add speaker");
-            
-            // Show error message
-            await DialogService.ShowErrorAsync($"Failed to add speaker '{Model.FullName}'. Please try again.");
-        }
-        finally
-        {
-            isSubmitting = false;
-            StateHasChanged();
-        }
-    }
+			// Reset the form
+			Model = new SpeakerEditFormModel();
+		}
+		catch (Exception ex)
+		{
+			Logger.LogError(ex, "Failed to add speaker");
 
-    record SpeakerEditFormModel
-    {
-        [Required]
-        public string FullName { get; set; } = string.Empty;
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; } = string.Empty;
-        public string? Company { get; set; }
-        [Url]
-        public string? GitHubUrl { get; set; }
-        public string? Bio { get; set; }
-        public bool IsPrimaryBiography { get; set; } = true;
-    }
+			// Show error message
+			await DialogService.ShowErrorAsync($"Failed to add speaker '{Model.FullName}'. Please try again.");
+		}
+		finally
+		{
+			isSubmitting = false;
+			StateHasChanged();
+		}
+	}
+
+	record SpeakerEditFormModel
+	{
+		[Required]
+		public string FullName { get; set; } = string.Empty;
+		[Required]
+		[EmailAddress]
+		public string Email { get; set; } = string.Empty;
+		public string? Company { get; set; }
+		[Url]
+		public string? GitHubUrl { get; set; }
+		public string? Bio { get; set; }
+		public bool IsPrimaryBiography { get; set; } = true;
+	}
 }

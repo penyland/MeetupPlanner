@@ -1,5 +1,4 @@
-﻿using MeetupPlanner.Features.Common;
-using MeetupPlanner.Infrastructure;
+﻿using MeetupPlanner.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using ModelContextProtocol.Server;
 using System.ComponentModel;

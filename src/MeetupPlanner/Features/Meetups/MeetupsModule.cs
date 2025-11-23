@@ -3,14 +3,12 @@ using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.FeatureModules;
 using Infinity.Toolkit.Handlers;
 using MeetupPlanner.Extensions;
-using MeetupPlanner.Features.Common;
 using MeetupPlanner.Features.Meetups.Commands;
 using MeetupPlanner.Features.Meetups.Queries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
-using System.IO;
 
 namespace MeetupPlanner.Features.Meetups;
 
