@@ -1,4 +1,5 @@
 ﻿using MeetupPlanner.Shared;
+using System.Text.Json;
 
 namespace MeetupPlanner.Admin.Features.Meetups;
 
@@ -33,5 +34,11 @@ public class MeetupsHttpClient(HttpClient httpClient)
     {
         var response = await httpClient.GetFromJsonAsync<MeetupResponse>($"meetupplanner/meetups/{meetupId}", cancellationToken);
         return response;
+    }
+
+    public async Task<List<RsvpResponse>> GetRsvpsAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await httpClient.GetFromJsonAsync<List<RsvpResponse>>("meetupplanner/meetups/rsvps", cancellationToken);
+        return response ?? [];
     }
 }

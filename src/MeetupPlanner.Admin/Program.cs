@@ -1,3 +1,4 @@
+using ApexCharts;
 using MeetupPlanner.Admin.Components;
 using MeetupPlanner.Admin.Features.Meetups;
 using MeetupPlanner.Admin.Features.Speakers;
@@ -7,6 +8,8 @@ using Microsoft.FluentUI.AspNetCore.Components;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+builder.Services.AddApexCharts();
 
 builder.Services.AddMeetupsHttpClient();
 builder.Services.AddSpeakersHttpClient();
