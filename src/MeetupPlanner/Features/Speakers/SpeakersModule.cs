@@ -45,16 +45,16 @@ internal class SpeakersModule : WebFeatureModule
         group.MapGetRequestHandlerWithResult<GetSpeakerBiographies.Query, GetSpeakerBiographies.Response, IReadOnlyList<SpeakerBiographyDto>>("/speakers/{speakerId}/biographies", map => map.SpeakerBiographies);
         group.MapGetRequestHandlerWithResult<GetSpeakerPresentations.Query, GetSpeakerPresentations.Response, IReadOnlyList<PresentationResponse>>("/speakers/{speakerId}/presentations", map => map.Presentations);
 
-        group.MapPost("/speakers", async (SpeakerRequest request, [FromServices] IRequestHandler<Command, Result<Response>> handler) =>
+        group.MapPost("/speakers", async (SpeakerRequest request, [FromServices] IRequestHandler<AddSpeaker.Command, Result<AddSpeaker.Response>> handler) =>
         {
-            var context = HandlerContextExtensions.Create(new Command(request));
+            var context = HandlerContextExtensions.Create(new AddSpeaker.Command(request));
             var result = await handler.HandleAsync(context);
 
             IResult response = result switch
             {
-                ErrorResult<Response> validationFailure => TypedResults.BadRequest(validationFailure.Errors),
+                ErrorResult<AddSpeaker.Response> validationFailure => TypedResults.BadRequest(validationFailure.Errors),
                 //NotFoundFailure notFoundFailure => TypedResults.NotFound(notFoundFailure.Message),
-                SuccessResult<Response> success => TypedResults.Created($"/meetupplanner/speakers/{success.Value.SpeakerId}", success.Value),
+                SuccessResult<AddSpeaker.Response> success => TypedResults.Created($"/meetupplanner/speakers/{success.Value.SpeakerId}", success.Value),
                 _ => TypedResults.BadRequest("An error occurred while processing the request.")
             };
 

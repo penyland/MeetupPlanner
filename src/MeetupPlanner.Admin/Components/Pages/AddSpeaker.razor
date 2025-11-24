@@ -20,20 +20,41 @@
 								 Required="true"
 								 Style="width: 100%;" />
 
+				<FluentTextField Label="Company"
+								 @bind-Value="Model!.Company"
+								 Style="width: 100%;" />
+
 				<FluentTextField Label="Email"
 								 @bind-Value="Model!.Email"
 								 Required="true"
 								 TextFieldType="TextFieldType.Email"
 								 Style="width: 100%;" />
 
-				<FluentTextField Label="Company"
-								 @bind-Value="Model!.Company"
+				<FluentTextField Label="LinkedIn URL"
+								 @bind-Value="Model!.LinkedInUrl"
+								 TextFieldType="TextFieldType.Url"
+								 Style="width: 100%;" />
+
+				<FluentTextField Label="Twitter URL"
+								 @bind-Value="Model!.TwitterUrl"
+								 TextFieldType="TextFieldType.Url"
 								 Style="width: 100%;" />
 
 				<FluentTextField Label="GitHub URL"
 								 @bind-Value="Model!.GitHubUrl"
 								 TextFieldType="TextFieldType.Url"
 								 Style="width: 100%;" />
+
+				<FluentTextField Label="Blog URL"
+								 @bind-Value="Model!.BlogUrl"
+								 TextFieldType="TextFieldType.Url"
+								 Style="width: 100%;" />
+
+				
+				<FluentTextField Label="Thumbnail URL"
+								 @bind-Value="Model!.ThumbnailUrl"
+								 TextFieldType="TextFieldType.Url"
+								 Style="width: 100%;" />								 				
 
 				<FluentTextArea Label="Bio"
 								@bind-Value="Model!.Bio"
@@ -85,7 +106,11 @@
 				FullName = Model.FullName,
 				Email = Model.Email,
 				Company = Model.Company,
+				LinkedInUrl = Model.LinkedInUrl,
+				TwitterUrl = Model.TwitterUrl,
 				GitHubUrl = Model.GitHubUrl,
+				BlogUrl = Model.BlogUrl,
+				ThumbnailUrl = Model.ThumbnailUrl,
 				Bio = Model.Bio,
 				IsPrimaryBiography = Model!.IsPrimaryBiography
 			};
@@ -121,9 +146,18 @@
 		[Required]
 		[EmailAddress]
 		public string Email { get; set; } = string.Empty;
-		public string? Company { get; set; }
+		public string? Company { get; set; } = string.Empty;
 		[Url]
-		public string? GitHubUrl { get; set; }
+		public string? GitHubUrl { get; set; } = string.Empty;
+		[Url]
+		public string? TwitterUrl { get; set; } = string.Empty;
+		[Url]
+		public string? LinkedInUrl { get; set; } = string.Empty;
+		[Url]
+		public string? BlogUrl { get; set; } = string.Empty;
+		[Url]
+		public string? ThumbnailUrl { get; set; } = string.Empty;
+
 		public string? Bio { get; set; }
 		public bool IsPrimaryBiography { get; set; } = true;
 	}

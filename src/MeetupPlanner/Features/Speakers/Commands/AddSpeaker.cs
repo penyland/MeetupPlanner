@@ -46,20 +46,6 @@ public static class AddSpeaker
         }
     }
 
-    internal sealed class ValidatorHandler(IRequestHandler<Command, Result<Response>> innerHandler, IValidator<Command> validator) : IRequestHandler<Command, Result<Response>>
-    {
-        public async Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
-        {
-            var validationResult = await validator.ValidateAsync(context.Request, cancellationToken);
-            if (!validationResult.IsValid)
-            {
-                var errors = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-                return Result.Failure<Response>(errors);
-            }
-            return await innerHandler.HandleAsync(context, cancellationToken);
-        }
-    }
-
     internal sealed class AddSpeakerValidator : AbstractValidator<Command>
     {
         public AddSpeakerValidator()
