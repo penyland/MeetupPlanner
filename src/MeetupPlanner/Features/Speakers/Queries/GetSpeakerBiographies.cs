@@ -9,7 +9,7 @@ public static class GetSpeakerBiographies
 {
     public sealed record Query(Guid SpeakerId);
 
-    public sealed record Response(IReadOnlyList<SpeakerBiographyDto> SpeakerBiographies);
+    public sealed record Response(IReadOnlyList<SpeakerBiographyResponse> SpeakerBiographies);
 
     internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Result<Response>>
     {
@@ -30,7 +30,7 @@ public static class GetSpeakerBiographies
                         : $"No biographies found for speaker with ID {context.Request.SpeakerId}.");
                 }
 
-                var response = biographies.Select(b => new SpeakerBiographyDto
+                var response = biographies.Select(b => new SpeakerBiographyResponse
                 {
                     SpeakerBiographyId = b.SpeakerBioId,
                     Biography = b.Bio,
@@ -47,7 +47,7 @@ public static class GetSpeakerBiographies
     }
 }
 
-public record SpeakerBiographyDto
+public record SpeakerBiographyResponse
 {
     public Guid SpeakerBiographyId { get; init; }
     public string Biography { get; init; } = string.Empty;
