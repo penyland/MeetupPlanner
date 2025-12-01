@@ -9,7 +9,7 @@ namespace MeetupPlanner.Features.Meetups.Commands;
 
 public static class UpdateMeetupRsvps
 {
-    public sealed record Command(Guid MeetupId, int RsvpYesCount, int RsvpNoCount, int RsvpWaitlistCount, int AttendanceCount);
+    public sealed record Command(Guid MeetupId, int TotalCount, int RsvpYesCount, int RsvpNoCount, int RsvpWaitlistCount, int AttendanceCount);
 
     public sealed record Response();
 
@@ -20,10 +20,16 @@ public static class UpdateMeetupRsvps
             RuleFor(x => x.MeetupId).NotEmpty();
             RuleFor(x => x.RsvpYesCount)
                 .GreaterThanOrEqualTo(0)
-                .LessThanOrEqualTo(x => x.AttendanceCount);
-            RuleFor(x => x.RsvpNoCount).GreaterThanOrEqualTo(0);
-            RuleFor(x => x.RsvpWaitlistCount).GreaterThanOrEqualTo(0);
-            RuleFor(x => x.AttendanceCount).GreaterThanOrEqualTo(0);
+                .LessThanOrEqualTo(x => x.TotalCount);
+            RuleFor(x => x.RsvpNoCount)
+                .GreaterThanOrEqualTo(0)
+                .LessThanOrEqualTo(x => x.TotalCount);
+            RuleFor(x => x.RsvpWaitlistCount)
+                .GreaterThanOrEqualTo(0)
+                .LessThanOrEqualTo(x => x.TotalCount);
+            RuleFor(x => x.AttendanceCount)
+                .GreaterThanOrEqualTo(0)
+                .LessThanOrEqualTo(x => x.TotalCount);
         }
     }
 
@@ -56,25 +62,10 @@ public static class UpdateMeetupRsvps
         }
     }
 
-    internal sealed class Validator(IRequestHandler<Command, Result<Response>> innerHandler, IValidator<UpdateMeetupRsvps.Command> validator) : IRequestHandler<Command, Result<Response>>
-    {
-        public async Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
-        {
-            var validationResult = await validator.ValidateAsync(context.Request, cancellationToken);
-            if (!validationResult.IsValid)
-            {
-                var errors = validationResult.Errors.Select(e => new ValidationError(e.PropertyName, e.ErrorMessage)).ToList();
-                return Result.Failure<Response>(errors);
-            }
-
-            return await innerHandler.HandleAsync(context, cancellationToken);
-        }
-    }
-
     public static void RegisterUpdateMeetupRsvps(this IServiceCollection services)
     {
         services.AddScoped<IValidator<Command>, UpdateMeetupRsvpsValidator>();
         services.AddRequestHandler<Command, Result<Response>, Handler>()
-            .Decorate<Validator>();
+            .Decorate<ValidatorHandler<Command, Response>>();
     }
 }
