@@ -4,12 +4,13 @@ using Infinity.Toolkit.Handlers;
 using MeetupPlanner.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 
 namespace MeetupPlanner.Features.Meetups.Commands;
 
 public static class UpdateMeetupRsvps
 {
-    public sealed record Command(Guid MeetupId, int TotalCount, int RsvpYesCount, int RsvpNoCount, int RsvpWaitlistCount, int AttendanceCount);
+    public sealed record Command(Guid MeetupId, RsvpRequest RsvpRequest);
 
     public sealed record Response();
 
@@ -17,19 +18,18 @@ public static class UpdateMeetupRsvps
     {
         public UpdateMeetupRsvpsValidator()
         {
-            RuleFor(x => x.MeetupId).NotEmpty();
-            RuleFor(x => x.RsvpYesCount)
+            RuleFor(x => x.RsvpRequest.RsvpYesCount)
                 .GreaterThanOrEqualTo(0)
-                .LessThanOrEqualTo(x => x.TotalCount);
-            RuleFor(x => x.RsvpNoCount)
+                .LessThanOrEqualTo(x => x.RsvpRequest.TotalSpots);
+            RuleFor(x => x.RsvpRequest.RsvpNoCount)
                 .GreaterThanOrEqualTo(0)
-                .LessThanOrEqualTo(x => x.TotalCount);
-            RuleFor(x => x.RsvpWaitlistCount)
+                .LessThanOrEqualTo(x => x.RsvpRequest.TotalSpots);
+            RuleFor(x => x.RsvpRequest.RsvpWaitlistCount)
                 .GreaterThanOrEqualTo(0)
-                .LessThanOrEqualTo(x => x.TotalCount);
-            RuleFor(x => x.AttendanceCount)
+                .LessThanOrEqualTo(x => x.RsvpRequest.TotalSpots);
+            RuleFor(x => x.RsvpRequest.AttendanceCount)
                 .GreaterThanOrEqualTo(0)
-                .LessThanOrEqualTo(x => x.TotalCount);
+                .LessThanOrEqualTo(x => x.RsvpRequest.TotalSpots);
         }
     }
 
@@ -41,13 +41,16 @@ public static class UpdateMeetupRsvps
 
             if (meetup == null)
             {
-                return Result.Failure<Response>($"Meetup with ID '{context.Request.MeetupId}' not found.");
+                var notFoundError = Error.Validation(HttpStatusCode.NotFound.ToString(), $"Meetup with ID '{context.Request.MeetupId}' not found.");
+                return Result.Failure<Response>(notFoundError);
             }
 
-            meetup.RsvpYesCount = context.Request.RsvpYesCount;
-            meetup.RsvpNoCount = context.Request.RsvpNoCount;
-            meetup.RsvpWaitlistCount = context.Request.RsvpWaitlistCount;
-            meetup.AttendanceCount = context.Request.AttendanceCount;
+
+            meetup.TotalSpots = context.Request.RsvpRequest.TotalSpots ?? meetup.TotalSpots;
+            meetup.RsvpYesCount = context.Request.RsvpRequest.RsvpYesCount ?? meetup.RsvpYesCount;
+            meetup.RsvpNoCount = context.Request.RsvpRequest.RsvpNoCount ?? meetup.RsvpNoCount;
+            meetup.RsvpWaitlistCount = context.Request.RsvpRequest.RsvpWaitlistCount ?? meetup.RsvpWaitlistCount;
+            meetup.AttendanceCount = context.Request.RsvpRequest.AttendanceCount ?? meetup.AttendanceCount;
 
             try
             {

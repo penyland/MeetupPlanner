@@ -35,9 +35,9 @@ public class MeetupsModule : WebFeatureModule
 
         group.MapPostMeetup("/meetups");
 
-        group.MapPut("/meetups/{meetupId}/rsvps", async ([FromRoute] Guid meetupId, UpdateMeetupRsvps.Command command, IRequestHandler<UpdateMeetupRsvps.Command, Result<UpdateMeetupRsvps.Response>> handler) =>
+        group.MapPatch("/meetups/{meetupId}/rsvps", async ([FromRoute] Guid meetupId, RsvpRequest rsvpRequest, IRequestHandler<UpdateMeetupRsvps.Command, Result<UpdateMeetupRsvps.Response>> handler) =>
         {
-            var result = await handler.HandleAsync(HandlerContextExtensions.Create(command with { MeetupId = meetupId }));
+            var result = await handler.HandleAsync(HandlerContextExtensions.Create(new UpdateMeetupRsvps.Command(meetupId, rsvpRequest)));
             return result.Succeeded ? TypedResults.NoContent() : Results.BadRequest(result.Errors);
         });
 
