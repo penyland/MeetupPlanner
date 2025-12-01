@@ -1,27 +1,27 @@
 ﻿@inherits LayoutComponentBase
 
 <FluentLayout>
-    <FluentHeader>
-        <div>
-            <FluentLabel Typo="Typography.PaneHeader" Color="@Color.Fill">Meetup Planner Admin</FluentLabel>
-        </div>
-        <FluentSpacer />
-        <div style="padding: 0 1rem;">
-            <FluentAnchor Href="https://learn.microsoft.com/aspnet/core/" Target="_blank">About</FluentAnchor>
-        </div>
-    </FluentHeader>
-    <FluentStack Orientation="Orientation.Horizontal" Style="height: 100%;">
-        <NavMenu />
-        <FluentBodyContent Style="padding: 1rem; flex: 1;">
-            @Body
-        </FluentBodyContent>
-    </FluentStack>
+	<FluentHeader>
+		<FluentLabel Typo="Typography.PaneHeader" Color="@Color.Fill">Meetup Planner Admin</FluentLabel>
+		<FluentSpacer />
+		<div style="padding: 0 1rem;">
+			<FluentAnchor Href="https://learn.microsoft.com/aspnet/core/" Target="_blank">About</FluentAnchor>
+		</div>
+	</FluentHeader>
+	<FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
+		<NavMenu />
+		<FluentBodyContent Class="body-content">
+			<div class="content">
+				@Body
+			</div>
+		</FluentBodyContent>
+	</FluentStack>
 </FluentLayout>
 
 <FluentDialogProvider />
 
 <div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
+	An unhandled error has occurred.
+	<a href="." class="reload">Reload</a>
+	<span class="dismiss">🗙</span>
 </div>
