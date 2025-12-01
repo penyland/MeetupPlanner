@@ -18,6 +18,7 @@ builder.Services.AddSpeakersHttpClient();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddHttpClient();
 builder.Services.AddFluentUIComponents();
 
 var app = builder.Build();

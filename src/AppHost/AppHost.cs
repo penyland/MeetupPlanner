@@ -15,11 +15,6 @@ var web = builder.AddViteApp("web", "../Web")
     .WaitFor(api)
     .WithReference(api);
 
-var proxy = builder.AddProject<Projects.MeetupPlanner_Proxy>("meetupplanner-proxy")
-    .WaitFor(api)
-    .WithReference(api)
-    .WithExternalHttpEndpoints();
-
 builder.AddMcpInspector("mcp-inspector")
     .WaitFor(api)
     .WithMcpServer(api, path: "/mcp");

@@ -1,9 +1,32 @@
-﻿<FluentNavMenu Width="250" Title="Meetup Planner Admin" Collapsible="true">
-    <FluentNavLink Href="" Match="NavLinkMatch.All">
-        Home
-    </FluentNavLink>
-    <FluentNavLink Href="add-speaker">
-        Add Speaker
-    </FluentNavLink>
+﻿@using Microsoft.FluentUI.AspNetCore.Components;
+
+<FluentNavMenu Width="250" Title="Meetup Planner Admin" Collapsible="true">
+	<FluentNavLink Href="" Match="NavLinkMatch.All">
+		Home
+	</FluentNavLink>
+	<FluentNavGroup Id="SpeakerGroup" Title="Speakers" Expanded="true" Icon="@(new Icons.Regular.Size24.Presenter())">
+		<FluentNavLink Icon="@(new Icons.Color.Size24.AppsList())">List</FluentNavLink>
+		<FluentNavLink Icon="@(new Icons.Color.Size24.AddCircle())" Href="add-speaker">Add</FluentNavLink>
+	</FluentNavGroup>
+
+	<FluentNavGroup Id="LocationsGroup" Title="Locations" @bind-Expanded=Item1Expanded Icon="@(new Icons.Color.Size24.BuildingPeople())">
+		<FluentNavLink Icon="@(new Icons.Color.Size24.AppsList())">List</FluentNavLink>
+		<FluentNavLink Icon="@(new Icons.Color.Size24.AddCircle())" Href="add-location">Add</FluentNavLink>
+	</FluentNavGroup>
+
+	<FluentNavGroup Id="MeetupsGroup" Title="Meetups" @bind-Expanded=Item1Expanded Icon="@(new Icons.Color.Size24.People())">
+		<FluentNavLink Icon="@(new Icons.Color.Size24.AppsList())">List</FluentNavLink>
+		<FluentNavLink Icon="@(new Icons.Color.Size24.AddCircle())" Href="add-meetup">Add</FluentNavLink>
+	</FluentNavGroup>
+
+	<FluentNavGroup Id="PresentationsGroup" Title="Presentations" @bind-Expanded=Item1Expanded Icon="@(new Icons.Regular.Size24.ProjectionScreen())">
+		<FluentNavLink Icon="@(new Icons.Color.Size24.AppsList())">List</FluentNavLink>
+		<FluentNavLink Icon="@(new Icons.Color.Size24.AddCircle())" Href="add-presentation">Add</FluentNavLink>
+	</FluentNavGroup>
 </FluentNavMenu>
 
+@code {
+	// bool MenuExpanded = true;
+	bool Item1Expanded = true;
+	// bool Item2Expanded = true;
+}
