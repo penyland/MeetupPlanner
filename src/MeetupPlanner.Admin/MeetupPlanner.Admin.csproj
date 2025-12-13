@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -8,7 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazor-ApexCharts" Version="6.0.2" />
+    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.13.2" />
+    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.13.2" />
+    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.13.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MeetupPlanner.ServiceDefaults\MeetupPlanner.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\MeetupPlanner.Shared\MeetupPlanner.Shared.csproj" />
   </ItemGroup>
 
 </Project>

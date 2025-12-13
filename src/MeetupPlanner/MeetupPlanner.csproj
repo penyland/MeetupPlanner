@@ -19,5 +19,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
     <PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.4.0-preview.3" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\MeetupPlanner.Shared\MeetupPlanner.Shared.csproj" />
+  </ItemGroup>
     
 </Project>

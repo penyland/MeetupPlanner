@@ -1,0 +1,33 @@
+﻿@page "/meetup/{meetupId}"
+@using MeetupPlanner.Admin.Features.Meetups
+@using MeetupPlanner.Shared
+@inject MeetupsHttpClient meetupsHttpClient
+
+@if (Meetup == null)
+{
+	<div style="max-width: 600px; margin-top: 20px;">
+		<FluentCard>
+			<FluentProgressRing>Loading meetup...</FluentProgressRing>
+		</FluentCard>
+	</div>
+}
+else
+{
+	<FluentLabel Typo="Typography.H1">@Meetup.Title</FluentLabel>
+	<FluentLabel Typo="Typography.Body">Meetup Title: @Meetup.Title</FluentLabel>
+}
+
+@code {
+	[Parameter]
+	public string? MeetupId { get; set; }
+
+	private MeetupResponse? Meetup { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		ArgumentNullException.ThrowIfNull(MeetupId, nameof(MeetupId));
+
+		Meetup = await meetupsHttpClient.GetMeetupByIdAsync(Guid.Parse(MeetupId));
+	}
+
+}

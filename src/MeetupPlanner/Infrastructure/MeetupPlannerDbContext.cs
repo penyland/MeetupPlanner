@@ -1,5 +1,4 @@
-﻿using MeetupPlanner.Features.Common;
-using MeetupPlanner.Infrastructure.Models;
+﻿using MeetupPlanner.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -22,6 +21,22 @@ public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbCont
         modelBuilder.Entity<Speaker>()
             .HasKey(s => s.SpeakerId);
 
+        modelBuilder.Entity<Speaker>()
+            .Property(m => m.CreatedBy)
+            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Speaker>()
+            .Property(m => m.CreatedUtc)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Speaker>()
+            .Property(m => m.UpdatedBy)
+            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Speaker>()
+            .Property(m => m.UpdatedUtc)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+
         // SpeakerBio
         modelBuilder.Entity<SpeakerBio>()
             .HasKey(b => b.SpeakerBioId);
@@ -35,6 +50,22 @@ public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbCont
             .HasIndex(b => new { b.SpeakerId })
             .HasFilter("[IsPrimary] = 1")
             .IsUnique();
+
+        modelBuilder.Entity<SpeakerBio>()
+            .Property(m => m.CreatedBy)
+            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<SpeakerBio>()
+            .Property(m => m.CreatedUtc)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<SpeakerBio>()
+            .Property(m => m.UpdatedBy)
+            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<SpeakerBio>()
+            .Property(m => m.UpdatedUtc)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
         // Location
         modelBuilder.Entity<Location>()
@@ -59,6 +90,22 @@ public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbCont
         // Presentation
         modelBuilder.Entity<Presentation>()
             .HasKey(p => p.PresentationId);
+
+        modelBuilder.Entity<Presentation>()
+            .Property(m => m.CreatedBy)
+            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Presentation>()
+            .Property(m => m.CreatedUtc)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Presentation>()
+            .Property(m => m.UpdatedBy)
+            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+
+        modelBuilder.Entity<Presentation>()
+            .Property(m => m.UpdatedUtc)
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
         // PresentationSpeaker (junction)
         modelBuilder.Entity<PresentationSpeaker>()

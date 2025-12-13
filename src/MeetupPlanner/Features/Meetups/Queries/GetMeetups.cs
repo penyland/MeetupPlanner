@@ -1,6 +1,5 @@
 ﻿using Infinity.Toolkit;
 using Infinity.Toolkit.Handlers;
-using MeetupPlanner.Features.Common;
 using MeetupPlanner.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 

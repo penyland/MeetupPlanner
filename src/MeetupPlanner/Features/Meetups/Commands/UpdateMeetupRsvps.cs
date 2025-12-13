@@ -4,12 +4,13 @@ using Infinity.Toolkit.Handlers;
 using MeetupPlanner.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 
 namespace MeetupPlanner.Features.Meetups.Commands;
 
 public static class UpdateMeetupRsvps
 {
-    public sealed record Command(Guid MeetupId, int RsvpYesCount, int RsvpNoCount, int RsvpWaitlistCount, int AttendanceCount);
+    public sealed record Command(Guid MeetupId, RsvpRequest RsvpRequest);
 
     public sealed record Response();
 
@@ -17,13 +18,18 @@ public static class UpdateMeetupRsvps
     {
         public UpdateMeetupRsvpsValidator()
         {
-            RuleFor(x => x.MeetupId).NotEmpty();
-            RuleFor(x => x.RsvpYesCount)
+            RuleFor(x => x.RsvpRequest.RsvpYesCount)
                 .GreaterThanOrEqualTo(0)
-                .LessThanOrEqualTo(x => x.AttendanceCount);
-            RuleFor(x => x.RsvpNoCount).GreaterThanOrEqualTo(0);
-            RuleFor(x => x.RsvpWaitlistCount).GreaterThanOrEqualTo(0);
-            RuleFor(x => x.AttendanceCount).GreaterThanOrEqualTo(0);
+                .LessThanOrEqualTo(x => x.RsvpRequest.TotalSpots);
+            RuleFor(x => x.RsvpRequest.RsvpNoCount)
+                .GreaterThanOrEqualTo(0)
+                .LessThanOrEqualTo(x => x.RsvpRequest.TotalSpots);
+            RuleFor(x => x.RsvpRequest.RsvpWaitlistCount)
+                .GreaterThanOrEqualTo(0)
+                .LessThanOrEqualTo(x => x.RsvpRequest.TotalSpots);
+            RuleFor(x => x.RsvpRequest.AttendanceCount)
+                .GreaterThanOrEqualTo(0)
+                .LessThanOrEqualTo(x => x.RsvpRequest.TotalSpots);
         }
     }
 
@@ -35,13 +41,16 @@ public static class UpdateMeetupRsvps
 
             if (meetup == null)
             {
-                return Result.Failure<Response>($"Meetup with ID '{context.Request.MeetupId}' not found.");
+                var notFoundError = Error.Validation(HttpStatusCode.NotFound.ToString(), $"Meetup with ID '{context.Request.MeetupId}' not found.");
+                return Result.Failure<Response>(notFoundError);
             }
 
-            meetup.RsvpYesCount = context.Request.RsvpYesCount;
-            meetup.RsvpNoCount = context.Request.RsvpNoCount;
-            meetup.RsvpWaitlistCount = context.Request.RsvpWaitlistCount;
-            meetup.AttendanceCount = context.Request.AttendanceCount;
+
+            meetup.TotalSpots = context.Request.RsvpRequest.TotalSpots ?? meetup.TotalSpots;
+            meetup.RsvpYesCount = context.Request.RsvpRequest.RsvpYesCount ?? meetup.RsvpYesCount;
+            meetup.RsvpNoCount = context.Request.RsvpRequest.RsvpNoCount ?? meetup.RsvpNoCount;
+            meetup.RsvpWaitlistCount = context.Request.RsvpRequest.RsvpWaitlistCount ?? meetup.RsvpWaitlistCount;
+            meetup.AttendanceCount = context.Request.RsvpRequest.AttendanceCount ?? meetup.AttendanceCount;
 
             try
             {
@@ -56,25 +65,10 @@ public static class UpdateMeetupRsvps
         }
     }
 
-    internal sealed class Validator(IRequestHandler<Command, Result<Response>> innerHandler, IValidator<UpdateMeetupRsvps.Command> validator) : IRequestHandler<Command, Result<Response>>
-    {
-        public async Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
-        {
-            var validationResult = await validator.ValidateAsync(context.Request, cancellationToken);
-            if (!validationResult.IsValid)
-            {
-                var errors = validationResult.Errors.Select(e => new ValidationError(e.PropertyName, e.ErrorMessage)).ToList();
-                return Result.Failure<Response>(errors);
-            }
-
-            return await innerHandler.HandleAsync(context, cancellationToken);
-        }
-    }
-
     public static void RegisterUpdateMeetupRsvps(this IServiceCollection services)
     {
         services.AddScoped<IValidator<Command>, UpdateMeetupRsvpsValidator>();
         services.AddRequestHandler<Command, Result<Response>, Handler>()
-            .Decorate<Validator>();
+            .Decorate<ValidatorHandler<Command, Response>>();
     }
 }

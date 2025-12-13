@@ -3,14 +3,12 @@ using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.FeatureModules;
 using Infinity.Toolkit.Handlers;
 using MeetupPlanner.Extensions;
-using MeetupPlanner.Features.Common;
 using MeetupPlanner.Features.Meetups.Commands;
 using MeetupPlanner.Features.Meetups.Queries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
-using System.IO;
 
 namespace MeetupPlanner.Features.Meetups;
 
@@ -28,6 +26,7 @@ public class MeetupsModule : WebFeatureModule
         builder.Services.AddRequestHandler<GetMeetupLocation.Query, Result<GetMeetupLocation.Response>, GetMeetupLocation.Handler>();
         builder.Services.AddRequestHandler<GetMeetupPresentations.Query, Result<GetMeetupPresentations.Response>, GetMeetupPresentations.Handler>();
         builder.Services.AddRequestHandler<GetMeetupRsvps.Query, Result<GetMeetupRsvps.Response>, GetMeetupRsvps.Handler>();
+        builder.Services.AddRequestHandler<GetRsvps.Query, Result<GetRsvps.Response>, GetRsvps.Handler>();
     }
 
     public override void MapEndpoints(WebApplication app)
@@ -36,9 +35,9 @@ public class MeetupsModule : WebFeatureModule
 
         group.MapPostMeetup("/meetups");
 
-        group.MapPut("/meetups/{meetupId}/rsvps", async ([FromRoute] Guid meetupId, UpdateMeetupRsvps.Command command, IRequestHandler<UpdateMeetupRsvps.Command, Result<UpdateMeetupRsvps.Response>> handler) =>
+        group.MapPatch("/meetups/{meetupId}/rsvps", async ([FromRoute] Guid meetupId, RsvpRequest rsvpRequest, IRequestHandler<UpdateMeetupRsvps.Command, Result<UpdateMeetupRsvps.Response>> handler) =>
         {
-            var result = await handler.HandleAsync(HandlerContextExtensions.Create(command with { MeetupId = meetupId }));
+            var result = await handler.HandleAsync(HandlerContextExtensions.Create(new UpdateMeetupRsvps.Command(meetupId, rsvpRequest)));
             return result.Succeeded ? TypedResults.NoContent() : Results.BadRequest(result.Errors);
         });
 
@@ -63,6 +62,7 @@ public class MeetupsModule : WebFeatureModule
         group.MapGetRequestHandlerWithResult<GetMeetupLocation.Query, GetMeetupLocation.Response, LocationDetailedResponse>("/meetups/{meetupId}/location", map => map.Location);
         group.MapGetRequestHandlerWithResult<GetMeetupPresentations.Query, GetMeetupPresentations.Response, IReadOnlyList<PresentationResponse>>("/meetups/{meetupId}/presentations", map => map.Presentations);
         group.MapGetRequestHandlerWithResult<GetMeetupRsvps.Query, GetMeetupRsvps.Response, Rsvp>("/meetups/{meetupId}/rsvps", map => map.Rsvp);
+        group.MapGetRequestHandlerWithResult<GetRsvps.Query, GetRsvps.Response, IReadOnlyList<RsvpResponse>>("/meetups/rsvps", map => map.Rsvps);
     }
 }
 

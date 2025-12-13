@@ -3,7 +3,6 @@ using Infinity.Toolkit;
 using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.Handlers;
 using MeetupPlanner.Extensions;
-using MeetupPlanner.Features.Common;
 using MeetupPlanner.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -97,22 +96,6 @@ public static class AddMeetup
         }
     }
 
-    internal sealed class ValidatorHandler(IRequestHandler<Command, Result<Response>> innerHandler, IValidator<AddMeetup.Command> validator) : IRequestHandler<Command, Result<Response>>
-    {
-        public async Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
-        {
-            var validationResult = await validator.ValidateAsync(context.Request, cancellationToken);
-
-            if (!validationResult.IsValid)
-            {
-                var errors = validationResult.Errors.Select(e => new ValidationError(e.PropertyName, e.ErrorMessage)).ToList();
-                return Result.Failure<Response>("Validation failed for AddMeetup.", errors);
-            }
-
-            return await innerHandler.HandleAsync(context, cancellationToken);
-        }
-    }
-
     public record MeetupRequest
     {
         public Guid? MeetupId { get; init; } = Guid.NewGuid();
@@ -145,7 +128,7 @@ public static class AddMeetup
     {
         services.AddScoped<IValidator<AddMeetup.Command>, AddMeetup.AddMeetupValidator>();
         services.AddRequestHandler<AddMeetup.Command, Result<AddMeetup.Response>, AddMeetup.Handler>()
-            .Decorate<AddMeetup.ValidatorHandler>();
+            .Decorate<ValidatorHandler<Command, Response>>();
     }
 
     public static RouteGroupBuilder MapPostMeetup(this RouteGroupBuilder builder, string path)

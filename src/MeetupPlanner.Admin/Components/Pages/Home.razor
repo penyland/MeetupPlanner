@@ -1,7 +1,82 @@
 ﻿@page "/"
+@using ApexCharts
+@using MeetupPlanner.Admin.Features.Meetups
+@using MeetupPlanner.Shared
+@inject MeetupsHttpClient meetupsHttpClient
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+@if (meetups.Length == 0)
+{
+	<FluentProgressRing>Loading...</FluentProgressRing>
+}
+else
+{
+	<FluentLabel Typo="Typography.H2">Scheduled meetups</FluentLabel>
+	<FluentStack Orientation="Microsoft.FluentUI.AspNetCore.Components.Orientation.Vertical" VerticalGap="8" Style="margin-top: 16px;">
+		@foreach (var meetup in meetups)
+		{
+			var meetupId = meetup.MeetupId.ToString();
+			<a href="@meetupId"></a>
+			<FluentCard>
+				<a Href="/meetup/@meetupId">
+					<FluentLabel Typo="Typography.Body">@meetup.Title - @meetup.StartUtc.ToString("d")</FluentLabel>
+				</a>
+			</FluentCard>
+		}
+	</FluentStack>
 
-Welcome to your new app.
+	// TODO: Add ability to schedule new meetups
+	<FluentLabel Typo="Typography.Body" Style="margin-top: 24px; font-style: italic;">
+		(Scheduling new meetups coming soon!)
+	</FluentLabel>
+}
+
+<ApexChart TItem="RsvpResponse"
+		   Title="Meetup Rsvps"
+		   Height="400">
+
+	<ApexPointSeries 
+		TItem="RsvpResponse"
+		Items="rsvps"
+		Name="Yes"
+		SeriesType="SeriesType.Line"
+		XValue="e => e.StartUtc.DateTime.Date"
+		YValue="e => e.RsvpYesCount" />
+
+	<ApexPointSeries 
+		TItem="RsvpResponse"
+		Items="rsvps"
+		Name="No"
+		SeriesType="SeriesType.Line"
+		XValue="e => e.StartUtc.DateTime.Date"
+		YValue="e => e.RsvpNoCount" />
+
+	<ApexPointSeries 
+		TItem="RsvpResponse"
+		Items="rsvps"
+		Name="Waitlist"
+		SeriesType="SeriesType.Line"
+		XValue="e => e.StartUtc.DateTime.Date"
+		YValue="e => e.RsvpWaitlistCount" />
+
+	<ApexPointSeries 
+		TItem="RsvpResponse"
+		Items="rsvps"
+		Name="Total spots"
+		SeriesType="SeriesType.Line"
+		XValue="e => e.StartUtc.DateTime.Date"
+		YValue="e => e.TotalSpots" />
+</ApexChart>
+
+
+@code {
+	private MeetupResponse[] meetups = [];
+	private List<RsvpResponse> rsvps = [];
+
+	protected override async Task OnInitializedAsync()
+	{
+		meetups = await meetupsHttpClient.GetScheduledMeetupsAsync();
+		rsvps = await meetupsHttpClient.GetRsvpsAsync();
+	}
+}

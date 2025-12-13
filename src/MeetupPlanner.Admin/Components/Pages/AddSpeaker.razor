@@ -1,0 +1,164 @@
+﻿@page "/add-speaker"
+@using MeetupPlanner.Admin.Features.Speakers
+@using System.ComponentModel.DataAnnotations
+@inject SpeakersHttpClient SpeakersHttpClient
+@inject ILogger<AddSpeaker> Logger
+@inject IDialogService DialogService
+
+<FluentLabel Typo="Typography.H1">Add a new speaker</FluentLabel>
+
+<div style="max-width: 600px; margin-top: 20px;">
+	<FluentCard>
+
+		<EditForm Model="Model" OnValidSubmit="HandleValidSubmit" FormName="AddSpeakerForm">
+			<DataAnnotationsValidator />
+			<FluentValidationSummary />
+
+			<FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+				<FluentTextField Label="Fullname"
+								 @bind-Value="Model!.FullName"
+								 Required="true"
+								 Style="width: 100%;" />
+
+				<FluentTextField Label="Company"
+								 @bind-Value="Model!.Company"
+								 Style="width: 100%;" />
+
+				<FluentTextField Label="Email"
+								 @bind-Value="Model!.Email"
+								 Required="true"
+								 TextFieldType="TextFieldType.Email"
+								 Style="width: 100%;" />
+
+				<FluentTextField Label="LinkedIn URL"
+								 @bind-Value="Model!.LinkedInUrl"
+								 TextFieldType="TextFieldType.Url"
+								 Style="width: 100%;" />
+
+				<FluentTextField Label="Twitter URL"
+								 @bind-Value="Model!.TwitterUrl"
+								 TextFieldType="TextFieldType.Url"
+								 Style="width: 100%;" />
+
+				<FluentTextField Label="GitHub URL"
+								 @bind-Value="Model!.GitHubUrl"
+								 TextFieldType="TextFieldType.Url"
+								 Style="width: 100%;" />
+
+				<FluentTextField Label="Blog URL"
+								 @bind-Value="Model!.BlogUrl"
+								 TextFieldType="TextFieldType.Url"
+								 Style="width: 100%;" />
+
+				
+				<FluentTextField Label="Thumbnail URL"
+								 @bind-Value="Model!.ThumbnailUrl"
+								 TextFieldType="TextFieldType.Url"
+								 Style="width: 100%;" />								 				
+
+				<FluentTextArea Label="Bio"
+								@bind-Value="Model!.Bio"
+								Rows="5"
+								Style="width: 100%;" />
+
+				<FluentCheckbox Label="Set as Primary Biography"
+								@bind-Value="Model!.IsPrimaryBiography" />
+
+				<FluentButton Type="ButtonType.Submit"
+							  Appearance="Appearance.Accent"
+							  Disabled="@isSubmitting">
+					@if (isSubmitting)
+					{
+						<text>Adding Speaker...</text>
+					}
+					else
+					{
+						<text>Add Speaker</text>
+					}
+				</FluentButton>
+			</FluentStack>
+		</EditForm>
+	</FluentCard>
+</div>
+
+@code {
+	[SupplyParameterFromForm]
+	private SpeakerEditFormModel? Model { get; set; }
+
+	private bool isSubmitting = false;
+
+	protected override void OnInitialized() => Model ??= new SpeakerEditFormModel();
+
+	private async Task HandleValidSubmit()
+	{
+		if (Model == null || isSubmitting)
+		{
+			return;
+		}
+
+		isSubmitting = true;
+		StateHasChanged();
+
+		try
+		{
+			var speaker = new SpeakerRequest
+			{
+				FullName = Model.FullName,
+				Email = Model.Email,
+				Company = Model.Company,
+				LinkedInUrl = Model.LinkedInUrl,
+				TwitterUrl = Model.TwitterUrl,
+				GitHubUrl = Model.GitHubUrl,
+				BlogUrl = Model.BlogUrl,
+				ThumbnailUrl = Model.ThumbnailUrl,
+				Bio = Model.Bio,
+				IsPrimaryBiography = Model!.IsPrimaryBiography
+			};
+
+			var speakerId = await SpeakersHttpClient.AddSpeakerAsync(speaker);
+			Logger.LogInformation("Added new speaker with ID {SpeakerId}", speakerId);
+
+			// Show success message
+			var dialog = await DialogService.ShowSuccessAsync($"Speaker '{Model.FullName}' was successfully added.");
+			await dialog.Result;
+
+			// Reset the form
+			Model = new SpeakerEditFormModel();
+		}
+		catch (Exception ex)
+		{
+			Logger.LogError(ex, "Failed to add speaker");
+
+			// Show error message
+			await DialogService.ShowErrorAsync($"Failed to add speaker '{Model.FullName}'. Please try again.");
+		}
+		finally
+		{
+			isSubmitting = false;
+			StateHasChanged();
+		}
+	}
+
+	record SpeakerEditFormModel
+	{
+		[Required]
+		public string FullName { get; set; } = string.Empty;
+		[Required]
+		[EmailAddress]
+		public string Email { get; set; } = string.Empty;
+		public string? Company { get; set; } = string.Empty;
+		[Url]
+		public string? GitHubUrl { get; set; } = string.Empty;
+		[Url]
+		public string? TwitterUrl { get; set; } = string.Empty;
+		[Url]
+		public string? LinkedInUrl { get; set; } = string.Empty;
+		[Url]
+		public string? BlogUrl { get; set; } = string.Empty;
+		[Url]
+		public string? ThumbnailUrl { get; set; } = string.Empty;
+
+		public string? Bio { get; set; }
+		public bool IsPrimaryBiography { get; set; } = true;
+	}
+}

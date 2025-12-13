@@ -1,7 +1,6 @@
 ﻿using Infinity.Toolkit;
 using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.Handlers;
-using MeetupPlanner.Features.Common;
 using MeetupPlanner.Infrastructure;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;

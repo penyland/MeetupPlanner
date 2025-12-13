@@ -1,8 +1,7 @@
 ﻿using Infinity.Toolkit;
 using Infinity.Toolkit.Handlers;
-using Microsoft.EntityFrameworkCore;
-using MeetupPlanner.Features.Common;
 using MeetupPlanner.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeetupPlanner.Features.Meetups.Queries;
 
@@ -39,11 +38,11 @@ public static class GetMeetup
                         m.RsvpWaitlistCount ?? 0,
                         m.AttendanceCount ?? 0),
                     new LocationResponse
-                        {
-                            Name = m.Location.Name,
-                            LocationId = m.Location.LocationId,
-                            IsActive = m.Location.IsActive
-                        },
+                    {
+                        Name = m.Location.Name,
+                        LocationId = m.Location.LocationId,
+                        IsActive = m.Location.IsActive
+                    },
                         m.ScheduleSlots
                             .Where(slot => slot.Presentation != null)
                             .Select(slot => slot.Presentation)
