@@ -4,7 +4,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var db = builder.AddConnectionString("MeetupPlanner");
 
-var api = builder.AddProject<Projects.MeetupPlanner_Api>("meetupplanner-api" )
+var api = builder.AddProject<Projects.MeetupPlanner_Api>("api" )
     .WaitFor(db)
     .WithReference(db);
 
@@ -13,6 +13,9 @@ var adminApp = builder.AddProject<Projects.MeetupPlanner_Admin>("meetupplanner-a
 
 var web = builder.AddViteApp("web", "../Web")
     .WaitFor(api)
+    .WithReference(api);
+
+var adminWeb = builder.AddViteApp("admin", "../MeetupPlanner.AdminReact")
     .WithReference(api);
 
 builder.AddMcpInspector("mcp-inspector")
