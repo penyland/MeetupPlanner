@@ -57,7 +57,7 @@ export interface AddPresentationResponse {
 
 export interface SpeakerResponse {
   speakerId: string;
-  name: string;
+  fullName: string;
   company: string;
   email: string;
   twitterUrl: string;
