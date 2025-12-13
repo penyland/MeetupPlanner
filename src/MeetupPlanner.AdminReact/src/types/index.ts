@@ -26,11 +26,33 @@ export interface LocationResponse {
   zipCode: string;
 }
 
+export interface LocationRequest {
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
+
+export interface AddLocationResponse {
+  locationId: string;
+}
+
 export interface PresentationResponse {
   presentationId: string;
   title: string;
+  abstract: string;
+  speakers: SpeakerResponse[];
+}
+
+export interface PresentationRequest {
+  title: string;
   description: string;
-  speaker: SpeakerResponse;
+  speakerId: string;
+}
+
+export interface AddPresentationResponse {
+  presentationId: string;
 }
 
 export interface SpeakerResponse {

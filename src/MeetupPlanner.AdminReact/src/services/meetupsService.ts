@@ -21,4 +21,8 @@ export class MeetupsService {
     const response = await apiClient.get<RsvpResponse[]>('/api/meetupplanner/meetups/rsvps');
     return response.data;
   }
+
+  static async deleteMeetup(meetupId: string): Promise<void> {
+    await apiClient.delete(`/api/meetupplanner/meetups/${meetupId}`);
+  }
 }

@@ -1,11 +1,13 @@
 import { Outlet } from 'react-router-dom';
-import Navigation from './Navigation';
+import Sidebar from './Sidebar';
+import TopBar from './TopBar';
 
 export default function Layout() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navigation />
-      <main>
+      <Sidebar />
+      <TopBar />
+      <main className="ml-64 mt-16 p-6">
         <Outlet />
       </main>
     </div>

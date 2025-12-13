@@ -9,7 +9,7 @@ public static class MeetupHttpClientExtensions
     {
         services.AddHttpClient<MeetupsHttpClient>(client =>
         {
-            client.BaseAddress = new Uri("https+http://meetupplanner-api");
+            client.BaseAddress = new Uri("https+http://api");
         });
         return services;
     }
