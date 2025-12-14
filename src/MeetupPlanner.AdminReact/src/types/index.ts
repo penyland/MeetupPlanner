@@ -55,6 +55,19 @@ export interface AddPresentationResponse {
   presentationId: string;
 }
 
+export interface Biography {
+  biographyId: string;
+  content: string;
+  isPrimary: boolean;
+  createdAt: string;
+}
+
+export interface BiographyResponse {
+  speakerBiographyId: string;
+  biography: string;
+  isPrimary: boolean;
+}
+
 export interface SpeakerResponse {
   speakerId: string;
   fullName: string;
@@ -66,6 +79,7 @@ export interface SpeakerResponse {
   blogUrl: string;
   thumbnailUrl: string;
   bio: string;
+  biographies?: Biography[];
 }
 
 export interface RsvpResponse {

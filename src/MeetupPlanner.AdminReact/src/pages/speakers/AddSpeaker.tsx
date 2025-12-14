@@ -1,7 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SpeakersService } from '../services/speakersService';
-import type { SpeakerRequest } from '../types';
+import { SpeakersService } from '../../services/speakersService';
+import type { SpeakerRequest } from '../../types';
 
 export default function AddSpeaker() {
   const navigate = useNavigate();

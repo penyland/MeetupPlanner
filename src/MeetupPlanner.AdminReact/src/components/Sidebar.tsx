@@ -1,12 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
-import { 
-  HomeIcon, 
-  CalendarIcon, 
-  UserGroupIcon, 
+import {
+  HomeIcon,
+  CalendarIcon,
+  UserGroupIcon,
   PresentationChartBarIcon,
   MapPinIcon,
-  PlusIcon,
-  ListBulletIcon,
   ChevronDownIcon,
   ChevronRightIcon
 } from '@heroicons/react/24/outline';
@@ -24,34 +22,22 @@ const menuItems: MenuItem[] = [
   {
     name: 'Meetups',
     icon: CalendarIcon,
-    children: [
-      { name: 'List', path: '/meetups', icon: ListBulletIcon },
-      { name: 'Add', path: '/meetups/add', icon: PlusIcon },
-    ],
+    path: '/meetups',
   },
   {
     name: 'Speakers',
     icon: UserGroupIcon,
-    children: [
-      { name: 'List', path: '/speakers', icon: ListBulletIcon },
-      { name: 'Add', path: '/speakers/add', icon: PlusIcon },
-    ],
+    path: '/speakers'
   },
   {
     name: 'Presentations',
     icon: PresentationChartBarIcon,
-    children: [
-      { name: 'List', path: '/presentations', icon: ListBulletIcon },
-      { name: 'Add', path: '/presentations/add', icon: PlusIcon },
-    ],
+    path: '/presentations',
   },
   {
     name: 'Locations',
     icon: MapPinIcon,
-    children: [
-      { name: 'List', path: '/locations', icon: ListBulletIcon },
-      { name: 'Add', path: '/locations/add', icon: PlusIcon },
-    ],
+    path: '/locations',
   },
 ];
 
@@ -90,9 +76,8 @@ export default function Sidebar() {
               {item.path ? (
                 <Link
                   to={item.path}
-                  className={`flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors ${
-                    isActive(item.path) ? 'bg-gray-800 text-blue-400' : ''
-                  }`}
+                  className={`flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors ${isActive(item.path) ? 'bg-gray-800 text-blue-400' : ''
+                    }`}
                 >
                   <item.icon className="w-5 h-5 mr-3" />
                   {item.name}
@@ -119,9 +104,8 @@ export default function Sidebar() {
                         <li key={child.name}>
                           <Link
                             to={child.path!}
-                            className={`flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors text-sm ${
-                              isActive(child.path) ? 'bg-gray-800 text-blue-400' : ''
-                            }`}
+                            className={`flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors text-sm ${isActive(child.path) ? 'bg-gray-800 text-blue-400' : ''
+                              }`}
                           >
                             <child.icon className="w-4 h-4 mr-2" />
                             {child.name}

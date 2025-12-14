@@ -46,10 +46,34 @@ export default function Home() {
 
   return (
     <div>
-      <h2 className="text-3xl font-bold mb-6">Dashboard</h2>
-      
+      <h2 className="text-3xl font-bold mb-6">Overview</h2>
+
+      <div className='grid lg:grid-cols-4 sm:grid-cols-2 gap-6 mb-8'>
+
+        <div className='bg-white rounded-lg shadow p-6 text-center'>
+          <h3 className="text-lg font-bold mb-4">Meetups</h3>
+          <p className="text-3xl font-semibold text-gray-900">{meetups.length}</p>
+        </div>
+
+        <div className='bg-white rounded-lg shadow p-6 text-center'>
+          <h3 className="text-xl font-bold mb-4">Speakers</h3>
+          <p className="text-3xl font-semibold text-gray-900">42</p>
+        </div>
+
+        <div className='bg-white rounded-lg shadow p-6 text-center'>
+          <h3 className="text-xl font-bold mb-4">Visitors</h3>
+          <p className="text-3xl font-semibold text-gray-900">142</p>
+        </div>
+
+        <div className='bg-white rounded-lg shadow p-6 text-center'>
+          <h3 className="text-xl font-bold mb-4">Presentations</h3>
+          <p className="text-3xl font-semibold text-gray-900">12</p>
+        </div>
+
+      </div>
+
       <div className="mb-8">
-        <h3 className="text-xl font-semibold mb-4">Scheduled Meetups</h3>
+        <h3 className="text-2xl font-semibold mb-4">Upcoming Meetups</h3>
         <div className="space-y-3">
           {meetups.map((meetup) => (
             <Link
@@ -65,9 +89,9 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-2xl font-bold mb-4">Meetup RSVPs</h3>
-        <ResponsiveContainer width="100%" height={400}>
+      <div className="bg-white rounded-lg shadow p-6 mt-12">
+        <h3 className="text-2xl font-semibold mb-4">Meetup RSVPs</h3>
+        <ResponsiveContainer width="100%" height={400} className="mt-16">
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />

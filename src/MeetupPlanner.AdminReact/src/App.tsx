@@ -5,7 +5,7 @@ import MeetupsList from './pages/meetups/MeetupsList';
 import AddMeetup from './pages/meetups/AddMeetup';
 import EditMeetup from './pages/meetups/EditMeetup';
 import SpeakersList from './pages/speakers/SpeakersList';
-import AddSpeaker from './pages/AddSpeaker';
+import AddSpeaker from './pages/speakers/AddSpeaker';
 import EditSpeaker from './pages/speakers/EditSpeaker';
 import PresentationsList from './pages/presentations/PresentationsList';
 import AddPresentation from './pages/presentations/AddPresentation';
