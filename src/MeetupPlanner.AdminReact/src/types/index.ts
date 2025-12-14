@@ -64,6 +64,7 @@ export interface Biography {
 
 export interface BiographyResponse {
   speakerBiographyId: string;
+  title?: string;
   biography: string;
   isPrimary: boolean;
 }
