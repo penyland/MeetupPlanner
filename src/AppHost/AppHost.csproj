@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.0.0">
+<Project Sdk="Aspire.AppHost.Sdk/13.1.0">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -10,13 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.0.0" />
-    <PackageReference Include="Aspire.Hosting.Azure.AppConfiguration" Version="13.0.0" />
-    <PackageReference Include="Aspire.Hosting.Azure.ApplicationInsights" Version="13.0.0" />
-    <PackageReference Include="Aspire.Hosting.Azure.KeyVault" Version="13.0.0" />
-    <PackageReference Include="Aspire.Hosting.Javascript" Version="13.0.0" />
-    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.0.0" />
-    <PackageReference Include="Aspire.Hosting.Yarp" Version="13.0.0" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.1.0" />
+    <PackageReference Include="Aspire.Hosting.Azure.AppConfiguration" Version="13.1.0" />
+    <PackageReference Include="Aspire.Hosting.Azure.ApplicationInsights" Version="13.1.0" />
+    <PackageReference Include="Aspire.Hosting.Azure.KeyVault" Version="13.1.0" />
+    <PackageReference Include="Aspire.Hosting.Javascript" Version="13.1.0" />
+    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.1.0" />
+    <PackageReference Include="Aspire.Hosting.Yarp" Version="13.1.0" />
   </ItemGroup>
 
   <ItemGroup Label="CommunityToolkit">
