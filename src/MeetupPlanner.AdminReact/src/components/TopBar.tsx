@@ -11,9 +11,9 @@ export default function TopBar() {
   };
 
   return (
-    <div className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 fixed top-0 right-0 left-64 z-10">
+    <div className="h-16 flex items-center justify-between px-6 fixed top-0 right-0 left-64 z-10">
       {/* Search Box */}
-      <div className="flex-1 max-w-2xl mx-auto">
+      <div className="flex-1 max-w-2xl mx-auto bg-white">
         <div className="relative">
           <MagnifyingGlassIcon className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input

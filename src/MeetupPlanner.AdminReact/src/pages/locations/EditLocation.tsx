@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { LocationsService } from '../../services/locationsService';
-import type { LocationResponse } from '../../types';
+import type { LocationDetailedResponse } from '../../types';
 
 export default function EditLocation() {
   const { locationId } = useParams<{ locationId: string }>();
   const navigate = useNavigate();
-  const [location, setLocation] = useState<LocationResponse | null>(null);
+  const [location, setLocation] = useState<LocationDetailedResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -64,11 +64,17 @@ export default function EditLocation() {
           </div>
 
           <div>
+            <h3 className="font-semibold text-gray-700">Description</h3>
+            <p className="text-gray-900">{location.description}</p>
+          </div>
+
+          <div>
             <h3 className="font-semibold text-gray-700">Address</h3>
-            <p className="text-gray-900">{location.address}</p>
+            <p className="text-gray-900">{location.street}</p>
             <p className="text-gray-900">
-              {location.city}, {location.state} {location.zipCode}
+              {location.postalCode} {location.city}
             </p>
+            <p className="text-gray-900">{location.country}</p>
           </div>
         </div>
 

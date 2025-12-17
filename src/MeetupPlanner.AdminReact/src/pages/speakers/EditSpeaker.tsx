@@ -5,7 +5,7 @@ import { SpeakersService } from '../../services/speakersService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa6";
 import { faGlobe } from '@fortawesome/free-solid-svg-icons';
-import type { SpeakerResponse, BiographyResponse } from '../../types';
+import type { SpeakerResponse, BiographyResponse, PresentationResponse } from '../../types';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import SpeakerCard from '../../components/SpeakerCard';
 
@@ -15,6 +15,7 @@ export default function EditSpeaker() {
   const [speaker, setSpeaker] = useState<SpeakerResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [biographies, setBiographies] = useState<BiographyResponse[]>([]);
+  const [presentations, setPresentations] = useState<PresentationResponse[]>([]);
   const [newBio, setNewBio] = useState('');
   const [newBioTitle, setNewBioTitle] = useState('');
   const [showAddBio, setShowAddBio] = useState(false);
@@ -31,6 +32,12 @@ export default function EditSpeaker() {
         if (biographiesData && biographiesData.length > 0) {
           setBiographies(biographiesData);
         }
+
+        const presentationsData = await SpeakersService.getSpeakerPresentations(speakerId);
+        if (presentationsData && presentationsData.length > 0) {
+          setPresentations(presentationsData);
+        }
+
       } catch (error) {
         console.error('Failed to fetch speaker:', error);
       } finally {
@@ -108,7 +115,7 @@ export default function EditSpeaker() {
 
       <div>
         <div className="flex justify-between items-center mb-6">
-          <div>Breadcrumb / Edit Speaker</div>
+          <div>Speakers / Edit Speaker</div>
           <div className="flex gap-3">
             <Link
               to="/speakers/add"
@@ -315,7 +322,7 @@ export default function EditSpeaker() {
                   <div className="space-y-6">
                     <div>
                       <label htmlFor="linkedInUrl" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
-                        <FaLinkedin/>
+                        <FaLinkedin />
                         LinkedIn URL
                       </label>
                       <input
@@ -506,8 +513,22 @@ export default function EditSpeaker() {
 
             <div className='col-span-2'>
               <div className="bg-white rounded-lg shadow p-6 w-full">
-                <div className="flex items-start space-x-6 mb-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold">Presentations</h2>
+                </div>
 
+                <div className="space-y-4">
+                  {presentations.map((presentation) => (
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">{presentation.title}</h3>
+                      <p className="text-gray-900 whitespace-pre-wrap mt-2">{presentation.abstract}</p>
+                    </div>
+                  ))}
+                  {presentations.length === 0 && (
+                    <p className="text-center text-gray-500 py-8">
+                      No presentations available for this speaker.
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

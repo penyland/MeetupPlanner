@@ -1,5 +1,5 @@
 import { apiClient } from './apiClient';
-import type { SpeakerResponse, SpeakerRequest, AddSpeakerResponse, BiographyResponse } from '../types';
+import type { SpeakerResponse, SpeakerRequest, AddSpeakerResponse, BiographyResponse, PresentationResponse } from '../types';
 
 export class SpeakersService {
   static async getAllSpeakers(): Promise<SpeakerResponse[]> {
@@ -27,6 +27,11 @@ export class SpeakersService {
 
   static async getSpeakerBiographies(speakerId: string): Promise<BiographyResponse[]> {
     const response = await apiClient.get<BiographyResponse[]>(`/api/meetupplanner/speakers/${speakerId}/biographies`);
+    return response.data;
+  }
+
+  static async getSpeakerPresentations(speakerId: string): Promise<PresentationResponse[]> {
+    const response = await apiClient.get<PresentationResponse[]>(`/api/meetupplanner/speakers/${speakerId}/presentations`);
     return response.data;
   }
 }

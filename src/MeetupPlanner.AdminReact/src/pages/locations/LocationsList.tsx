@@ -57,10 +57,6 @@ export default function LocationsList() {
               className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
             >
               <h3 className="text-lg font-semibold text-gray-900 mb-2">{location.name}</h3>
-              <p className="text-sm text-gray-600">{location.address}</p>
-              <p className="text-sm text-gray-600">
-                {location.city}, {location.state} {location.zipCode}
-              </p>
             </Link>
           ))}
         </div>
@@ -72,7 +68,7 @@ export default function LocationsList() {
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City/State/Zip</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -83,8 +79,8 @@ export default function LocationsList() {
                         {location.name}
                       </Link>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{location.address}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{location.city}, {location.state} {location.zipCode}</td>
+                    {/* <td className="px-6 py-4 text-sm text-gray-500">{location.street}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{location.city}, {location.postalCode} {location.country}</td> */}
                   </tr>
                 ))}
               </tbody>

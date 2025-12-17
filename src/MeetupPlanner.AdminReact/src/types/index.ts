@@ -20,10 +20,16 @@ export interface Rsvp {
 export interface LocationResponse {
   locationId: string;
   name: string;
-  address: string;
+  maxCapacity?: number;
+  isActive: boolean;
+}
+
+export interface LocationDetailedResponse extends LocationResponse {
+  street: string;
   city: string;
-  state: string;
-  zipCode: string;
+  postalCode: string;
+  country: string;
+  description: string;
 }
 
 export interface LocationRequest {
