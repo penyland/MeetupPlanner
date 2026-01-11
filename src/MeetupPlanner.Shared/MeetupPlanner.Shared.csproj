@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.1" />
-    <PackageReference Include="Infinity.Toolkit" Version="1.3.0" />
+    <PackageReference Include="Infinity.Toolkit" Version="1.4.0" />
     <PackageReference Include="Infinity.Toolkit.AspNetCore" Version="1.2.0" />
   </ItemGroup>
 

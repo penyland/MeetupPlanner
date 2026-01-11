@@ -22,7 +22,7 @@ internal class PresentationsModule : WebFeatureModule
     public override void MapEndpoints(WebApplication app)
     {
         var group = app.MapGroup("/meetupplanner")
-            .WithTags("Meetup Planner");
+            .WithTags("Presentations");
 
 
         group.MapGetRequestHandlerWithResult<GetPresentations.Response, IReadOnlyList<PresentationResponse>>("/presentations", map => map.Presentations);

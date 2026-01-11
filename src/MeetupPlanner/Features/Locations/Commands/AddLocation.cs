@@ -82,14 +82,13 @@ public static class AddLocation
 
             RuleFor(x => x.Location.City)
                 .NotEmpty().WithMessage("City is required.")
-                .MinimumLength(4)
+                .MinimumLength(2)
                 .MaximumLength(100)
-                .WithMessage("City must be between 4 and 100 characters.");
+                .WithMessage("City must be between 2 and 100 characters.");
 
             RuleFor(x => x.Location.PostalCode)
                 .NotEmpty().WithMessage("Postal code is required.")
-                .Matches(@"^\d{3} \d{2}$").WithMessage("Postal code must be in the format '123 45'.")
-                .MaximumLength(6).WithMessage("Postal code cannot exceed 6 characters.");
+                .MaximumLength(6).WithMessage("Postal code cannot exceed 5 characters.");
 
             RuleFor(x => x.Location.Country)
                 .NotEmpty().WithMessage("Country is required.")
@@ -97,6 +96,9 @@ public static class AddLocation
 
             RuleFor(x => x.Location.MaxCapacity)
                 .GreaterThan(0).WithMessage("Max capacity must be greater than zero.");
+
+            RuleFor(x => x.Location.Description)
+                .MaximumLength(2048).WithMessage("Description cannot exceed 2048 characters.");
         }
     }
 
@@ -136,8 +138,8 @@ public static class AddLocation
             return response;
         })
         .Produces<Guid>(StatusCodes.Status201Created)
-        .ProducesProblem(StatusCodes.Status400BadRequest)
-        .RequireAuthorization();
+        .ProducesProblem(StatusCodes.Status400BadRequest);
+        //.RequireAuthorization();
 
         return builder;
     }

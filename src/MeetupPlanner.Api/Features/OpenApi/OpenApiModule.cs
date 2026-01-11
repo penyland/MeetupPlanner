@@ -18,7 +18,7 @@ public record OpenApiOptions
 
     public string Scopes { get; init; }
 
-    public string[]? ScopesArray => Scopes.Split(" ");
+    public string[]? ScopesArray => Scopes.Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
     public IDictionary<string, string> ScopesDictionary => ScopesArray?.ToDictionary(x => x, x => x) ?? [];
 

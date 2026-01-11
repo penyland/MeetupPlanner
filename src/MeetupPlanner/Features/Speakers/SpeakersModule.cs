@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using static MeetupPlanner.Features.Speakers.Commands.AddSpeaker;
 using static MeetupPlanner.Features.Speakers.Commands.AddSpeakerBiography;
 
 namespace MeetupPlanner.Features.Speakers;
@@ -35,6 +34,10 @@ internal class SpeakersModule : WebFeatureModule
         builder.Services.AddRequestHandler<AddSpeaker.Command, Result<AddSpeaker.Response>, AddSpeaker.Handler>()
             .Decorate<ValidatorHandler<AddSpeaker.Command, AddSpeaker.Response>>();
 
+        builder.Services.AddScoped<IValidator<UpdateSpeaker.Command>, UpdateSpeaker.UpdateSpeakerValidator>();
+        builder.Services.AddRequestHandler<UpdateSpeaker.Command, Result<UpdateSpeaker.Response>, UpdateSpeaker.Handler>()
+            .Decorate<ValidatorHandler<UpdateSpeaker.Command, UpdateSpeaker.Response>>();
+
         builder.Services.AddScoped<IValidator<AddSpeakerBiography.Command>, AddSpeakerBiographyValidator>();
         builder.Services.AddRequestHandler<AddSpeakerBiography.Command, Result<AddSpeakerBiography.Response>, AddSpeakerBiography.Handler>()
             .Decorate<ValidatorHandler<AddSpeakerBiography.Command, AddSpeakerBiography.Response>>();
@@ -43,7 +46,7 @@ internal class SpeakersModule : WebFeatureModule
     public override void MapEndpoints(WebApplication app)
     {
         var group = app.MapGroup("/meetupplanner")
-            .WithTags("Meetup Planner");
+            .WithTags("Speakers");
 
         group.MapGetRequestHandlerWithResult<GetSpeakers.Response, IReadOnlyList<SpeakerResponse>>("/speakers", map => map.Speakers);
         group.MapGetRequestHandlerWithResult<GetSpeaker.Query, GetSpeaker.Response, SpeakerDetailedResponse>("/speakers/{speakerId}", map => map.Speaker);
@@ -63,6 +66,21 @@ internal class SpeakersModule : WebFeatureModule
                 _ => TypedResults.BadRequest("An error occurred while processing the request.")
             };
 
+            return response;
+        })
+        .Accepts<SpeakerRequest>("application/json");
+
+        group.MapPut("/speakers/{speakerId}", async (Guid speakerId, SpeakerRequest request, [FromServices] IRequestHandler<UpdateSpeaker.Command, Result<UpdateSpeaker.Response>> handler) =>
+        {
+            var context = HandlerContextExtensions.Create(new UpdateSpeaker.Command(speakerId, request));
+            var result = await handler.HandleAsync(context);
+            IResult response = result switch
+            {
+                ErrorResult<UpdateSpeaker.Response> validationFailure => TypedResults.BadRequest(validationFailure.Errors),
+                //NotFoundFailure notFoundFailure => TypedResults.NotFound(notFoundFailure.Message),
+                SuccessResult<UpdateSpeaker.Response> success => TypedResults.Ok(success.Value),
+                _ => TypedResults.BadRequest("An error occurred while processing the request.")
+            };
             return response;
         })
         .Accepts<SpeakerRequest>("application/json");

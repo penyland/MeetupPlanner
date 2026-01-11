@@ -14,6 +14,7 @@ import LocationsList from './pages/locations/LocationsList';
 import AddLocation from './pages/locations/AddLocation';
 import EditLocation from './pages/locations/EditLocation';
 import NotFound from './pages/NotFound';
+import User from './pages/User';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           
           <Route path="*" element={<NotFound />} />
         </Route>
+        <Route path="user" element={<User />} />
       </Routes>
     </BrowserRouter>
   );

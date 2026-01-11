@@ -8,10 +8,14 @@ export default function AddLocation() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<LocationRequest>({
     name: '',
-    address: '',
+    street: '',
     city: '',
-    state: '',
-    zipCode: '',
+    postalCode: '',
+    country: '',
+    description: '',
+    link: '',
+    maxCapacity: 45,
+    isActive: true,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,6 +36,11 @@ export default function AddLocation() {
       setIsSubmitting(false);
     }
   };
+
+  function handleTextAreaChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  }
 
   return (
     <div>
@@ -55,14 +64,14 @@ export default function AddLocation() {
           </div>
 
           <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-              Address <span className="text-red-500">*</span>
+            <label htmlFor="street" className="block text-sm font-medium text-gray-700 mb-1">
+              Street <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              id="address"
-              name="address"
-              value={formData.address}
+              id="street"
+              name="street"
+              value={formData.street}
               onChange={handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -86,33 +95,64 @@ export default function AddLocation() {
             </div>
 
             <div>
-              <label htmlFor="state" className="block text-sm font-medium text-gray-700 mb-1">
-                State <span className="text-red-500">*</span>
+              <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-1">
+                Postal Code <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                id="state"
-                name="state"
-                value={formData.state}
+                id="postalCode"
+                name="postalCode"
+                value={formData.postalCode}
                 onChange={handleChange}
                 required
-                maxLength={2}
+                maxLength={6}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
 
           <div>
-            <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">
-              ZIP Code <span className="text-red-500">*</span>
+            <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">
+              Country <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              id="zipCode"
-              name="zipCode"
-              value={formData.zipCode}
+              id="country"
+              name="country"
+              value={formData.country}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="link" className="block text-sm font-medium text-gray-700 mb-1">
+              Link
+            </label>
+            <input
+              type="text"
+              id="link"
+              name="link"
+              value={formData.link}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+              Description <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleTextAreaChange}
+              required
+              maxLength={2048}
+              aria-multiline="true"
+              rows={4}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>

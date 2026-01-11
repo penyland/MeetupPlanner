@@ -31,7 +31,7 @@ public class MeetupsModule : WebFeatureModule
 
     public override void MapEndpoints(WebApplication app)
     {
-        var group = app.MapGroup("/meetupplanner").WithTags("Meetup Planner");
+        var group = app.MapGroup("/meetupplanner").WithTags("Meetups");
 
         group.MapPostMeetup("/meetups");
 

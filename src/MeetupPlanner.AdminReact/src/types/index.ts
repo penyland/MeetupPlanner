@@ -30,14 +30,19 @@ export interface LocationDetailedResponse extends LocationResponse {
   postalCode: string;
   country: string;
   description: string;
+  link: string;  
 }
 
 export interface LocationRequest {
   name: string;
-  address: string;
+  street: string;
   city: string;
-  state: string;
-  zipCode: string;
+  postalCode: string;
+  country: string;
+  description: string;
+  link: string;
+  maxCapacity?: number;
+  isActive: boolean;
 }
 
 export interface AddLocationResponse {
@@ -107,8 +112,14 @@ export interface SpeakerRequest {
   linkedInUrl?: string;
   blogUrl?: string;
   thumbnailUrl?: string;
-  bio?: string;
-  isPrimaryBiography?: boolean;
+  // bio?: string;
+  // isPrimaryBiography?: boolean;
+}
+
+export interface BiographyRequest {
+  title?: string;
+  biography: string;
+  isPrimary: boolean;
 }
 
 export interface AddSpeakerResponse {

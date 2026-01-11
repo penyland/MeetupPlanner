@@ -15,6 +15,7 @@
     <PackageReference Include="Aspire.Hosting.Azure.ApplicationInsights" Version="13.1.0" />
     <PackageReference Include="Aspire.Hosting.Azure.KeyVault" Version="13.1.0" />
     <PackageReference Include="Aspire.Hosting.Javascript" Version="13.1.0" />
+    <PackageReference Include="Aspire.Hosting.Keycloak" Version="13.1.0-preview.1.25616.3" />
     <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.1.0" />
     <PackageReference Include="Aspire.Hosting.Yarp" Version="13.1.0" />
   </ItemGroup>
@@ -27,6 +28,7 @@
     <ProjectReference Include="..\MeetupPlanner.Admin\MeetupPlanner.Admin.csproj" />
     <ProjectReference Include="..\MeetupPlanner.Api\MeetupPlanner.Api.csproj" />
     <ProjectReference Include="..\MeetupPlanner.Proxy\MeetupPlanner.Proxy.csproj" />
+    <ProjectReference Include="..\MeetupPlanner.Bff\MeetupPlanner.Bff.csproj" />
   </ItemGroup>
 
 </Project>
