@@ -9,6 +9,10 @@
   </Folder>
   <Folder Name="/src/Web/">
     <Project Path="src/MeetupPlanner.Admin/MeetupPlanner.Admin.csproj" />
+    <Project Path="src/MeetupPlanner.AdminReact/MeetupPlanner.AdminReact.esproj">
+      <Build />
+      <Deploy />
+    </Project>
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/MeetupPlanner.Api.IntegrationTests/MeetupPlanner.Api.IntegrationTests.csproj" />
