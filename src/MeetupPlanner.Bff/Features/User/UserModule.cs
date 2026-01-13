@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Security.Claims;
 
 namespace MeetupPlanner.Bff.Features.User;
@@ -88,6 +87,7 @@ public class UserModule : WebFeatureModule
             {
                 IsAuthenticated = context.User.Identity?.IsAuthenticated ?? false,
                 Name = context.User.Identity?.Name,
+                AuthenticationType = context.User.Identity?.AuthenticationType,
             });
 
         }).RequireAuthorization();

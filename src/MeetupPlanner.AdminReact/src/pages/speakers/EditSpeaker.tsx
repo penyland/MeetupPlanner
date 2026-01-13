@@ -30,6 +30,21 @@ export default function EditSpeaker() {
     blogUrl: '',
     thumbnailUrl: ''
   });
+  const [originalPersonalDetails, setOriginalPersonalDetails] = useState<SpeakerRequest | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSaveToast, setShowSaveToast] = useState(false);
+
+  const shallowEqual = (a: SpeakerRequest, b: SpeakerRequest) =>
+    a.fullName === b.fullName &&
+    a.company === b.company &&
+    a.email === b.email &&
+    a.twitterUrl === b.twitterUrl &&
+    a.gitHubUrl === b.gitHubUrl &&
+    a.linkedInUrl === b.linkedInUrl &&
+    a.blogUrl === b.blogUrl &&
+    a.thumbnailUrl === b.thumbnailUrl;
+
+  const isDirty = originalPersonalDetails ? !shallowEqual(originalPersonalDetails, personalDetailsFormData) : false;
 
   useEffect(() => {
     const fetchSpeaker = async () => {
@@ -39,6 +54,16 @@ export default function EditSpeaker() {
         const data = await SpeakersService.getSpeakerById(speakerId);
         setSpeaker(data);
         setPersonalDetailsFormData(data);
+        setOriginalPersonalDetails({
+          fullName: data.fullName ?? '',
+          company: data.company ?? '',
+          email: data.email ?? '',
+          twitterUrl: data.twitterUrl ?? '',
+          gitHubUrl: data.gitHubUrl ?? '',
+          linkedInUrl: data.linkedInUrl ?? '',
+          blogUrl: data.blogUrl ?? '',
+          thumbnailUrl: data.thumbnailUrl ?? ''
+        });
 
         const biographiesData = await SpeakersService.getSpeakerBiographies(speakerId);
         if (biographiesData && biographiesData.length > 0) {
@@ -132,12 +157,18 @@ export default function EditSpeaker() {
 
   const onSubmitSpeakerUpdate = async (e: FormEvent) => {
     e.preventDefault();
-
+    if (!isDirty || isSubmitting) return;
+    setIsSubmitting(true);
     try {
       await SpeakersService.updateSpeaker(speakerId!, personalDetailsFormData);
+      setOriginalPersonalDetails(personalDetailsFormData);
+      setShowSaveToast(true);
+      setTimeout(() => setShowSaveToast(false), 5000);
       navigate('/speakers/' + speakerId);
     } catch (error) {
       console.error('Failed to update speaker:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -295,8 +326,12 @@ export default function EditSpeaker() {
                 </div>
 
                 <div className="flex">
-                  <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                    Save Changes
+                  <button
+                    type="submit"
+                    disabled={!isDirty || isSubmitting}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:hover:bg-blue-600"
+                  >
+                    {isSubmitting ? 'Saving...' : 'Save Changes'}
                   </button>
                 </div>
               </form>
@@ -418,8 +453,7 @@ export default function EditSpeaker() {
               <div className="space-y-4">
                 {presentations.map((presentation) => (
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{presentation.title}</h3>
-                    <p className="text-gray-900 whitespace-pre-wrap mt-2">{presentation.abstract}</p>
+                    <p className="text-md text-gray-900">{presentation.title}</p>
                   </div>
                 ))}
                 {presentations.length === 0 && (
@@ -433,6 +467,19 @@ export default function EditSpeaker() {
           </div>
         </div>
       </div>
+
+      {showSaveToast && (
+        <div className="fixed bottom-6 right-6 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-in slide-in-from-right">
+          <span>✓ Form saved successfully</span>
+          <button
+            onClick={() => setShowSaveToast(false)}
+            className="text-white hover:text-gray-200 font-bold text-lg"
+            aria-label="Dismiss notification"
+          >
+            ×
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -37,6 +37,9 @@ public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbCont
             .Property(m => m.UpdatedUtc)
             .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
+        modelBuilder.Entity<Speaker>()
+            .ToTable(tb => tb.HasTrigger("TR_Speaker_Delete"));
+
         // SpeakerBio
         modelBuilder.Entity<SpeakerBio>()
             .HasKey(b => b.SpeakerBioId);

@@ -16,26 +16,25 @@ public static class UpdateSpeaker
         public async Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
         {
             // Find existing speaker by ID
-            var existingSpeaker = await dbContext.Speakers
+            var speaker = await dbContext.Speakers
                 .FirstOrDefaultAsync(s => s.SpeakerId == context.Request.SpeakerId, cancellationToken);
-            if (existingSpeaker == null)
+
+            if (speaker == null)
             {
                 return Result.Failure<Response>($"Speaker with ID '{context.Request.SpeakerId}' not found.");
             }
 
-            var speaker = new Infrastructure.Models.Speaker
-            {
-                SpeakerId = context.Request.SpeakerId,
-                FullName = context.Request.Speaker.FullName,
-                Company = context.Request.Speaker.Company,
-                Email = context.Request.Speaker.Email,
-                TwitterUrl = context.Request.Speaker.TwitterUrl,
-                GitHubUrl = context.Request.Speaker.GitHubUrl,
-                LinkedInUrl = context.Request.Speaker.LinkedInUrl,
-                BlogUrl = context.Request.Speaker.BlogUrl,
-                ThumbnailUrl = context.Request.Speaker.ThumbnailUrl
-            };
-            dbContext.Speakers.Update(speaker);
+            // Update properties directly on the tracked entity
+            speaker.FullName = context.Request.Speaker.FullName;
+            speaker.Company = context.Request.Speaker.Company;
+            speaker.Email = context.Request.Speaker.Email;
+            speaker.TwitterUrl = context.Request.Speaker.TwitterUrl;
+            speaker.GitHubUrl = context.Request.Speaker.GitHubUrl;
+            speaker.LinkedInUrl = context.Request.Speaker.LinkedInUrl;
+            speaker.BlogUrl = context.Request.Speaker.BlogUrl;
+            speaker.ThumbnailUrl = context.Request.Speaker.ThumbnailUrl;
+            // EF Core will automatically set UpdatedUtc and UpdatedBy if configured
+
             await dbContext.SaveChangesAsync(cancellationToken);
             return new Response(speaker.SpeakerId);
         }

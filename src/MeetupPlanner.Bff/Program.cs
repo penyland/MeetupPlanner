@@ -12,7 +12,7 @@ builder.AddServiceDefaults();
 
 builder.AddFeatureModules();
 
-builder.Services.AddHttpContextAccessor();
+//builder.Services.AddHttpContextAccessor();
 //builder.Services.AddAntiforgery(options =>
 //{
 //    options.HeaderName = "X-CSRF";
@@ -22,7 +22,7 @@ builder.Services.AddHttpContextAccessor();
 //    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 //});
 
-JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+//JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 builder.Services
     .AddAuthentication(options =>
@@ -42,7 +42,7 @@ builder.Services
         options =>
         {
             options.ClientId = "meetupplanner-gateway";
-            options.ClientSecret = "iy2HYOqLA5R5rAlTbJGUq2Qc7p4xJk1G";
+            options.ClientSecret = builder.Configuration["OpenIDConnectSettings:ClientSecret"];
             options.ResponseType = OpenIdConnectResponseType.Code;
             options.SaveTokens = true;
             options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -71,6 +71,7 @@ builder.Services
             options.Scope.Add("offline_access");
             //options.Scope.Add("meetupplanner-api.all");
         });
+
 //.AddCookie(options =>
 //{
 //    options.LoginPath = "/bff/login";
@@ -97,10 +98,6 @@ builder.Services
 //    ConfigureOpenIdConnect(options, builder.Configuration, authProvider);
 //});
 
-//builder.Services.AddAuthorization(options =>
-//{
-//    options.FallbackPolicy = options.DefaultPolicy;
-//});
 builder.Services.AddAuthorization();
 
 var routes = new List<RouteConfig>
@@ -159,7 +156,7 @@ builder.Services.AddReverseProxy()
     })
     .AddServiceDiscoveryDestinationResolver();
 
-builder.Services.AddHttpClient("token-client");
+//builder.Services.AddHttpClient("token-client");
 
 var app = builder.Build();
 
@@ -201,56 +198,52 @@ app.UseAuthorization();
 //});
 
 app.MapFeatureModules();
+app.MapReverseProxy();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapReverseProxy();
-}
-else
+if (!app.Environment.IsDevelopment())
 {
     app.UseDefaultFiles();
     app.UseStaticFiles();
-    app.MapReverseProxy();
     app.MapFallbackToFile("index.html");
 }
 
 app.Run();
 
-static void ConfigureOpenIdConnect(OpenIdConnectOptions options, IConfiguration configuration, string provider)
-{
-    var section = configuration.GetSection($"Authentication:{provider}");
-    section.Bind(options);
+//static void ConfigureOpenIdConnect(OpenIdConnectOptions options, IConfiguration configuration, string provider)
+//{
+//    var section = configuration.GetSection($"Authentication:{provider}");
+//    section.Bind(options);
 
-    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.SaveTokens = true;
-    options.ResponseType = OpenIdConnectResponseType.Code;
-    options.UsePkce = true;
-    options.GetClaimsFromUserInfoEndpoint = true;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        NameClaimType = "name",
-        RoleClaimType = "roles",
-        ValidateAudience = true,
-    };
+//    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//    options.SaveTokens = true;
+//    options.ResponseType = OpenIdConnectResponseType.Code;
+//    options.UsePkce = true;
+//    options.GetClaimsFromUserInfoEndpoint = true;
+//    options.TokenValidationParameters = new TokenValidationParameters
+//    {
+//        NameClaimType = "name",
+//        RoleClaimType = "roles",
+//        ValidateAudience = true,
+//    };
 
-    var scopes = section.GetSection("Scopes").Get<string[]>() ?? Array.Empty<string>();
-    options.Scope.Clear();
-    foreach (var scope in scopes)
-    {
-        options.Scope.Add(scope);
-    }
+//    var scopes = section.GetSection("Scopes").Get<string[]>() ?? Array.Empty<string>();
+//    options.Scope.Clear();
+//    foreach (var scope in scopes)
+//    {
+//        options.Scope.Add(scope);
+//    }
 
-    var requireHttps = section.GetValue<bool?>("RequireHttpsMetadata");
-    if (requireHttps.HasValue)
-    {
-        options.RequireHttpsMetadata = requireHttps.Value;
-    }
-}
+//    var requireHttps = section.GetValue<bool?>("RequireHttpsMetadata");
+//    if (requireHttps.HasValue)
+//    {
+//        options.RequireHttpsMetadata = requireHttps.Value;
+//    }
+//}
 
-static string NormalizeUri(Uri uri)
-{
-    var text = uri.ToString().TrimEnd('/');
-    return text + "/";
-}
+//static string NormalizeUri(Uri uri)
+//{
+//    var text = uri.ToString().TrimEnd('/');
+//    return text + "/";
+//}
 
 
