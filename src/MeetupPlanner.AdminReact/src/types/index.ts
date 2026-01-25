@@ -112,8 +112,14 @@ export interface SpeakerRequest {
   linkedInUrl?: string;
   blogUrl?: string;
   thumbnailUrl?: string;
-  bio?: string;
-  isPrimaryBiography?: boolean;
+  // bio?: string;
+  // isPrimaryBiography?: boolean;
+}
+
+export interface BiographyRequest {
+  title?: string;
+  biography: string;
+  isPrimary: boolean;
 }
 
 export interface AddSpeakerResponse {

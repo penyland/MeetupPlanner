@@ -6,49 +6,43 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MeetupPlanner.Features.Speakers.Commands;
 
-public static class AddSpeaker
+public static class UpdateSpeaker
 {
-    public sealed record Command(SpeakerRequest Speaker);
+    public sealed record Command(Guid SpeakerId, SpeakerRequest Speaker);
     public sealed record Response(Guid SpeakerId);
 
     internal sealed class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Command, Result<Response>>
     {
         public async Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
         {
-            // Check for existing speaker with the same email
-            // if a speaker with the same email exists, return a validation error
-            if (!string.IsNullOrEmpty(context.Request.Speaker.Email))
+            // Find existing speaker by ID
+            var speaker = await dbContext.Speakers
+                .FirstOrDefaultAsync(s => s.SpeakerId == context.Request.SpeakerId, cancellationToken);
+
+            if (speaker == null)
             {
-                var existingSpeaker = await dbContext.Speakers
-                    .FirstOrDefaultAsync(s => s.Email == context.Request.Speaker.Email, cancellationToken);
-                if (existingSpeaker != null)
-                {
-                    return Result.Failure<Response>($"A speaker with the email '{context.Request.Speaker.Email}' already exists.");
-                }
+                return Result.Failure<Response>($"Speaker with ID '{context.Request.SpeakerId}' not found.");
             }
 
-            var speaker = new Infrastructure.Models.Speaker
-            {
-                SpeakerId = Guid.NewGuid(),
-                FullName = context.Request.Speaker.FullName,
-                Company = context.Request.Speaker.Company,
-                Email = context.Request.Speaker.Email,
-                TwitterUrl = context.Request.Speaker.TwitterUrl,
-                GitHubUrl = context.Request.Speaker.GitHubUrl,
-                LinkedInUrl = context.Request.Speaker.LinkedInUrl,
-                BlogUrl = context.Request.Speaker.BlogUrl,
-                ThumbnailUrl = context.Request.Speaker.ThumbnailUrl
-            };
+            // Update properties directly on the tracked entity
+            speaker.FullName = context.Request.Speaker.FullName;
+            speaker.Company = context.Request.Speaker.Company;
+            speaker.Email = context.Request.Speaker.Email;
+            speaker.TwitterUrl = context.Request.Speaker.TwitterUrl;
+            speaker.GitHubUrl = context.Request.Speaker.GitHubUrl;
+            speaker.LinkedInUrl = context.Request.Speaker.LinkedInUrl;
+            speaker.BlogUrl = context.Request.Speaker.BlogUrl;
+            speaker.ThumbnailUrl = context.Request.Speaker.ThumbnailUrl;
+            // EF Core will automatically set UpdatedUtc and UpdatedBy if configured
 
-            dbContext.Speakers.Add(speaker);
             await dbContext.SaveChangesAsync(cancellationToken);
             return new Response(speaker.SpeakerId);
         }
     }
 
-    internal sealed class AddSpeakerValidator : AbstractValidator<Command>
+    internal sealed class UpdateSpeakerValidator : AbstractValidator<Command>
     {
-        public AddSpeakerValidator()
+        public UpdateSpeakerValidator()
         {
             RuleFor(x => x.Speaker.FullName)
                 .NotEmpty().WithMessage("FullName is required.")

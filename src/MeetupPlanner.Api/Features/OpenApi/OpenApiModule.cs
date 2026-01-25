@@ -48,6 +48,7 @@ public class OpenApiModule : IWebFeatureModule
                     return Task.CompletedTask;
                 });
 
+            options.AddDocumentTransformer<BearerSecuritySchemeDefinitionDocumentTransformer>();
             options.AddDocumentTransformer<OAuth2SecuritySchemeDefinitionDocumentTransformer>();
             options.AddDocumentTransformer<AddServersDocumentTransformer>();
             options.AddOperationTransformer<SecuritySchemeOperationTransformer>();

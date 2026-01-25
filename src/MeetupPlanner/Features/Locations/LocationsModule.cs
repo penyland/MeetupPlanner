@@ -33,7 +33,7 @@ public class LocationsModule : WebFeatureModule
     public override void MapEndpoints(WebApplication app)
     {
         var group = app.MapGroup("/meetupplanner")
-            .WithTags("Meetup Planner");
+            .WithTags("Locations");
 
         group.MapGetLocations("/locations");
         group.MapGetLocation("/locations/{locationId}");

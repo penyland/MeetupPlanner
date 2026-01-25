@@ -16,9 +16,32 @@ if (builder.Environment.IsDevelopment())
 // Add services to the container.
 builder.AddFeatureModules();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration, "AzureAd");
+//builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration, "AzureAd");
+builder.Services.AddAuthentication()
+        .AddKeycloakJwtBearer("keycloak", realm: "meetupplanner", options =>
+        {
+            options.Authority = "https+http://keycloak/realms/meetupplanner";
+            options.Audience = "meetupplanner-api";
+            options.RequireHttpsMetadata = false;
 
-builder.Services.AddAuthorization();
+            options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            {
+                ValidIssuers =
+                [
+                    "http://keycloak/realms/meetupplanner",
+                    "https://keycloak/realms/meetupplanner"
+                ]
+            };
+        });
+
+//.AddJwtBearer(options =>
+//{
+//    options.Authority = "https://keycloak-apphost.dev.localhost:49190/realms/meetupplanner";
+//    options.Audience = "meetupplanner-api";
+//    options.RequireHttpsMetadata = false;
+//});
+
+builder.Services.AddAuthorizationBuilder();
 
 builder.Services.AddProblemDetails(options =>
     options.CustomizeProblemDetails = ctx =>

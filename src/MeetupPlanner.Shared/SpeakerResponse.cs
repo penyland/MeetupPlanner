@@ -21,3 +21,15 @@ public record SpeakerDetailedResponse
     public string? ThumbnailUrl { get; init; }
     public string? Bio { get; init; }
 }
+
+public record SpeakerRequest
+{
+    public string FullName { get; set; }
+    public string? Company { get; set; }
+    public string? Email { get; set; }
+    public string? TwitterUrl { get; set; }
+    public string? GitHubUrl { get; set; }
+    public string? LinkedInUrl { get; set; }
+    public string? BlogUrl { get; set; }
+    public string? ThumbnailUrl { get; set; }
+}

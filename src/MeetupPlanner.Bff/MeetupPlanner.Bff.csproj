@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>MeetupPlanner.Bff</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.1.0-preview.1.25616.3" />
+    <PackageReference Include="Infinity.Toolkit.FeatureModules" Version="1.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.2.0" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="4.3.0" />
+    <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MeetupPlanner.ServiceDefaults\MeetupPlanner.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="wwwroot\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.102" />
+  </ItemGroup>
+
+</Project>

@@ -3,7 +3,7 @@ import type { SpeakerResponse, SpeakerRequest, AddSpeakerResponse, BiographyResp
 
 export class SpeakersService {
   static async getAllSpeakers(): Promise<SpeakerResponse[]> {
-    const response = await apiClient.get<SpeakerResponse[]>('/api/meetupplanner/speakers');
+    const response = await apiClient.get<SpeakerResponse[]>('/speakers');
     return response.data;
   }
 
@@ -33,5 +33,10 @@ export class SpeakersService {
   static async getSpeakerPresentations(speakerId: string): Promise<PresentationResponse[]> {
     const response = await apiClient.get<PresentationResponse[]>(`/api/meetupplanner/speakers/${speakerId}/presentations`);
     return response.data;
+  }
+
+  static async addBiography(speakerId: string, biography: { title?: string; biography: string; isPrimary: boolean; }): Promise<string> {
+    const response = await apiClient.post<{ speakerBiographyId: string }>(`/api/meetupplanner/speakers/${speakerId}/biographies`, biography);
+    return response.data.speakerBiographyId;
   }
 }
