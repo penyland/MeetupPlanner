@@ -11,7 +11,8 @@ var openIDConnectSettingsClientSecret = builder.AddParameter("OpenIDConnectSetti
 var keycloak = builder.AddKeycloak("keycloak", port:8080, adminUsername: keycloakdUsername, adminPassword: keycloakPassword)
     .WithDataVolume("meetupplanner-datavolume")
     .WithOtlpExporter()
-    .WithLifetime(ContainerLifetime.Persistent);
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithRealmImport("../../config/keycloak");
 
 keycloakdUsername.WithParentRelationship(keycloak);
 keycloakPassword.WithParentRelationship(keycloak);
