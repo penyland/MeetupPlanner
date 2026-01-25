@@ -5,6 +5,7 @@ interface UserInfo {
   name: string;
   email: string;
   roles: string[];
+  claims: Record<string, unknown>;
 }
 
 interface SessionInfo {
@@ -97,6 +98,37 @@ function User() {
             <p><strong>Name:</strong> {userInfo.name}</p>
             <p><strong>Email:</strong> {userInfo.email}</p>
             <p><strong>Roles:</strong> {userInfo.roles.join(', ')}</p>
+            
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold mb-2">Claims</h3>
+              <table className="min-w-full border-collapse border border-gray-300">
+                <thead>
+                  <tr className="bg-gray-200">
+                    <th className="border border-gray-300 px-4 py-2 text-left">Claim</th>
+                    <th className="border border-gray-300 px-4 py-2 text-left">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Array.isArray(userInfo.claims) 
+                    ? userInfo.claims.map((claim: any, index: number) => (
+                        <tr key={index} className="hover:bg-gray-100">
+                          <td className="border border-gray-300 px-4 py-2 font-medium">{claim.type}</td>
+                          <td className="border border-gray-300 px-4 py-2">{claim.value}</td>
+                        </tr>
+                      ))
+                    : Object.entries(userInfo.claims).map(([key, value]) => (
+                        <tr key={key} className="hover:bg-gray-100">
+                          <td className="border border-gray-300 px-4 py-2 font-medium">{key}</td>
+                          <td className="border border-gray-300 px-4 py-2">
+                            {typeof value === 'string' ? value : JSON.stringify(value)}
+                          </td>
+                        </tr>
+                      ))
+                  }
+                </tbody>
+              </table>
+            </div>
+
           </div>
         )}
 

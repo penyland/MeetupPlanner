@@ -8,7 +8,7 @@ var keycloakdUsername = builder.AddParameter("username");
 var keycloakPassword = builder.AddParameter("password", secret: true);
 var openIDConnectSettingsClientSecret = builder.AddParameter("OpenIDConnectSettingsClientSecret", secret: true);
 
-var keycloak = builder.AddKeycloak("keycloak", adminUsername: keycloakdUsername, adminPassword: keycloakPassword)
+var keycloak = builder.AddKeycloak("keycloak", port:8080, adminUsername: keycloakdUsername, adminPassword: keycloakPassword)
     .WithDataVolume("meetupplanner-datavolume")
     .WithOtlpExporter()
     .WithLifetime(ContainerLifetime.Persistent);
