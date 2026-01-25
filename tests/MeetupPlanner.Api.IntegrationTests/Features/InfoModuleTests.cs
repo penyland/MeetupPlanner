@@ -1,40 +1,37 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-using Shouldly;
+﻿using Shouldly;
 using static MeetupPlanner.Api.Features.Info.InfoEndpoints;
 
 namespace MeetupPlanner.Api.IntegrationTests.Features;
 
-public class InfoModuleTests(IntegrationTestClassFixture factory) : IClassFixture<IntegrationTestClassFixture>
+public class InfoModuleTests : IntegrationTestsBase
 {
-    private readonly WebApplicationFactory<Program> factory = factory;
-
-    [Fact]
+    [Test]
     public async Task GetVersion_ReturnsSuccessStatusCode()
     {
         // Arrange
-        var client = factory.CreateClient();
+        var client = Factory.CreateClient();
         // Act
         var response = await client.GetAsync("/info/version", CancellationToken.None);
         // Assert
         response.EnsureSuccessStatusCode();
     }
 
-    [Fact]
+    [Test]
     public async Task GetVersion_ReturnsExpectedMediaType()
     {
         // Arrange
-        var client = factory.CreateClient();
+        var client = Factory.CreateClient();
         // Act
         var response = await client.GetAsync("/info/version", CancellationToken.None);
         // Assert
         response.Content.Headers.ContentType?.MediaType.ShouldBe("application/json");
     }
 
-    [Fact]
+    [Test]
     public async Task GetInfo_ReturnsExpectedResponse()
     {
         // Arrange
-        var client = factory.CreateClient();
+        var client = Factory.CreateClient();
 
         // Act
         var response = await client.GetFromJsonAsync<Info>("/info/version", CancellationToken.None);
