@@ -43,6 +43,8 @@ var bff = builder.AddProject<Projects.MeetupPlanner_Bff>("bff")
     //.WithEnvironment("Frontend__DevServer", () => adminWeb.GetEndpoint("http")!.Url)
     .WithExternalHttpEndpoints();
 
+adminWeb.WithReference(bff);
+
 //api.WithEnvironment("Cors__AllowedOrigins", () => bff.GetEndpoint("http")!.Url.TrimEnd('/'));
 //api.WithEnvironment("KeyCloak__Authority", () => keycloak.GetEndpoint("http")!.Url.TrimEnd('/') + "/realms/meetupplanner");
 //api.WithEnvironment("KeyCloak__ClientId", "admin-bff");

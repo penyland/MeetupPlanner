@@ -15,6 +15,11 @@ export default defineConfig({
         changeOrigin: true,
         //secure: false,
         rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/speakers': {
+        target: process.env.BFF_HTTPS || process.env.BFF_HTTP,
+        changeOrigin: true
+        //secure: false,
       }
     }
   }
