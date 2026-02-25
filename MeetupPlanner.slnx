@@ -8,13 +8,6 @@
     <Project Path="src/MeetupPlanner.Shared/MeetupPlanner.Shared.csproj" Id="fccc1244-a2f7-4ea0-bb03-970078c0b649" />
     <Project Path="src/MeetupPlanner/MeetupPlanner.csproj" Id="0e023452-e2b7-4ce4-ae2b-6689bfe58958" />
   </Folder>
-  <Folder Name="/src/Web/">
-    <Project Path="src/MeetupPlanner.Admin/MeetupPlanner.Admin.csproj" />
-    <Project Path="src/MeetupPlanner.AdminReact/MeetupPlanner.AdminReact.esproj">
-      <Build />
-      <Deploy />
-    </Project>
-  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/MeetupPlanner.Api.IntegrationTests/MeetupPlanner.Api.IntegrationTests.csproj" />
     <Project Path="tests/MeetupPlanner.Api.Tests/MeetupPlanner.Api.Tests.csproj" />
