@@ -1,133 +1,194 @@
 # MeetupPlanner
 
-## Build and deploy
+MeetupPlanner is a full-stack application for organising and managing tech meetup events. It handles the full lifecycle of a meetup: scheduling events at venues, registering speakers and their presentations, building an agenda (schedule slots), and tracking RSVPs and attendance.
 
-### Building MeetupPlanner.Api container image locally
-Run the following command:
+## What it does
+
+- **Meetups** – create and manage events with title, description, start/end times, location, status (Scheduled, Published, Cancelled, Completed), capacity, and RSVP counts (yes / no / waitlist / attended).
+- **Locations** – maintain a catalogue of venues/sponsors with address and capacity. A location must exist before a meetup can be created at it.
+- **Speakers** – speaker profiles with biography, social links (LinkedIn, GitHub, Twitter/X, blog), company, and photo URL.
+- **Presentations** – talk abstracts with duration, status, and optional slides/repo links. Presentations are linked to one or more speakers.
+- **Schedule** – ordered `ScheduleSlot` entries inside each meetup, each optionally linked to a presentation.
+- **RSVP tracking** – track total spots and the breakdown of yes/no/waitlist/attendance counts per meetup.
+- **MCP endpoint** – the API exposes an [MCP](https://modelcontextprotocol.io) server at `/mcp` so AI assistants can query meetups, speakers, and locations.
+
+## Architecture
+
+The solution is a .NET 10 multi-project application orchestrated locally by **.NET Aspire** (`src/AppHost`).
+
 ```
-dotnet publish -t:PublishContainer -p:ContainerImageTags=latest --no-restore -p:ContainerRepository=meetupplanner/api -p:VersionSuffix=beta1
-```
-
-
-### Build image and push to Azure Container Registry
-To build and publish the application to Azure Container Registry and then update the container app, run the following commands:
-
-First login to the container registry:
-```
-docker login mycontainerregistry.azurecr.io
-```
-
-Enter username and password when prompted.
-
-Build the container image by running the following command:
-```
-dotnet publish .\src\MeetupPlanner.Api\MeetupPlanner.Api.csproj  -t:PublishContainer -p:ContainerImageTags='"latest"' -p:VersionSuffix=test1 -p:ContainerRegistry=mycontainerregistry.azurecr.io
-```
-
-This will create a docker image `meetupplanner/api` with the tag `latest` and push it to the Azure Container Registry `mycontainerregistry.azurecr.io`.
-Replace `mycontainerregistry.azurecr.io` with your Azure Container Registry name.
-
-# Running the application
-
-## Running the application in Azure
-To run the application in Azure, you need to create a Container App in Azure. You can do this using the Azure Portal or using the Azure CLI.
-
-## Running the application locally
-
-### Running the application using Docker
-To run the application using Docker, run the following command:
-```
-docker run -p 8080:80 meetupplanner/api:latest
-```
-
-This will run the application on port 8080.
-
-### Running the application using dotnet
-To run the application using dotnet, run the following command:
-```
-dotnet run --project .\src\MeetupPlanner.Api\MeetupPlanner.Api.csproj
+┌────────────────────────────────────────────────────────────────────┐
+│                         .NET Aspire AppHost                        │
+│                                                                    │
+│  ┌──────────────┐  ┌──────────────────┐   ┌────────────────────┐   │
+│  │  Web         │  │ MeetupPlanner.Bff│   │ MeetupPlanner.Admin│   │
+│  │ (SvelteKit)  │  │ (YARP + OIDC)    │   │ (Blazor Server)    │   │
+│  └──────┬───────┘  └────────┬─────────┘   └────────┬───────────┘   │
+│         │                   │ reverse-proxy        │ HTTP client   │
+│         │            ┌──────┴───────────────────┐  │               │
+│         └────────────►   MeetupPlanner.Api      ◄──┘               │
+│                      │   (Minimal API / MCP)    │                  │
+│                      └──────────────┬───────────┘                  │
+│                                     │ EF Core                      │
+│                              ┌──────┴───────┐                      │
+│                              │  SQL Server  │                      │
+│                              └──────────────┘                      │
+│                                                                    │
+│  ┌──────────────────────────────────────┐                          │
+│  │  AdminReact (React 19 + Vite)        │ ◄── served via BFF       │
+│  └──────────────────────────────────────┘                          │
+│                                                                    │
+│  ┌──────────────────────────────────────┐                          │
+│  │  Keycloak  (realm: meetupplanner)    │ ◄── auth for API + BFF   │
+│  └──────────────────────────────────────┘                          │
+└────────────────────────────────────────────────────────────────────┘
 ```
 
-This will run the application on port 5000.
+| Project | Role |
+|---|---|
+| `src/AppHost` | .NET Aspire orchestrator – wires up all services for local dev |
+| `src/MeetupPlanner.Api` | ASP.NET Core minimal API – primary backend; also hosts the MCP server |
+| `src/MeetupPlanner` | Core domain library – all business logic, EF Core models, feature modules |
+| `src/MeetupPlanner.Bff` | Backend-for-frontend – Keycloak OIDC cookie auth, YARP reverse proxy to API + React admin |
+| `src/MeetupPlanner.Admin` | Blazor Server admin UI (Microsoft Fluent UI + ApexCharts) |
+| `src/MeetupPlanner.AdminReact` | React 19 + Vite admin frontend (Tailwind CSS v4), served through the BFF |
+| `src/Web` | SvelteKit 5 public-facing website (Tailwind CSS v4) |
+| `src/MeetupPlanner.ServiceDefaults` | Shared .NET Aspire service defaults (telemetry, health checks) |
+| `src/MeetupPlanner.Shared` | Shared response DTOs referenced by multiple backend projects |
+| `src/MeetupPlanner.Proxy` | YARP reverse proxy (work in progress) |
+| `tests/MeetupPlanner.Api.Tests` | Unit tests (TUnit) |
+| `tests/MeetupPlanner.Api.IntegrationTests` | Integration tests (TUnit + `TestWebApplicationFactory`) |
 
-### Run the application in a container using https and a self-signed certificate
+## Running locally
 
-Generate a certificate and configure the local machine:
+### Prerequisites
+- .NET 10 SDK
+- Docker (for SQL Server and Keycloak)
+- Node.js (for SvelteKit / React frontends, managed automatically by Aspire)
 
-```bash
-dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\aspnetapp.pfx -p <CREDENTIAL_PLACEHOLDER>
-dotnet dev-certs https --trust
+### With .NET Aspire (recommended)
+
+The Aspire AppHost starts all services, including Keycloak (with realm import from `config/keycloak`) and expects an external SQL Server connection string named `MeetupPlanner`.
+
+```powershell
+dotnet run --project src/AppHost
 ```
 
-In the preceding commands, replace <CREDENTIAL_PLACEHOLDER> with a password.
+Open the Aspire dashboard at `http://localhost:15888` to see all running services and their logs.
 
-To run the application in a container using https and a self-signed certificate, run the following command:
-```
-docker run --rm -it -p 7119:8080 -e ASPNETCORE_URLS="https://+:8080;" -e ASPNETCORE_ENVIRONMENT=Development -e ASPNETCORE_HTTPS_PORT=7119 -e ASPNETCORE_Kestrel__Certificates__Default__Password="docker" -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx -v $env:USERPROFILE\.aspnet\https:/https/ -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets:ro meetupplanner/api:latest
-```
+### API only (without Aspire)
 
-Running locally with user-secrets requires mounting the user-secrets directory to the container. This is done by mounting the user-secrets directory to the container using the `-v` flag.
-It's also required to run as root to access the user-secrets directory. This is done by running the container with the `--user` flag.
-```
-docker run --rm -it -p 7119:8080 -e ASPNETCORE_URLS="https://+:8080;" -e ASPNETCORE_ENVIRONMENT=Development -e ASPNETCORE_HTTPS_PORT=7119 -e ASPNETCORE_Kestrel__Certificates__Default__Password="docker" -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx -v $env:USERPROFILE\.aspnet\https:/https/ -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets --user root meetupplanner/api:latest
-```
+Start a SQL Server instance:
 
-## Dependencies
-MeetupPlanner.Api depends on a few services to run. These services are:
-- Sql Server
-
-To run Sql Server, run the following command:
-```
+```powershell
 docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Your_password123" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest
 ```
 
-To run the standalone .NET Aspire Dashboard, run the following command:
-```
-docker run --rm -it -p 18888:18888 -p 4317:18889 -d --name aspire-dashboard -e DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS='true' mcr.microsoft.com/dotnet/aspire-dashboard:latest
+Run the API:
+
+```powershell
+dotnet run --project src/MeetupPlanner.Api
 ```
 
-# Authentication
-A few of the endpoints in MeetupPlanner.Api require authentication. To authenticate, you need to provide a valid JWT token in the `Authorization` header. The JWT token should be in the format `Bearer <token>`.
-Currently the MeetupPlanner.Api supports two issuers
-- Azure AD
-- dotnet-user-jwts
+Optionally, run the standalone Aspire Dashboard for telemetry:
 
-## Using dotnet-user-jwts
-First check if you have created a JWT token for the user previously.
-```
-dotnet user-jwts list --project .\src\MeetupPlanner.Api\MeetupPlanner.Api.csproj
+```powershell
+docker run --rm -it -p 18888:18888 -p 4317:18889 -d --name aspire-dashboard `
+  -e DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS='true' `
+  mcr.microsoft.com/dotnet/aspire-dashboard:latest
 ```
 
-If you haven't created a JWT token for the user, create a JWT token for the user by running the following command:
+### SvelteKit frontend
+
+```powershell
+cd src/Web
+npm install
+npm run dev
 ```
+
+### React admin frontend
+
+```powershell
+cd src/MeetupPlanner.AdminReact
+npm install
+npm run dev
+```
+
+## Build
+
+```powershell
+# Build entire solution
+dotnet build MeetupPlanner.slnx
+
+# Run all tests
+dotnet test MeetupPlanner.slnx
+```
+
+### Build and publish API container image
+
+```powershell
+dotnet publish -t:PublishContainer -p:ContainerImageTags=latest --no-restore `
+  -p:ContainerRepository=meetupplanner/api -p:VersionSuffix=beta1
+```
+
+### Push to Azure Container Registry
+
+```powershell
+docker login mycontainerregistry.azurecr.io
+
+dotnet publish .\src\MeetupPlanner.Api\MeetupPlanner.Api.csproj `
+  -t:PublishContainer -p:ContainerImageTags='"latest"' `
+  -p:VersionSuffix=test1 -p:ContainerRegistry=mycontainerregistry.azurecr.io
+```
+
+Replace `mycontainerregistry.azurecr.io` with your Azure Container Registry name.
+
+## Authentication
+
+The API validates Keycloak JWT bearer tokens (realm `meetupplanner`, audience `meetupplanner-api`). When running via Aspire, Keycloak is started automatically.
+
+For quick local testing without Keycloak, you can use `dotnet user-jwts`:
+
+```powershell
+# Create a token
 dotnet user-jwts create --project .\src\MeetupPlanner.Api\MeetupPlanner.Api.csproj
+
+# Use the token
+curl -i -H "Authorization: Bearer <TOKEN>" https://localhost:7119/meetupplanner/meetups
 ```
 
-This will create a JWT token for the user and print the token to the console. It will also save information about the token to the user-secrets defined for the project in secrets.json.
-The path to the user-secrets is defined in the project file. The default path is `C:\Users\<username>\AppData\Roaming\Microsoft\UserSecrets\<user-secrets-id>\secrets.json`.
-The token itself is saved in another file called `user-jwts.json` in the same directory.
+> **SDK bug workaround:** dotnet SDK ≤ 9.0.102 generates `ValidIssuer` instead of `ValidIssuers` in `appsettings.Development.json`, causing [IDX10500](https://github.com/dotnet/aspnetcore/issues/59277). Fix it manually:
+> ```json
+> "Authentication": {
+>   "Schemes": {
+>     "Bearer": {
+>       "ValidAudiences": ["http://localhost:5016", "https://localhost:7119"],
+>       "ValidIssuers": ["dotnet-user-jwts"]
+>     }
+>   }
+> }
+> ```
 
-To authenticate using the JWT token, copy the token from the console and provide it in the `Authorization` header in the format `Bearer <token>`.
-```
-curl -i -H "Authorization: Bearer <TOKEN>" https://localhost:5001/info/config
-```
+## Running the API in Docker with HTTPS
 
-There's a bug in the dotnet SDK <= 9.0.102 which generates incorrect configuration which results in [IDX10500](https://github.com/dotnet/aspnetcore/issues/59277). To work around this issue, you have to change the configuration key 
-ValidIssuer to ValidIssuers in appsettings.development.json. The configuration should look like this:
+Generate a dev certificate:
 
-```json
-  "Authentication": {
-    "DefaultScheme": "Bearer",
-    "Schemes": {
-      "Bearer": {
-        "ValidAudiences": [
-          "http://localhost:5016",
-          "https://localhost:7119"
-        ],
-        "ValidIssuers": [ "dotnet-user-jwts" ]
-      }
-    }
-  }
+```powershell
+dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\aspnetapp.pfx -p <PASSWORD>
+dotnet dev-certs https --trust
 ```
 
-For more information about the `dotnet user-jwts` command, browse to the [dotnet user-jwts documentation](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-9.0&tabs=linux)
+Run the container:
+
+```powershell
+docker run --rm -it -p 7119:8080 `
+  -e ASPNETCORE_URLS="https://+:8080;" `
+  -e ASPNETCORE_ENVIRONMENT=Development `
+  -e ASPNETCORE_HTTPS_PORT=7119 `
+  -e ASPNETCORE_Kestrel__Certificates__Default__Password="<PASSWORD>" `
+  -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx `
+  -v $env:USERPROFILE\.aspnet\https:/https/ `
+  -v $env:APPDATA\microsoft\UserSecrets\:/root/.microsoft/usersecrets `
+  --user root `
+  meetupplanner/api:latest
+```
