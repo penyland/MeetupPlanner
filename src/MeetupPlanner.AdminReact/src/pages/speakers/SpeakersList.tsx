@@ -1,15 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PlusIcon } from '@heroicons/react/24/outline';
+import { FaGithub, FaGlobe, FaLinkedin, FaTwitter } from 'react-icons/fa6';
 import { SpeakersService } from '../../services/speakersService';
 import type { SpeakerResponse } from '../../types';
 import ViewToggle from '../../components/ViewToggle';
 import ErrorBoundary from '../../components/ErrorBoundary';
+import SortIcon from '../../components/SortIcon';
+import { useSortable } from '../../hooks/useSortable';
+
+type SortField = 'name' | 'email' | 'company';
 
 export default function SpeakersList() {
   const [speakers, setSpeakers] = useState<SpeakerResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
+  const { sortField, sortDirection, handleSort } = useSortable<SortField>('name');
 
   useEffect(() => {
     const fetchSpeakers = async () => {
@@ -25,6 +31,17 @@ export default function SpeakersList() {
 
     fetchSpeakers();
   }, []);
+
+  const sortedSpeakers = useMemo(() => {
+    return [...speakers].sort((a, b) => {
+      const cmp = sortField === 'company'
+        ? (a.company ?? '').localeCompare(b.company ?? '')
+        : sortField === 'email'
+          ? (a.email ?? '').localeCompare(b.email ?? '')
+          : a.fullName.localeCompare(b.fullName);
+      return sortDirection === 'asc' ? cmp : -cmp;
+    });
+  }, [speakers, sortField, sortDirection]);
 
   if (loading) {
     return (
@@ -52,7 +69,7 @@ export default function SpeakersList() {
         </div>
         {viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {speakers.map((speaker) => (
+            {sortedSpeakers.map((speaker) => (
               <Link
                 key={speaker.speakerId}
                 to={`/speakers/${speaker.speakerId}`}
@@ -85,21 +102,104 @@ export default function SpeakersList() {
               <table className="w-full">
                 <thead className="bg-gray-50 border-b">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bio</th>
+                    <th
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none hover:text-gray-700"
+                      onClick={() => handleSort('name')}
+                    >
+                      Name<SortIcon field="name" sortField={sortField} sortDirection={sortDirection} />
+                    </th>
+                    <th
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none hover:text-gray-700"
+                      onClick={() => handleSort('email')}
+                    >
+                      Email<SortIcon field="email" sortField={sortField} sortDirection={sortDirection} />
+                    </th>
+                    <th
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none hover:text-gray-700"
+                      onClick={() => handleSort('company')}
+                    >
+                      Company<SortIcon field="company" sortField={sortField} sortDirection={sortDirection} />
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Social</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {speakers.map((speaker) => (
+                  {sortedSpeakers.map((speaker) => (
                     <tr key={speaker.speakerId} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
-                        <Link to={`/speakers/${speaker.speakerId}`} className="text-blue-600 hover:text-blue-800 font-medium">
-                          {speaker.fullName}
+                        <Link to={`/speakers/${speaker.speakerId}`} className="flex items-center gap-3 text-blue-600 hover:text-blue-800 font-medium">
+                          {speaker.thumbnailUrl ? (
+                            <img
+                              src={speaker.thumbnailUrl}
+                              alt={speaker.fullName}
+                              className="w-10 h-10 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
+                              {speaker.fullName.charAt(0)}
+                            </div>
+                          )}
+                          <span>{speaker.fullName}</span>
                         </Link>
                       </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">{speaker.email}</td>
                       <td className="px-6 py-4 text-sm text-gray-500">{speaker.company}</td>
-                      <td className="px-6 py-4 text-sm text-gray-500">{speaker.bio}</td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        <div className="flex items-center gap-3">
+                          {speaker.linkedInUrl && (
+                            <a
+                              href={speaker.linkedInUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-gray-700 hover:text-blue-600"
+                              title="LinkedIn"
+                              aria-label={`${speaker.fullName} LinkedIn`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <FaLinkedin />
+                            </a>
+                          )}
+                          {speaker.twitterUrl && (
+                            <a
+                              href={speaker.twitterUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-gray-700 hover:text-blue-400"
+                              title="Twitter"
+                              aria-label={`${speaker.fullName} Twitter`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <FaTwitter />
+                            </a>
+                          )}
+                          {speaker.gitHubUrl && (
+                            <a
+                              href={speaker.gitHubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-gray-700 hover:text-gray-900"
+                              title="GitHub"
+                              aria-label={`${speaker.fullName} GitHub`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <FaGithub />
+                            </a>
+                          )}
+                          {speaker.blogUrl && (
+                            <a
+                              href={speaker.blogUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-gray-700 hover:text-green-600"
+                              title="Blog"
+                              aria-label={`${speaker.fullName} Blog`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <FaGlobe />
+                            </a>
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

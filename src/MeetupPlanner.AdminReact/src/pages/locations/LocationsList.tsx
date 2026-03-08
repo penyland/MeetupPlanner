@@ -1,14 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { LocationsService } from '../../services/locationsService';
 import type { LocationResponse } from '../../types';
 import ViewToggle from '../../components/ViewToggle';
+import SortIcon from '../../components/SortIcon';
+import { useSortable } from '../../hooks/useSortable';
+
+type SortField = 'name';
 
 export default function LocationsList() {
   const [locations, setLocations] = useState<LocationResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
+  const { sortField, sortDirection, handleSort } = useSortable<SortField>('name');
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -24,6 +29,13 @@ export default function LocationsList() {
 
     fetchLocations();
   }, []);
+
+  const sortedLocations = useMemo(() => {
+    return [...locations].sort((a, b) => {
+      const cmp = a.name.localeCompare(b.name);
+      return sortDirection === 'asc' ? cmp : -cmp;
+    });
+  }, [locations, sortField, sortDirection]);
 
   if (loading) {
     return (
@@ -50,7 +62,7 @@ export default function LocationsList() {
       </div>
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {locations.map((location) => (
+          {sortedLocations.map((location) => (
             <Link
               key={location.locationId}
               to={`/locations/${location.locationId}`}
@@ -66,13 +78,18 @@ export default function LocationsList() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none hover:text-gray-700"
+                    onClick={() => handleSort('name')}
+                  >
+                    Name<SortIcon field="name" sortField={sortField} sortDirection={sortDirection} />
+                  </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {locations.map((location) => (
+                {sortedLocations.map((location) => (
                   <tr key={location.locationId} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <Link to={`/locations/${location.locationId}`} className="text-blue-600 hover:text-blue-800 font-medium">

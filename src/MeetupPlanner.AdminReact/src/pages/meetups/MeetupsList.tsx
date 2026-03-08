@@ -1,26 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDownIcon, ChevronUpIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import { MeetupsService } from '../../services/meetupsService';
 import type { MeetupResponse } from '../../types';
 import ViewToggle from '../../components/ViewToggle';
+import SortIcon from '../../components/SortIcon';
+import { useSortable } from '../../hooks/useSortable';
 
 type SortField = 'title' | 'date' | 'location';
-type SortDirection = 'asc' | 'desc';
-
-function SortIcon({ field, sortField, sortDirection }: { field: SortField; sortField: SortField; sortDirection: SortDirection }) {
-  if (field !== sortField) return null;
-  return sortDirection === 'asc'
-    ? <ChevronUpIcon className="inline w-3 h-3 ml-1" />
-    : <ChevronDownIcon className="inline w-3 h-3 ml-1" />;
-}
 
 export default function MeetupsList() {
   const [meetups, setMeetups] = useState<MeetupResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
-  const [sortField, setSortField] = useState<SortField>('date');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const { sortField, sortDirection, handleSort } = useSortable<SortField>('date', 'desc', { date: 'desc' });
 
   useEffect(() => {
     const fetchMeetups = async () => {
@@ -36,15 +29,6 @@ export default function MeetupsList() {
 
     fetchMeetups();
   }, []);
-
-  const handleSort = (field: SortField) => {
-    if (field === sortField) {
-      setSortDirection(d => d === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection(field === 'date' ? 'desc' : 'asc');
-    }
-  };
 
   const sortedMeetups = useMemo(() => {
     return [...meetups].sort((a, b) => {

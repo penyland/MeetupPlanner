@@ -1,14 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { PresentationsService } from '../../services/presentationsService';
 import type { PresentationResponse } from '../../types';
 import ViewToggle from '../../components/ViewToggle';
+import SortIcon from '../../components/SortIcon';
+import { useSortable } from '../../hooks/useSortable';
+
+type SortField = 'title';
 
 export default function PresentationsList() {
   const [presentations, setPresentations] = useState<PresentationResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const { sortField, sortDirection, handleSort } = useSortable<SortField>('title');
 
   useEffect(() => {
     const fetchPresentations = async () => {
@@ -24,6 +29,13 @@ export default function PresentationsList() {
 
     fetchPresentations();
   }, []);
+
+  const sortedPresentations = useMemo(() => {
+    return [...presentations].sort((a, b) => {
+      const cmp = a.title.localeCompare(b.title);
+      return sortDirection === 'asc' ? cmp : -cmp;
+    });
+  }, [presentations, sortField, sortDirection]);
 
   if (loading) {
     return (
@@ -50,7 +62,7 @@ export default function PresentationsList() {
       </div>
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-          {presentations.map((presentation) => (
+          {sortedPresentations.map((presentation) => (
             <Link
               key={presentation.presentationId}
               to={`/presentations/${presentation.presentationId}`}
@@ -85,8 +97,11 @@ export default function PresentationsList() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Title
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none hover:text-gray-700"
+                    onClick={() => handleSort('title')}
+                  >
+                    Title<SortIcon field="title" sortField={sortField} sortDirection={sortDirection} />
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Speakers
@@ -97,7 +112,7 @@ export default function PresentationsList() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {presentations.map((presentation) => (
+                {sortedPresentations.map((presentation) => (
                   <tr key={presentation.presentationId} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <Link
