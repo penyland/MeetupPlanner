@@ -131,7 +131,7 @@ public static class AddLocation
             IResult response = result switch
             {
                 ErrorResult<Response> failure => TypedResults.Problem(failure.ToProblemDetails()),
-                Success => TypedResults.Created($"/{path}/{result.Value.LocationId}", result.Value.LocationId),
+                Success => TypedResults.Created($"/{path}/{result.Value.LocationId}", result.Value),
                 _ => TypedResults.BadRequest("Failed to process request.")
             };
 
