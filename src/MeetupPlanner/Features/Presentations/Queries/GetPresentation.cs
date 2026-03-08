@@ -3,7 +3,7 @@ using Infinity.Toolkit.Handlers;
 using Microsoft.EntityFrameworkCore;
 using MeetupPlanner.Infrastructure;
 
-namespace MeetupPlanner.Features.Presentations;
+namespace MeetupPlanner.Features.Presentations.Queries;
 
 public static class GetPresentation
 {
