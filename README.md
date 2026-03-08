@@ -14,46 +14,39 @@ MeetupPlanner is a full-stack application for organising and managing tech meetu
 
 ## Architecture
 
-The solution is a .NET 10 multi-project application orchestrated locally by **.NET Aspire** (`src/AppHost`).
+The solution is a .NET 10 multi-project application orchestrated locally by **Aspire** (`src/AppHost`).
 
-```
-┌────────────────────────────────────────────────────────────────────┐
-│                         .NET Aspire AppHost                        │
-│                                                                    │
-│  ┌──────────────┐  ┌──────────────────┐   ┌────────────────────┐   │
-│  │  Web         │  │ MeetupPlanner.Bff│   │ MeetupPlanner.Admin│   │
-│  │ (SvelteKit)  │  │ (YARP + OIDC)    │   │ (Blazor Server)    │   │
-│  └──────┬───────┘  └────────┬─────────┘   └────────┬───────────┘   │
-│         │                   │ reverse-proxy        │ HTTP client   │
-│         │            ┌──────┴───────────────────┐  │               │
-│         └────────────►   MeetupPlanner.Api      ◄──┘               │
-│                      │   (Minimal API / MCP)    │                  │
-│                      └──────────────┬───────────┘                  │
-│                                     │ EF Core                      │
-│                              ┌──────┴───────┐                      │
-│                              │  SQL Server  │                      │
-│                              └──────────────┘                      │
-│                                                                    │
-│  ┌──────────────────────────────────────┐                          │
-│  │  AdminReact (React 19 + Vite)        │ ◄── served via BFF       │
-│  └──────────────────────────────────────┘                          │
-│                                                                    │
-│  ┌──────────────────────────────────────┐                          │
-│  │  Keycloak  (realm: meetupplanner)    │ ◄── auth for API + BFF   │
-│  └──────────────────────────────────────┘                          │
-└────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph Aspire["🚀 Aspire AppHost"]
+        Web["Web<br>(SvelteKit 5)"]
+        AdminReact["AdminReact<br>(React 19 + Vite)"]
+
+        subgraph BFF["MeetupPlanner.Bff (YARP + OIDC)"]
+            AdminReact
+        end
+
+        API["MeetupPlanner.Api<br>(Minimal API / MCP)"]
+        DB[("SQL Server")]
+        Keycloak["Keycloak<br>(realm: meetupplanner)"]
+    end
+
+    Web -- HTTP --> API
+    BFF -- reverse-proxy --> API
+    API -- EF Core --> DB
+    Keycloak -- JWT auth --> API
+    Keycloak -- OIDC cookie auth --> BFF
 ```
 
 | Project | Role |
 |---|---|
-| `src/AppHost` | .NET Aspire orchestrator – wires up all services for local dev |
+| `src/AppHost` | Aspire orchestrator – wires up all services for local dev |
 | `src/MeetupPlanner.Api` | ASP.NET Core minimal API – primary backend; also hosts the MCP server |
 | `src/MeetupPlanner` | Core domain library – all business logic, EF Core models, feature modules |
 | `src/MeetupPlanner.Bff` | Backend-for-frontend – Keycloak OIDC cookie auth, YARP reverse proxy to API + React admin |
-| `src/MeetupPlanner.Admin` | Blazor Server admin UI (Microsoft Fluent UI + ApexCharts) |
 | `src/MeetupPlanner.AdminReact` | React 19 + Vite admin frontend (Tailwind CSS v4), served through the BFF |
 | `src/Web` | SvelteKit 5 public-facing website (Tailwind CSS v4) |
-| `src/MeetupPlanner.ServiceDefaults` | Shared .NET Aspire service defaults (telemetry, health checks) |
+| `src/MeetupPlanner.ServiceDefaults` | Shared Aspire service defaults (telemetry, health checks) |
 | `src/MeetupPlanner.Shared` | Shared response DTOs referenced by multiple backend projects |
 | `src/MeetupPlanner.Proxy` | YARP reverse proxy (work in progress) |
 | `tests/MeetupPlanner.Api.Tests` | Unit tests (TUnit) |
@@ -66,7 +59,7 @@ The solution is a .NET 10 multi-project application orchestrated locally by **.N
 - Docker (for SQL Server and Keycloak)
 - Node.js (for SvelteKit / React frontends, managed automatically by Aspire)
 
-### With .NET Aspire (recommended)
+### With Aspire (recommended)
 
 The Aspire AppHost starts all services, including Keycloak (with realm import from `config/keycloak`) and expects an external SQL Server connection string named `MeetupPlanner`.
 
