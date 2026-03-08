@@ -15,7 +15,7 @@ namespace MeetupPlanner.Features.Meetups.Commands;
 
 public static class AddMeetup
 {
-    public sealed record Command(MeetupRequest Meetup);
+    public sealed record Command(AddMeetupRequest Meetup);
     public sealed record Response(Guid MeetupId);
 
     internal sealed class AddMeetupValidator : AbstractValidator<Command>
@@ -48,6 +48,9 @@ public static class AddMeetup
             RuleFor(x => x.Meetup.LocationName)
                 .NotEmpty().WithMessage("Location is required.")
                 .MaximumLength(300).WithMessage("Location cannot exceed 300 characters.");
+
+            RuleForEach(x => x.Meetup.PresentationIds)
+                .NotEmpty().WithMessage("PresentationId is required.");
         }
     }
 
@@ -66,9 +69,28 @@ public static class AddMeetup
                 return Result.Failure<Response>($"Location '{context.Request.Meetup.LocationName}' not found. Add location before adding a meetup.");
             }
 
+            var presentationIds = context.Request.Meetup.PresentationIds
+                .Distinct()
+                .ToList();
+
+            var presentations = presentationIds.Count == 0
+                ? []
+                : await dbContext.Presentations
+                    .AsNoTracking()
+                    .Where(p => presentationIds.Contains(p.PresentationId))
+                    .ToListAsync(cancellationToken);
+
+            if (presentations.Count != presentationIds.Count)
+            {
+                return Result.Failure<Response>(
+                    "One or more selected presentations could not be found.");
+            }
+
+            var meetupId = context.Request.Meetup.MeetupId ?? Guid.NewGuid();
+
             var meetup = new Infrastructure.Models.Meetup
             {
-                MeetupId = context.Request.Meetup.MeetupId ?? Guid.NewGuid(),
+                MeetupId = meetupId,
                 Title = context.Request.Meetup.Title,
                 Description = context.Request.Meetup.Description,
                 StartUtc = context.Request.Meetup.StartUtc,
@@ -80,6 +102,24 @@ public static class AddMeetup
                 RsvpWaitlistCount = context.Request.Meetup.RsvpWaitlistCount,
                 Status = context.Request.Meetup.Status.ToString(),
                 LocationId = location.LocationId,
+                ScheduleSlots =
+                [
+                    .. presentationIds.Select((presentationId, index) =>
+                    {
+                        var presentation = presentations.Single(p => p.PresentationId == presentationId);
+
+                        return new Infrastructure.Models.ScheduleSlot
+                        {
+                            SlotId = Guid.NewGuid(),
+                            MeetupId = meetupId,
+                            SortOrder = index,
+                            PresentationId = presentationId,
+                            Title = presentation.Title,
+                            StartUtc = null,
+                            EndUtc = null
+                        };
+                    })
+                ]
             };
 
             try
@@ -96,7 +136,7 @@ public static class AddMeetup
         }
     }
 
-    public record MeetupRequest
+    public record AddMeetupRequest
     {
         public Guid? MeetupId { get; init; } = Guid.NewGuid();
 
@@ -122,6 +162,8 @@ public static class AddMeetup
 
         public string LocationName { get; init; } = string.Empty;
 
+        public IReadOnlyList<Guid> PresentationIds { get; init; } = [];
+
     }
 
     public static void RegisterAddMeetup(this IServiceCollection services)
@@ -135,7 +177,7 @@ public static class AddMeetup
     {
         //builder.MapPostRequestHandlerWithResult<Command, Response, Guid>(path, map => map.MeetupId);
 
-        builder.MapPost(path, async (MeetupRequest request, [FromServices] IRequestHandler<Command, Result<Response>> handler) =>
+        builder.MapPost(path, async (AddMeetupRequest request, [FromServices] IRequestHandler<Command, Result<Response>> handler) =>
         {
             var context = HandlerContextExtensions.Create<Command>(new(request));
             var result = await handler.HandleAsync(context);
@@ -143,12 +185,12 @@ public static class AddMeetup
             IResult response = result switch
             {
                 ErrorResult<Response> failure => TypedResults.Problem(failure.ToProblemDetails()),
-                Success => TypedResults.Created($"/{path}/{result.Value.MeetupId}", result.Value.MeetupId),
+                Success => TypedResults.Created($"/{path}/{result.Value.MeetupId}", result.Value),
                 _ => TypedResults.BadRequest("Failed to process request.")
             };
             return response;
         })
-        .Accepts<MeetupRequest>("application/json");
+        .Accepts<AddMeetupRequest>("application/json");
 
         return builder;
     }
