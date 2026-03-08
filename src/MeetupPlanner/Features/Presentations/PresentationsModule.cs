@@ -2,6 +2,7 @@
 using Infinity.Toolkit.AspNetCore;
 using Infinity.Toolkit.FeatureModules;
 using Infinity.Toolkit.Handlers;
+using MeetupPlanner.Features.Presentations.Commands;
 using MeetupPlanner.Features.Presentations.Queries;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +16,7 @@ internal class PresentationsModule : WebFeatureModule
 
     public override void RegisterModule(IHostApplicationBuilder builder)
     {
+        builder.Services.RegisterAddPresentation();
         builder.Services.AddRequestHandler<Result<GetPresentations.Response>, GetPresentations.Handler>();
         builder.Services.AddRequestHandler<GetPresentation.Query, Result<GetPresentation.Response>, GetPresentation.Handler>();
 
@@ -26,6 +28,7 @@ internal class PresentationsModule : WebFeatureModule
             .WithTags("Presentations");
 
 
+        group.MapPostPresentation("/presentations");
         group.MapGetRequestHandlerWithResult<GetPresentations.Response, IReadOnlyList<PresentationResponse>>("/presentations", map => map.Presentations);
         group.MapGetRequestHandlerWithResult<GetPresentation.Query, GetPresentation.Response, PresentationDetailedResponse>("/presentations/{presentationId}", map => map.Presentation);
     }
