@@ -1,4 +1,4 @@
-import type { MeetupResponse, RsvpResponse } from '../types';
+import type { AddMeetupResponse, MeetupRequest, MeetupResponse, RsvpResponse } from '../types';
 import { apiClient } from './apiClient';
 
 export class MeetupsService {
@@ -20,6 +20,11 @@ export class MeetupsService {
   static async getRsvps(): Promise<RsvpResponse[]> {
     const response = await apiClient.get<RsvpResponse[]>('/api/meetupplanner/meetups/rsvps');
     return response.data;
+  }
+
+  static async addMeetup(meetup: MeetupRequest): Promise<string> {
+    const response = await apiClient.post<AddMeetupResponse>('/api/meetupplanner/meetups', meetup);
+    return response.data.meetupId;
   }
 
   static async deleteMeetup(meetupId: string): Promise<void> {

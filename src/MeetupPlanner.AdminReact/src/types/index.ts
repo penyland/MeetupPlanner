@@ -9,6 +9,21 @@ export interface MeetupResponse {
   presentations?: PresentationResponse[];
 }
 
+export interface MeetupRequest {
+  title: string;
+  description: string;
+  startUtc: string;
+  endUtc: string;
+  totalSpots: number;
+  status: 'Scheduled' | 'Published' | 'Cancelled' | 'Completed';
+  locationName: string;
+  presentationIds: string[];
+}
+
+export interface AddMeetupResponse {
+  meetupId: string;
+}
+
 export interface Rsvp {
   totalSpots: number;
   rsvpYesCount: number;
