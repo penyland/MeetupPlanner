@@ -1,14 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, ChevronUpIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { MeetupsService } from '../../services/meetupsService';
 import type { MeetupResponse } from '../../types';
 import ViewToggle from '../../components/ViewToggle';
+
+type SortField = 'title' | 'date' | 'location';
+type SortDirection = 'asc' | 'desc';
+
+function SortIcon({ field, sortField, sortDirection }: { field: SortField; sortField: SortField; sortDirection: SortDirection }) {
+  if (field !== sortField) return null;
+  return sortDirection === 'asc'
+    ? <ChevronUpIcon className="inline w-3 h-3 ml-1" />
+    : <ChevronDownIcon className="inline w-3 h-3 ml-1" />;
+}
 
 export default function MeetupsList() {
   const [meetups, setMeetups] = useState<MeetupResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [sortField, setSortField] = useState<SortField>('date');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   useEffect(() => {
     const fetchMeetups = async () => {
@@ -24,6 +36,29 @@ export default function MeetupsList() {
 
     fetchMeetups();
   }, []);
+
+  const handleSort = (field: SortField) => {
+    if (field === sortField) {
+      setSortDirection(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection(field === 'date' ? 'desc' : 'asc');
+    }
+  };
+
+  const sortedMeetups = useMemo(() => {
+    return [...meetups].sort((a, b) => {
+      let cmp = 0;
+      if (sortField === 'title') {
+        cmp = a.title.localeCompare(b.title);
+      } else if (sortField === 'date') {
+        cmp = new Date(a.startUtc).getTime() - new Date(b.startUtc).getTime();
+      } else if (sortField === 'location') {
+        cmp = a.location.name.localeCompare(b.location.name);
+      }
+      return sortDirection === 'asc' ? cmp : -cmp;
+    });
+  }, [meetups, sortField, sortDirection]);
 
   if (loading) {
     return (
@@ -55,14 +90,23 @@ export default function MeetupsList() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Title
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none hover:text-gray-700"
+                    onClick={() => handleSort('title')}
+                  >
+                    Title<SortIcon field="title" sortField={sortField} sortDirection={sortDirection} />
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Start Date
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none hover:text-gray-700"
+                    onClick={() => handleSort('date')}
+                  >
+                    Date<SortIcon field="date" sortField={sortField} sortDirection={sortDirection} />
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Location
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none hover:text-gray-700"
+                    onClick={() => handleSort('location')}
+                  >
+                    Location<SortIcon field="location" sortField={sortField} sortDirection={sortDirection} />
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     RSVPs
@@ -70,7 +114,7 @@ export default function MeetupsList() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {meetups.map((meetup) => (
+                {sortedMeetups.map((meetup) => (
                   <tr key={meetup.meetupId} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <Link
@@ -97,7 +141,7 @@ export default function MeetupsList() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {meetups.map((meetup) => (
+          {sortedMeetups.map((meetup) => (
             <Link
               key={meetup.meetupId}
               to={`/meetups/${meetup.meetupId}`}
