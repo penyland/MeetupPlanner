@@ -52,7 +52,9 @@ public static class GetMeetups
                     LocationId = m.Location.LocationId,
                     Name = m.Location.Name
                 },
-                [.. m.ScheduleSlots.Select(s => new PresentationResponse
+                [.. m.ScheduleSlots
+                    .OrderBy(s => s.SortOrder)
+                    .Select(s => new PresentationResponse
                 {
                     PresentationId = s.Presentation.PresentationId,
                     Title = s.Presentation.Title,

@@ -44,6 +44,7 @@ public static class GetMeetup
                         IsActive = m.Location.IsActive
                     },
                         m.ScheduleSlots
+                            .OrderBy(slot => slot.SortOrder)
                             .Where(slot => slot.Presentation != null)
                             .Select(slot => slot.Presentation)
                             .Select(p => new PresentationResponse

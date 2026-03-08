@@ -19,6 +19,7 @@ public static class GetMeetupPresentations
             {
                 var presentations = await dbContext.ScheduleSlots
                     .Where(s => s.MeetupId == context.Request.MeetupId && s.Presentation != null)
+                    .OrderBy(s => s.SortOrder)
                     .Include(s => s.Presentation)
                     .ThenInclude(p => p.PresentationSpeakers)
                     .ThenInclude(ps => ps.Speaker)
