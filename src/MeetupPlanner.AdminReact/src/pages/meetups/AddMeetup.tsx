@@ -128,18 +128,9 @@ export default function AddMeetup() {
           SpeakersService.getAllSpeakers()
         ]);
 
-        setLocations(loadedLocations);
+        setLocations([...loadedLocations].sort((a, b) => a.name.localeCompare(b.name)));
         setPresentations(loadedPresentations);
         setSpeakers(loadedSpeakers);
-
-        const defaultLocation = loadedLocations.find(location => location.isActive) ?? loadedLocations[0];
-        if (defaultLocation) {
-          setFormData(prev => ({
-            ...prev,
-            locationId: defaultLocation.locationId,
-            totalSpots: defaultLocation.maxCapacity ?? prev.totalSpots
-          }));
-        }
       } catch (error) {
         console.error('Failed to load meetup form data:', error);
         setErrorMessage('Failed to load locations, presentations, or speakers.');
@@ -388,6 +379,12 @@ export default function AddMeetup() {
 
   return (
     <div>
+      <div className="flex justify-between items-center mb-6">
+        <div>Events / Add Event</div>
+      </div>
+
+      <div className="flex justify-center w-full mb-8">
+        <div className="w-full max-w-7xl">
       <h1 className="text-3xl font-bold mb-6">Add Meetup</h1>
 
       {errorMessage && (
@@ -960,6 +957,8 @@ export default function AddMeetup() {
           </form>
         </Dialog>
       )}
+        </div>
+      </div>
     </div>
   );
 }
