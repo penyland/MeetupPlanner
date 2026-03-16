@@ -8,6 +8,7 @@ public record MeetupResponse(
     DateTimeOffset EndUtc,
     Rsvp Rsvp,
     LocationResponse Location,
+    string Status,
     IReadOnlyList<PresentationResponse>? Presentations = null
 );
 
