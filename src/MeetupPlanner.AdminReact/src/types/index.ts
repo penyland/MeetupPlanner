@@ -73,7 +73,7 @@ export interface PresentationResponse {
 
 export interface PresentationRequest {
   title: string;
-  description: string;
+  abstract: string;
   speakerId: string;
 }
 

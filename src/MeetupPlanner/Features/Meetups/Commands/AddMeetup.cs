@@ -31,8 +31,7 @@ public static class AddMeetup
                 .MaximumLength(1000).WithMessage("Description cannot exceed 1000 characters.");
 
             RuleFor(x => x.Meetup.StartUtc)
-                .NotEmpty().WithMessage("StartUtc is required.")
-                .Must(date => date > DateTime.UtcNow).WithMessage("StartUtc must be in the future.");
+                .NotEmpty().WithMessage("StartUtc is required.");
 
             RuleFor(x => x.Meetup.EndUtc)
                 .NotEmpty().WithMessage("EndUtc is required.")

@@ -67,6 +67,24 @@ function getStockholmDateTimeValue(hours: number, minutes: number): string {
   return `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
+function formatDateTimeLocalValue(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+}
+
+function addHoursToDateTimeLocalValue(value: string, hoursToAdd: number): string {
+  const [datePart, timePart] = value.split('T');
+  if (!datePart || !timePart) {
+    return value;
+  }
+
+  const [year, month, day] = datePart.split('-').map(Number);
+  const [hours, minutes] = timePart.split(':').map(Number);
+  const nextDate = new Date(year, month - 1, day, hours, minutes);
+  nextDate.setHours(nextDate.getHours() + hoursToAdd);
+
+  return formatDateTimeLocalValue(nextDate);
+}
+
 export default function AddMeetup() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -104,7 +122,7 @@ export default function AddMeetup() {
 
   const [presentationForm, setPresentationForm] = useState<PresentationRequest>({
     title: '',
-    description: '',
+    abstract: '',
     speakerId: ''
   });
 
@@ -129,8 +147,8 @@ export default function AddMeetup() {
         ]);
 
         setLocations([...loadedLocations].sort((a, b) => a.name.localeCompare(b.name)));
-        setPresentations(loadedPresentations);
-        setSpeakers(loadedSpeakers);
+        setPresentations([...loadedPresentations].sort((a, b) => a.title.localeCompare(b.title)));
+        setSpeakers([...loadedSpeakers].sort((a, b) => a.fullName.localeCompare(b.fullName)));
       } catch (error) {
         console.error('Failed to load meetup form data:', error);
         setErrorMessage('Failed to load locations, presentations, or speakers.');
@@ -158,7 +176,7 @@ export default function AddMeetup() {
     const { name, value } = e.target;
 
     setFormData(prev => {
-      const next = {
+      const next: MeetupFormState = {
         ...prev,
         [name]: name === 'totalSpots' ? Number(value) : value
       };
@@ -172,6 +190,26 @@ export default function AddMeetup() {
 
       return next;
     });
+  };
+
+  const handleStartUtcChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+
+    setFormData(prev => ({
+      ...prev,
+      startUtc: value,
+      endUtc: addHoursToDateTimeLocalValue(value, 3)
+    }));
+  };
+
+  const handleStartUtcInput = (e: FormEvent<HTMLInputElement>) => {
+    const { value } = e.currentTarget;
+
+    setFormData(prev => ({
+      ...prev,
+      startUtc: value,
+      endUtc: addHoursToDateTimeLocalValue(value, 3)
+    }));
   };
 
   const handleLocationFormChange = (
@@ -318,7 +356,7 @@ export default function AddMeetup() {
       const addedPresentation: PresentationResponse = {
         presentationId,
         title: presentationForm.title,
-        abstract: presentationForm.description,
+        abstract: presentationForm.abstract,
         speakers: [selectedSpeaker]
       };
 
@@ -326,7 +364,7 @@ export default function AddMeetup() {
       setAgendaItems(prev => [...prev, addedPresentation]);
       setPresentationForm({
         title: '',
-        description: '',
+        abstract: '',
         speakerId: ''
       });
       setShowPresentationDialog(false);
@@ -435,7 +473,8 @@ export default function AddMeetup() {
                 id="startUtc"
                 name="startUtc"
                 value={formData.startUtc}
-                onChange={handleMeetupChange}
+                onChange={handleStartUtcChange}
+                onInput={handleStartUtcInput}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -800,13 +839,13 @@ export default function AddMeetup() {
               </div>
             </div>
             <div>
-              <label htmlFor="presentation-description" className="mb-1 block text-sm font-medium text-gray-700">
-                Description
+              <label htmlFor="presentation-abstract" className="mb-1 block text-sm font-medium text-gray-700">
+                Abstract
               </label>
               <textarea
-                id="presentation-description"
-                name="description"
-                value={presentationForm.description}
+                id="presentation-abstract"
+                name="abstract"
+                value={presentationForm.abstract}
                 onChange={handlePresentationFormChange}
                 rows={6}
                 required

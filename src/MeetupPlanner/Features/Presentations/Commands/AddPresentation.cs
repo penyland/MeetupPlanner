@@ -6,6 +6,7 @@ using MeetupPlanner.Extensions;
 using MeetupPlanner.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,7 +61,7 @@ public static class AddPresentation
                 Title = context.Request.Presentation.Title,
                 Abstract = context.Request.Presentation.Abstract,
                 DurationMinutes = 45,
-                Status = "Accepted",
+                Status = "Scheduled",
                 PresentationSpeakers =
                 [
                     new Infrastructure.Models.PresentationSpeakerEntity
@@ -97,16 +98,8 @@ public static class AddPresentation
 
     public static RouteGroupBuilder MapPostPresentation(this RouteGroupBuilder builder, string path)
     {
-        builder.MapPost(path, async (HttpContext httpContext) =>
-        {
-            var request = await httpContext.Request.ReadFromJsonAsync<AddPresentationRequest>();
-            if (request == null)
-            {
-                return Results.BadRequest("Request body is required.");
-            }
-
-            var handler = httpContext.RequestServices
-                .GetRequiredService<IRequestHandler<Command, Result<Response>>>();
+        builder.MapPost(path, async (AddPresentationRequest request, [FromServices] IRequestHandler<Command, Result<Response>> handler) =>
+        {            
             var context = HandlerContextExtensions.Create(new Command(request));
             var result = await handler.HandleAsync(context);
 
