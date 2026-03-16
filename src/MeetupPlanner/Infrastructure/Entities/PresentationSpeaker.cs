@@ -12,3 +12,16 @@ public partial class PresentationSpeaker : Entity
 
     public virtual Speaker Speaker { get; set; }
 }
+
+public partial class PresentationSpeakerEntity
+{
+    public Guid PresentationId { get; set; }
+
+    public Guid SpeakerId { get; set; }
+
+    public bool IsPrimary { get; set; }
+
+    public virtual Presentation Presentation { get; set; }
+
+    public virtual Speaker Speaker { get; set; }
+}

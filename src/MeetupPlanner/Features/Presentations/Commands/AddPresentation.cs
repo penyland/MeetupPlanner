@@ -63,7 +63,7 @@ public static class AddPresentation
                 Status = "Accepted",
                 PresentationSpeakers =
                 [
-                    new Infrastructure.Models.PresentationSpeaker
+                    new Infrastructure.Models.PresentationSpeakerEntity
                     {
                         PresentationId = presentationId,
                         SpeakerId = speaker.SpeakerId,

@@ -13,6 +13,6 @@ public partial class Speaker : Entity
     public string? ThumbnailUrl { get; set; }
 
     public ICollection<SpeakerBio> Bios { get; set; }
-    public ICollection<PresentationSpeaker> PresentationSpeakers { get; set; }
+    public ICollection<PresentationSpeakerEntity> PresentationSpeakers { get; set; }
     public ICollection<MeetupSpeaker> MeetupSpeakers { get; set; }
 }

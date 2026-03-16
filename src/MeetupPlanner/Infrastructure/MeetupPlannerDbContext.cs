@@ -10,7 +10,7 @@ public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbCont
     public DbSet<SpeakerBio> SpeakerBios { get; set; }
     public DbSet<Location> Locations { get; set; }
     public DbSet<Presentation> Presentations { get; set; }
-    public DbSet<PresentationSpeaker> PresentationSpeakers { get; set; }
+    public DbSet<PresentationSpeakerEntity> PresentationSpeakers { get; set; }
     public DbSet<Meetup> Meetups { get; set; }
     public DbSet<MeetupSpeaker> MeetupSpeakers { get; set; }
     public DbSet<ScheduleSlot> ScheduleSlots { get; set; }
@@ -21,21 +21,21 @@ public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbCont
         modelBuilder.Entity<Speaker>()
             .HasKey(s => s.SpeakerId);
 
-        modelBuilder.Entity<Speaker>()
-            .Property(m => m.CreatedBy)
-            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Speaker>()
+        //    .Property(m => m.CreatedBy)
+        //    .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<Speaker>()
-            .Property(m => m.CreatedUtc)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Speaker>()
+        //    .Property(m => m.CreatedUtc)
+        //    .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<Speaker>()
-            .Property(m => m.UpdatedBy)
-            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Speaker>()
+        //    .Property(m => m.UpdatedBy)
+        //    .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<Speaker>()
-            .Property(m => m.UpdatedUtc)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Speaker>()
+        //    .Property(m => m.UpdatedUtc)
+        //    .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
         modelBuilder.Entity<Speaker>()
             .ToTable(tb => tb.HasTrigger("TR_Speaker_Delete"));
@@ -54,77 +54,77 @@ public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbCont
             .HasFilter("[IsPrimary] = 1")
             .IsUnique();
 
-        modelBuilder.Entity<SpeakerBio>()
-            .Property(m => m.CreatedBy)
-            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<SpeakerBio>()
+        //    .Property(m => m.CreatedBy)
+        //    .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<SpeakerBio>()
-            .Property(m => m.CreatedUtc)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<SpeakerBio>()
+        //    .Property(m => m.CreatedUtc)
+        //    .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<SpeakerBio>()
-            .Property(m => m.UpdatedBy)
-            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<SpeakerBio>()
+        //    .Property(m => m.UpdatedBy)
+        //    .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<SpeakerBio>()
-            .Property(m => m.UpdatedUtc)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<SpeakerBio>()
+        //    .Property(m => m.UpdatedUtc)
+        //    .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
         // Location
-        modelBuilder.Entity<Location>()
-            .HasKey(l => l.LocationId);
+        //modelBuilder.Entity<Location>()
+        //    .HasKey(l => l.LocationId);
 
-        modelBuilder.Entity<Location>()
-            .Property(m => m.CreatedBy)
-            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Location>()
+        //    .Property(m => m.CreatedBy)
+        //    .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<Location>()
-            .Property(m => m.CreatedUtc)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Location>()
+        //    .Property(m => m.CreatedUtc)
+        //    .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<Location>()
-            .Property(m => m.UpdatedBy)
-            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Location>()
+        //    .Property(m => m.UpdatedBy)
+        //    .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<Location>()
-            .Property(m => m.UpdatedUtc)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Location>()
+        //    .Property(m => m.UpdatedUtc)
+        //    .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
         // Presentation
         modelBuilder.Entity<Presentation>()
             .HasKey(p => p.PresentationId);
 
-        modelBuilder.Entity<Presentation>()
-            .Property(m => m.CreatedBy)
-            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Presentation>()
+        //    .Property(m => m.CreatedBy)
+        //    .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<Presentation>()
-            .Property(m => m.CreatedUtc)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Presentation>()
+        //    .Property(m => m.CreatedUtc)
+        //    .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<Presentation>()
-            .Property(m => m.UpdatedBy)
-            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Presentation>()
+        //    .Property(m => m.UpdatedBy)
+        //    .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<Presentation>()
-            .Property(m => m.UpdatedUtc)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Presentation>()
+        //    .Property(m => m.UpdatedUtc)
+        //    .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
         // PresentationSpeaker (junction)
-        modelBuilder.Entity<PresentationSpeaker>()
+        modelBuilder.Entity<PresentationSpeakerEntity>()
             .HasKey(ps => new { ps.PresentationId, ps.SpeakerId });
-        modelBuilder.Entity<PresentationSpeaker>()
+        modelBuilder.Entity<PresentationSpeakerEntity>()
             .HasOne(ps => ps.Presentation)
             .WithMany(p => p.PresentationSpeakers)
             .HasForeignKey(ps => ps.PresentationId)
             .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<PresentationSpeaker>()
+        modelBuilder.Entity<PresentationSpeakerEntity>()
             .HasOne(ps => ps.Speaker)
             .WithMany(s => s.PresentationSpeakers)
             .HasForeignKey(ps => ps.SpeakerId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<PresentationSpeaker>()
+        modelBuilder.Entity<PresentationSpeakerEntity>()
             .HasIndex(ps => new { ps.PresentationId })
             .HasFilter("[IsPrimary] = 1")
             .IsUnique();
@@ -141,21 +141,21 @@ public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbCont
         modelBuilder.Entity<Meetup>()
             .ToTable(tb => tb.UseSqlOutputClause(false));
 
-        modelBuilder.Entity<Meetup>()
-            .Property(m => m.CreatedBy)
-            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Meetup>()
+        //    .Property(m => m.CreatedBy)
+        //    .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<Meetup>()
-            .Property(m => m.CreatedUtc)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Meetup>()
+        //    .Property(m => m.CreatedUtc)
+        //    .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<Meetup>()
-            .Property(m => m.UpdatedBy)
-            .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Meetup>()
+        //    .Property(m => m.UpdatedBy)
+        //    .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
 
-        modelBuilder.Entity<Meetup>()
-            .Property(m => m.UpdatedUtc)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+        //modelBuilder.Entity<Meetup>()
+        //    .Property(m => m.UpdatedUtc)
+        //    .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
         // MeetupSpeaker (junction)
         modelBuilder.Entity<MeetupSpeaker>()

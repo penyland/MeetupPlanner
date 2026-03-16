@@ -10,6 +10,6 @@ public partial class Presentation : Entity
     public string? RepoUrl { get; set; }
     public string? SlidesUrl { get; set; }
 
-    public ICollection<PresentationSpeaker> PresentationSpeakers { get; set; }
+    public ICollection<PresentationSpeakerEntity> PresentationSpeakers { get; set; }
     public ICollection<ScheduleSlot> ScheduleSlots { get; set; }
 }
