@@ -10,7 +10,7 @@ namespace MeetupPlanner.Features.Meetups.Commands;
 
 public static class UpdateMeetupRsvps
 {
-    public sealed record Command(Guid MeetupId, RsvpRequest RsvpRequest);
+    public sealed record Command(Guid MeetupId, UpdateRsvpRequest RsvpRequest);
 
     public sealed record Response();
 
@@ -38,6 +38,7 @@ public static class UpdateMeetupRsvps
         public async Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
         {
             var meetup = await meetupPlannerDbContext.Meetups.FindAsync([context.Request.MeetupId], cancellationToken);
+            var request = context.Request.RsvpRequest;
 
             if (meetup == null)
             {
@@ -45,12 +46,11 @@ public static class UpdateMeetupRsvps
                 return Result.Failure<Response>(notFoundError);
             }
 
-
-            meetup.TotalSpots = context.Request.RsvpRequest.TotalSpots ?? meetup.TotalSpots;
-            meetup.RsvpYesCount = context.Request.RsvpRequest.RsvpYesCount ?? meetup.RsvpYesCount;
-            meetup.RsvpNoCount = context.Request.RsvpRequest.RsvpNoCount ?? meetup.RsvpNoCount;
-            meetup.RsvpWaitlistCount = context.Request.RsvpRequest.RsvpWaitlistCount ?? meetup.RsvpWaitlistCount;
-            meetup.AttendanceCount = context.Request.RsvpRequest.AttendanceCount ?? meetup.AttendanceCount;
+            meetup.TotalSpots = request.TotalSpots != meetup.TotalSpots ? request.TotalSpots : meetup.TotalSpots;
+            meetup.RsvpYesCount = request.RsvpYesCount != meetup.RsvpYesCount ? request.RsvpYesCount : meetup.RsvpYesCount;
+            meetup.RsvpNoCount = request.RsvpNoCount != meetup.RsvpNoCount ? request.RsvpNoCount : meetup.RsvpNoCount;
+            meetup.RsvpWaitlistCount = request.RsvpWaitlistCount != meetup.RsvpWaitlistCount ? request.RsvpWaitlistCount : meetup.RsvpWaitlistCount;
+            meetup.AttendanceCount = request.AttendanceCount != meetup.AttendanceCount ? request.AttendanceCount : meetup.AttendanceCount;
 
             try
             {
@@ -65,7 +65,7 @@ public static class UpdateMeetupRsvps
         }
     }
 
-    public static void RegisterUpdateMeetupRsvps(this IServiceCollection services)
+    public static void RegisterUpdateRsvps(this IServiceCollection services)
     {
         services.AddScoped<IValidator<Command>, UpdateMeetupRsvpsValidator>();
         services.AddRequestHandler<Command, Result<Response>, Handler>()

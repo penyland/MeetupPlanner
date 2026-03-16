@@ -1,6 +1,6 @@
 ﻿namespace MeetupPlanner.Shared;
 
-public sealed record RsvpRequest
+public sealed record UpdateRsvpRequest
 (
     int? TotalSpots,
     int? RsvpYesCount,

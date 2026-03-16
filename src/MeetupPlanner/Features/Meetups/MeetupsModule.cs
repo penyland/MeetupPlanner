@@ -19,7 +19,7 @@ public class MeetupsModule : WebFeatureModule
     public override void RegisterModule(IHostApplicationBuilder builder)
     {
         builder.Services.RegisterAddMeetup();
-        builder.Services.RegisterUpdateMeetupRsvps();
+        builder.Services.RegisterUpdateRsvps();
 
         builder.Services.AddRequestHandler<GetMeetups.Query, Result<GetMeetups.Response>, GetMeetups.Handler>();
         builder.Services.AddRequestHandler<GetMeetup.Query, Result<GetMeetup.Response>, GetMeetup.Handler>();
@@ -35,7 +35,7 @@ public class MeetupsModule : WebFeatureModule
 
         group.MapPostMeetup("/meetups");
 
-        group.MapPatch("/meetups/{meetupId}/rsvps", async ([FromRoute] Guid meetupId, RsvpRequest rsvpRequest, IRequestHandler<UpdateMeetupRsvps.Command, Result<UpdateMeetupRsvps.Response>> handler) =>
+        group.MapPatch("/meetups/{meetupId}/rsvps", async ([FromRoute] Guid meetupId, UpdateRsvpRequest rsvpRequest, IRequestHandler<UpdateMeetupRsvps.Command, Result<UpdateMeetupRsvps.Response>> handler) =>
         {
             var result = await handler.HandleAsync(HandlerContextExtensions.Create(new UpdateMeetupRsvps.Command(meetupId, rsvpRequest)));
             return result.Succeeded ? TypedResults.NoContent() : Results.BadRequest(result.Errors);
