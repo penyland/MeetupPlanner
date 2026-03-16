@@ -1,6 +1,8 @@
 ﻿using MeetupPlanner.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.ComponentModel;
+using static System.Net.WebRequestMethods;
 
 namespace MeetupPlanner.Infrastructure;
 
@@ -188,6 +190,12 @@ public partial class MeetupPlannerDbContext(DbContextOptions<MeetupPlannerDbCont
         modelBuilder.Entity<ScheduleSlot>()
             .HasIndex(ss => new { ss.MeetupId, ss.SortOrder })
             .IsUnique();
+
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            entityType.UseSqlOutputClause(false);
+        }
+
     }
 
     public async Task<List<LocationResponse>> GetLocationsAsync(CancellationToken cancellationToken = default)

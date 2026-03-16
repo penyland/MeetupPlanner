@@ -3,7 +3,7 @@ import type { SpeakerResponse, SpeakerRequest, AddSpeakerResponse, BiographyResp
 
 export class SpeakersService {
   static async getAllSpeakers(): Promise<SpeakerResponse[]> {
-    const response = await apiClient.get<SpeakerResponse[]>('/speakers');
+    const response = await apiClient.get<SpeakerResponse[]>('/api/meetupplanner/speakers');
     return response.data;
   }
 

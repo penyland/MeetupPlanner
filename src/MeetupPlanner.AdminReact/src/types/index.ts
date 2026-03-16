@@ -74,7 +74,7 @@ export interface PresentationResponse {
 export interface PresentationRequest {
   title: string;
   abstract: string;
-  speakerId: string;
+   speakerIds: string[];
 }
 
 export interface AddPresentationResponse {

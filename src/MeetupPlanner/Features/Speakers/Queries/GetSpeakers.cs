@@ -18,13 +18,15 @@ public static class GetSpeakers
             try
             {
                 var speakers = await dbContext.Speakers
-                    .Include(s => s.Bios)
                     .AsNoTracking()
                     .ToListAsync(cancellationToken: cancellationToken);
+
                 var response = speakers.Select(s => new SpeakerResponse
                 {
                     SpeakerId = s.SpeakerId,
                     FullName = s.FullName,
+                    Company = s.Company,
+                    Email = s.Email,
                     ThumbnailUrl = s.ThumbnailUrl
                 });
 

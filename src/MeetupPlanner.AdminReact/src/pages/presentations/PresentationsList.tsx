@@ -35,7 +35,7 @@ export default function PresentationsList() {
       const cmp = a.title.localeCompare(b.title);
       return sortDirection === 'asc' ? cmp : -cmp;
     });
-  }, [presentations, sortField, sortDirection]);
+  }, [presentations, sortDirection]);
 
   if (loading) {
     return (
@@ -80,7 +80,7 @@ export default function PresentationsList() {
                     className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 hover:bg-blue-200"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {speaker.name}
+                    {speaker.fullName}
                   </Link>
                 ))}
               </div>
@@ -130,7 +130,7 @@ export default function PresentationsList() {
                             to={`/speakers/${speaker.speakerId}`}
                             className="hover:underline"
                           >
-                            {speaker.name}
+                            {speaker.fullName}
                           </Link>
                         ))}
                       </div>
