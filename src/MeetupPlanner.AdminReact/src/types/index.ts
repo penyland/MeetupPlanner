@@ -17,7 +17,7 @@ export interface MeetupRequest {
   endUtc: string;
   status: 'Scheduled' | 'Published' | 'Cancelled' | 'Completed';
   totalSpots: number;
-  locationName: string;
+  locationId: string;
 }
 
 export interface AddMeetupResponse {

@@ -45,9 +45,8 @@ public static class UpdateMeetup
                 .NotEmpty().WithMessage("Status is required.")
                 .IsInEnum().WithMessage("Status must be a valid enum value.");
 
-            RuleFor(x => x.Meetup.LocationName)
-                .NotEmpty().WithMessage("Location is required.")
-                .MaximumLength(300).WithMessage("Location cannot exceed 300 characters.");
+            RuleFor(x => x.Meetup.LocationId)
+                .NotEmpty().WithMessage("Location is required.");
         }
     }
 
@@ -64,22 +63,13 @@ public static class UpdateMeetup
                 return Result.Failure<Response>($"Meetup with ID '{context.Request.MeetupId}' not found.");
             }
 
-            var location = await dbContext.Locations
-                .AsNoTracking()
-                .SingleOrDefaultAsync(l => l.Name == context.Request.Meetup.LocationName, cancellationToken);
-
-            if (location == null)
-            {
-                return Result.Failure<Response>($"Location '{context.Request.Meetup.LocationName}' not found. Add location before updating a meetup.");
-            }
-
             meetup.Title = context.Request.Meetup.Title;
             meetup.Description = context.Request.Meetup.Description;
             meetup.StartUtc = context.Request.Meetup.StartUtc;
             meetup.EndUtc = context.Request.Meetup.EndUtc;
             meetup.TotalSpots = context.Request.Meetup.TotalSpots;
             meetup.Status = context.Request.Meetup.Status.ToString();
-            meetup.LocationId = location.LocationId;
+            meetup.LocationId = context.Request.Meetup.LocationId;
 
             try
             {
@@ -108,7 +98,7 @@ public static class UpdateMeetup
 
         public MeetupStatus Status { get; init; } = MeetupStatus.Scheduled;
 
-        public string LocationName { get; init; } = string.Empty;
+        public Guid LocationId { get; init; } = Guid.Empty;
 
         public IReadOnlyList<Guid> PresentationIds { get; init; } = [];
     }

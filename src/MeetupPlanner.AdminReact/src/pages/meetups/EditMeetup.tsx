@@ -92,7 +92,6 @@ export default function EditMeetup() {
         setLocations([...loadedLocations].sort((a, b) => a.name.localeCompare(b.name)));
         setPresentations([...loadedPresentations].sort((a, b) => a.title.localeCompare(b.title)));
 
-        const currentLocation = loadedLocations.find(l => l.name === data.location.name);
         const statusValue = (['Scheduled', 'Cancelled', 'Completed'].includes(data.status)
           ? data.status
           : 'Scheduled') as MeetupEditFormState['status'];
@@ -102,7 +101,7 @@ export default function EditMeetup() {
           description: data.description,
           startUtc: toDateTimeLocalValue(data.startUtc),
           endUtc: toDateTimeLocalValue(data.endUtc),
-          locationId: currentLocation?.locationId ?? '',
+          locationId: data.location.locationId,
           rsvpYesCount: data.rsvp.rsvpYesCount,
           rsvpNoCount: data.rsvp.rsvpNoCount,
           rsvpWaitlistCount: data.rsvp.rsvpWaitlistCount,
@@ -222,7 +221,7 @@ export default function EditMeetup() {
         endUtc: new Date(formData.endUtc).toISOString(),
         status: formData.status,
         totalSpots: formData.totalSpots,
-        locationName: selectedLocation.name
+        locationId: selectedLocation.locationId
       };
 
       const rsvpRequest: UpdateRsvpRequest = {
@@ -244,6 +243,7 @@ export default function EditMeetup() {
           startUtc: new Date(formData.startUtc).toISOString(),
           endUtc: new Date(formData.endUtc).toISOString(),
           status: formData.status,
+          location: selectedLocation || meetup.location,
           rsvp: {
             totalSpots: formData.totalSpots,
             rsvpYesCount: formData.rsvpYesCount,
