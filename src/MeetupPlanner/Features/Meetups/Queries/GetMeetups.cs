@@ -52,6 +52,7 @@ public static class GetMeetups
                     LocationId = m.Location.LocationId,
                     Name = m.Location.Name
                 },
+                m.Status,
                 [.. m.ScheduleSlots
                     .OrderBy(s => s.SortOrder)
                     .Select(s => new PresentationResponse

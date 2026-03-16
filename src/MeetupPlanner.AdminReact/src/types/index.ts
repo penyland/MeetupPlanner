@@ -4,6 +4,7 @@ export interface MeetupResponse {
   description: string;
   startUtc: string;
   endUtc: string;
+  status: string;
   rsvp: Rsvp;
   location: LocationResponse;
   presentations?: PresentationResponse[];
@@ -14,10 +15,9 @@ export interface MeetupRequest {
   description: string;
   startUtc: string;
   endUtc: string;
-  totalSpots: number;
   status: 'Scheduled' | 'Published' | 'Cancelled' | 'Completed';
+  totalSpots: number;
   locationName: string;
-  presentationIds: string[];
 }
 
 export interface AddMeetupResponse {
@@ -116,6 +116,14 @@ export interface RsvpResponse {
   rsvpNoCount: number;
   rsvpWaitlistCount: number;
   totalSpots: number;
+}
+
+export interface UpdateRsvpRequest {
+  totalSpots: number;
+  rsvpYesCount: number;
+  rsvpNoCount: number;
+  rsvpWaitlistCount: number;
+  attendanceCount: number;
 }
 
 export interface SpeakerRequest {

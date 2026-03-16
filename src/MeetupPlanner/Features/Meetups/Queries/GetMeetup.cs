@@ -43,24 +43,25 @@ public static class GetMeetup
                         LocationId = m.Location.LocationId,
                         IsActive = m.Location.IsActive
                     },
-                        m.ScheduleSlots
-                            .OrderBy(slot => slot.SortOrder)
-                            .Where(slot => slot.Presentation != null)
-                            .Select(slot => slot.Presentation)
-                            .Select(p => new PresentationResponse
-                            {
-                                PresentationId = p.PresentationId,
-                                Title = p.Title,
-                                Abstract = p.Abstract,
-                                Speakers = p.PresentationSpeakers
-                                    .Select(ps => ps.Speaker)
-                                    .Select(s => new SpeakerResponse
-                                    {
-                                        SpeakerId = s.SpeakerId,
-                                        FullName = s.FullName,
-                                        ThumbnailUrl = s.ThumbnailUrl
-                                    }).ToList()
-                            }).ToList()))
+                    m.Status,
+                    m.ScheduleSlots
+                        .OrderBy(slot => slot.SortOrder)
+                        .Where(slot => slot.Presentation != null)
+                        .Select(slot => slot.Presentation)
+                        .Select(p => new PresentationResponse
+                        {
+                            PresentationId = p.PresentationId,
+                            Title = p.Title,
+                            Abstract = p.Abstract,
+                            Speakers = p.PresentationSpeakers
+                                .Select(ps => ps.Speaker)
+                                .Select(s => new SpeakerResponse
+                                {
+                                    SpeakerId = s.SpeakerId,
+                                    FullName = s.FullName,
+                                    ThumbnailUrl = s.ThumbnailUrl
+                                }).ToList()
+                        }).ToList()))
                     .FirstOrDefaultAsync(cancellationToken);
 
                 return meetup == null ? Result.Failure<Response>("No meetup found") : Result.Success(new Response(meetup));

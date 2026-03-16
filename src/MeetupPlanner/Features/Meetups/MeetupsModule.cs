@@ -19,7 +19,9 @@ public class MeetupsModule : WebFeatureModule
     public override void RegisterModule(IHostApplicationBuilder builder)
     {
         builder.Services.RegisterAddMeetup();
+        builder.Services.RegisterUpdateMeetup();
         builder.Services.RegisterUpdateRsvps();
+        builder.Services.RegisterUpdateMeetupAgenda();
 
         builder.Services.AddRequestHandler<GetMeetups.Query, Result<GetMeetups.Response>, GetMeetups.Handler>();
         builder.Services.AddRequestHandler<GetMeetup.Query, Result<GetMeetup.Response>, GetMeetup.Handler>();
@@ -34,10 +36,17 @@ public class MeetupsModule : WebFeatureModule
         var group = app.MapGroup("/meetupplanner").WithTags("Meetups");
 
         group.MapPostMeetup("/meetups");
+        group.MapPutMeetup("/meetups/{meetupId}");
 
         group.MapPatch("/meetups/{meetupId}/rsvps", async ([FromRoute] Guid meetupId, UpdateRsvpRequest rsvpRequest, IRequestHandler<UpdateMeetupRsvps.Command, Result<UpdateMeetupRsvps.Response>> handler) =>
         {
             var result = await handler.HandleAsync(HandlerContextExtensions.Create(new UpdateMeetupRsvps.Command(meetupId, rsvpRequest)));
+            return result.Succeeded ? TypedResults.NoContent() : Results.BadRequest(result.Errors);
+        });
+
+        group.MapPatch("/meetups/{meetupId}/agenda", async ([FromRoute] Guid meetupId, UpdateMeetupAgenda.UpdateAgendaRequest agendaRequest, IRequestHandler<UpdateMeetupAgenda.Command, Result<UpdateMeetupAgenda.Response>> handler) =>
+        {
+            var result = await handler.HandleAsync(HandlerContextExtensions.Create(new UpdateMeetupAgenda.Command(meetupId, agendaRequest)));
             return result.Succeeded ? TypedResults.NoContent() : Results.BadRequest(result.Errors);
         });
 

@@ -1,4 +1,4 @@
-import type { AddMeetupResponse, MeetupRequest, MeetupResponse, RsvpResponse } from '../types';
+import type { AddMeetupResponse, MeetupRequest, MeetupResponse, RsvpResponse, UpdateRsvpRequest } from '../types';
 import { apiClient } from './apiClient';
 
 export class MeetupsService {
@@ -29,5 +29,17 @@ export class MeetupsService {
 
   static async deleteMeetup(meetupId: string): Promise<void> {
     await apiClient.delete(`/api/meetupplanner/meetups/${meetupId}`);
+  }
+
+  static async updateMeetup(meetupId: string, meetup: MeetupRequest): Promise<void> {
+    await apiClient.put(`/api/meetupplanner/meetups/${meetupId}`, meetup);
+  }
+
+  static async updateMeetupRsvps(meetupId: string, rsvpRequest: UpdateRsvpRequest): Promise<void> {
+    await apiClient.patch(`/api/meetupplanner/meetups/${meetupId}/rsvps`, rsvpRequest);
+  }
+
+  static async updateMeetupAgenda(meetupId: string, presentationIds: string[]): Promise<void> {
+    await apiClient.patch(`/api/meetupplanner/meetups/${meetupId}/agenda`, { presentationIds });
   }
 }
