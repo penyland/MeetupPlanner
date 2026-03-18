@@ -6,7 +6,7 @@ var sqlServer = builder.AddSqlServer("sqlserver", port: 1433)
     .WithImage("mssql/server", "latest")
     .WithLifetime(ContainerLifetime.Persistent);
 
-var database = sqlServer.AddDatabase("db", "MeetupPlanner");
+var database = sqlServer.AddDatabase("MeetupPlannerDb", "MeetupPlanner");
 
 // Add a database connection string
 var dbConnectionString = builder.AddConnectionString("MeetupPlanner");
@@ -31,11 +31,7 @@ var api = builder.AddProject<Projects.MeetupPlanner_Api>("api")
     .WithReference(dbConnectionString)
     .WithReference(keycloak)
     .WithReference(database)
-    .WaitFor(database)
-    .WithEnvironment(async context =>
-    {
-        context.EnvironmentVariables["MeetupPlanner:ConnectionString"] = await database.Resource.ConnectionStringExpression.GetValueAsync(CancellationToken.None) ?? string.Empty;
-    });
+    .WaitFor(database);
 
 var web = builder.AddViteApp("web", "../Web")
     .WaitFor(api)
@@ -52,6 +48,16 @@ var bff = builder.AddProject<Projects.MeetupPlanner_Bff>("bff")
     .WithExternalHttpEndpoints();
 
 adminWeb.WithReference(bff);
+
+builder.AddProject<Projects.MeetupPlanner_MigrationsWorker>("meetupplanner-migrationsworker")
+    //.WaitFor(dbConnectionString)
+    //.WithReference(dbConnectionString)
+    .WithReference(database).WaitFor(database)
+    .WithEnvironment(async context =>
+    {
+        context.EnvironmentVariables["ConnectionStrings__MeetupPlanner"] = await database.Resource.ConnectionStringExpression.GetValueAsync(CancellationToken.None) ?? string.Empty;
+    })
+    .WithExplicitStart();
 
 builder.Build().Run();
 

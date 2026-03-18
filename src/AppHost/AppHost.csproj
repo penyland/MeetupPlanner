@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MeetupPlanner.Api\MeetupPlanner.Api.csproj" />
     <ProjectReference Include="..\MeetupPlanner.Bff\MeetupPlanner.Bff.csproj" />
+    <ProjectReference Include="..\MeetupPlanner.MigrationsWorker\MeetupPlanner.MigrationsWorker.csproj" />
   </ItemGroup>
 
   <ItemGroup>

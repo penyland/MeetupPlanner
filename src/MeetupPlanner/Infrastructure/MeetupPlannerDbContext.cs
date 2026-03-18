@@ -1,8 +1,5 @@
 ﻿using MeetupPlanner.Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using System.ComponentModel;
-using static System.Net.WebRequestMethods;
 
 namespace MeetupPlanner.Infrastructure;
 
