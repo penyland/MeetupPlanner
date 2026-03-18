@@ -230,7 +230,7 @@ export default function EditLocation() {
                         name="description"
                         value={formData.description}
                         onChange={onFormChange}
-                        rows={4}
+                        rows={5}
                         maxLength={2048}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />

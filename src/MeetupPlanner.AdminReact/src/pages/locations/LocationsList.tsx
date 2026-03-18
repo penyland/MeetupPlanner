@@ -7,12 +7,20 @@ import ViewToggle from '../../components/ViewToggle';
 import SortIcon from '../../components/SortIcon';
 import { useSortable } from '../../hooks/useSortable';
 
-type SortField = 'name';
+type SortField = 'name' | 'isActive' | 'maxCapacity';
+const VIEW_MODE_STORAGE_KEY = 'locations:view-mode';
 
 export default function LocationsList() {
   const [locations, setLocations] = useState<LocationResponse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
+    if (typeof window === 'undefined') {
+      return 'grid';
+    }
+
+    const savedViewMode = window.localStorage.getItem(VIEW_MODE_STORAGE_KEY);
+    return savedViewMode === 'list' || savedViewMode === 'grid' ? savedViewMode : 'grid';
+  });
   const { sortField, sortDirection, handleSort } = useSortable<SortField>('name');
 
   useEffect(() => {
@@ -30,9 +38,22 @@ export default function LocationsList() {
     fetchLocations();
   }, []);
 
+  useEffect(() => {
+    window.localStorage.setItem(VIEW_MODE_STORAGE_KEY, viewMode);
+  }, [viewMode]);
+
   const sortedLocations = useMemo(() => {
     return [...locations].sort((a, b) => {
-      const cmp = a.name.localeCompare(b.name);
+      let cmp = 0;
+
+      if (sortField === 'name') {
+        cmp = a.name.localeCompare(b.name);
+      } else if (sortField === 'isActive') {
+        cmp = Number(a.isActive) - Number(b.isActive);
+      } else if (sortField === 'maxCapacity') {
+        cmp = (a.maxCapacity ?? 0) - (b.maxCapacity ?? 0);
+      }
+
       return sortDirection === 'asc' ? cmp : -cmp;
     });
   }, [locations, sortField, sortDirection]);
@@ -68,7 +89,14 @@ export default function LocationsList() {
               to={`/locations/${location.locationId}`}
               className="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
             >
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">{location.name}</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{location.name}</h3>
+                {!location.isActive && (
+                  <span className="mb-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    Inactive
+                  </span>
+                )}
+              </div>
             </Link>
           ))}
         </div>
@@ -84,8 +112,19 @@ export default function LocationsList() {
                   >
                     Name<SortIcon field="name" sortField={sortField} sortDirection={sortDirection} />
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City</th>
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none hover:text-gray-700"
+                    onClick={() => handleSort('isActive')}
+                  >
+                    Active<SortIcon field="isActive" sortField={sortField} sortDirection={sortDirection} />
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Website</th>
+                  <th
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer select-none hover:text-gray-700"
+                    onClick={() => handleSort('maxCapacity')}
+                  >
+                    Max Capacity<SortIcon field="maxCapacity" sortField={sortField} sortDirection={sortDirection} />
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -96,8 +135,22 @@ export default function LocationsList() {
                         {location.name}
                       </Link>
                     </td>
-                    {/* <td className="px-6 py-4 text-sm text-gray-500">{location.street}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{location.city}, {location.postalCode} {location.country}</td> */}
+                    <td className="px-6 py-4 text-sm text-gray-700">{location.isActive ? 'Yes' : 'No'}</td>
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      {location.link ? (
+                        <a
+                          href={location.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800"
+                        >
+                          Visit Site
+                        </a>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700">{location.maxCapacity ?? '-'}</td>
                   </tr>
                 ))}
               </tbody>

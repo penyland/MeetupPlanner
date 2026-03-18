@@ -20,7 +20,7 @@ export default function LocationCard({ location }: LocationCardProps) {
               </span>
             )}
           </div>
-          <div className="mt-2 text-gray-900 pl-[3.25rem]">
+          <div className="mt-2 text-gray-900 pl-13">
             <p>{location.street}</p>
             <p>{location.postalCode} {location.city}</p>
             <p>{location.country}</p>
