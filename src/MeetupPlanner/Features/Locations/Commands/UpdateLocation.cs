@@ -31,6 +31,7 @@ public static class UpdateLocation
             location.Description = context.Request.Location.Description;
             location.MaxCapacity = context.Request.Location.MaxCapacity;
             location.IsActive = context.Request.Location.IsActive;
+            //location.Link = context.Request.Location.Link;
 
             await dbContext.SaveChangesAsync(cancellationToken);
             return Result.Success(new Response(location.LocationId));

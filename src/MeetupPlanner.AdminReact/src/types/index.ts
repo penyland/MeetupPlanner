@@ -37,6 +37,7 @@ export interface LocationResponse {
   name: string;
   maxCapacity?: number;
   isActive: boolean;
+  link: string;
 }
 
 export interface LocationDetailedResponse extends LocationResponse {
@@ -45,7 +46,6 @@ export interface LocationDetailedResponse extends LocationResponse {
   postalCode: string;
   country: string;
   description: string;
-  link: string;  
 }
 
 export interface LocationRequest {
@@ -74,7 +74,7 @@ export interface PresentationResponse {
 export interface PresentationRequest {
   title: string;
   abstract: string;
-   speakerIds: string[];
+  speakerIds: string[];
 }
 
 export interface AddPresentationResponse {

@@ -37,6 +37,7 @@ public static class GetLocation
                     Description = location.Description,
                     MaxCapacity = location.MaxCapacity,
                     IsActive = location.IsActive,
+                    Link = new Uri("/temporary/" + location.LocationId, UriKind.Relative)
                 };
 
                 return Result.Success(new Response(locationResponse));
