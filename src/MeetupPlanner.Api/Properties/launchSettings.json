@@ -17,8 +17,7 @@
       "applicationUrl": "https://api.dev.localhost:7119;http://api.dev.localhost:5016;http://0.0.0.0:5017",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "AZURE_APP_CONFIG_ENDPOINT": "https://odin-appcs.azconfig.io",
-        "INCLUDE_AZURE_CLI_CREDENTIAL": "true"
+        "AZURE_APP_CONFIG_ENDPOINT": "",
       }
     }
   }

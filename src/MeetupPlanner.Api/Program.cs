@@ -1,7 +1,6 @@
 using Infinity.Toolkit.Azure;
 using MeetupPlanner.Api.ExceptionHandlers;
 using Microsoft.AspNetCore.Http.Json;
-using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
