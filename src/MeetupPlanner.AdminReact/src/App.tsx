@@ -14,7 +14,7 @@ import LocationsList from './pages/locations/LocationsList';
 import AddLocation from './pages/locations/AddLocation';
 import EditLocation from './pages/locations/EditLocation';
 import NotFound from './pages/NotFound';
-import User from './pages/User';
+import User from './pages/user/User';
 
 function App() {
   return (
@@ -44,8 +44,10 @@ function App() {
           <Route path="locations/:locationId" element={<EditLocation />} />
           
           <Route path="*" element={<NotFound />} />
+        
+          {/* User Account */}
+          <Route path="user" element={<User />} />
         </Route>
-        <Route path="user" element={<User />} />
       </Routes>
     </BrowserRouter>
   );

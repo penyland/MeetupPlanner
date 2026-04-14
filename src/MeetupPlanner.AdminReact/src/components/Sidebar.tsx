@@ -39,6 +39,11 @@ const menuItems: MenuItem[] = [
     icon: MapPinIcon,
     path: '/locations',
   },
+  {
+    name: 'User Account',
+    icon: UserGroupIcon,
+    path: '/user',
+  }
 ];
 
 export default function Sidebar() {

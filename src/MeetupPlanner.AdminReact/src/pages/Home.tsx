@@ -51,7 +51,7 @@ export default function Home() {
       <div className='grid lg:grid-cols-4 sm:grid-cols-2 gap-6 mb-8'>
 
         <div className='bg-white rounded-lg shadow p-6 text-center'>
-          <h3 className="text-lg font-bold mb-4">Meetups</h3>
+          <h3 className="text-lg font-bold mb-4">Upcoming events</h3>
           <p className="text-3xl font-semibold text-gray-900">{meetups.length}</p>
         </div>
 
