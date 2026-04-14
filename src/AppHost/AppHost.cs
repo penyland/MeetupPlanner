@@ -25,6 +25,10 @@ var keycloak = builder.AddKeycloak("keycloak", port:8080, adminUsername: keycloa
 keycloakdUsername.WithParentRelationship(keycloak);
 keycloakPassword.WithParentRelationship(keycloak);
 
+var storage = builder.AddAzureStorage("assetStorage")
+    .RunAsEmulator(c => c.WithLifetime(ContainerLifetime.Persistent))
+    .AddBlobs("assets");
+
 // Projects
 var api = builder.AddProject<Projects.MeetupPlanner_Api>("api")
     .WaitFor(dbConnectionString)
@@ -44,19 +48,20 @@ var bff = builder.AddProject<Projects.MeetupPlanner_Bff>("bff")
     .WithReference(api)
     .WithReference(keycloak).WaitFor(keycloak)
     .WithReference(adminWeb)
+    .WithReference(storage).WaitFor(storage)
     .WithEnvironment("OpenIDConnectSettings__ClientSecret", openIDConnectSettingsClientSecret)
     .WithExternalHttpEndpoints();
 
 adminWeb.WithReference(bff);
 
 builder.AddProject<Projects.MeetupPlanner_MigrationsWorker>("meetupplanner-migrationsworker")
-    //.WaitFor(dbConnectionString)
-    //.WithReference(dbConnectionString)
-    .WithReference(database).WaitFor(database)
-    .WithEnvironment(async context =>
-    {
-        context.EnvironmentVariables["ConnectionStrings__MeetupPlanner"] = await database.Resource.ConnectionStringExpression.GetValueAsync(CancellationToken.None) ?? string.Empty;
-    })
+    .WaitFor(dbConnectionString)
+    .WithReference(dbConnectionString)
+    //.WithReference(database).WaitFor(database)
+    //.WithEnvironment(async context =>
+    //{
+    //    context.EnvironmentVariables["ConnectionStrings__MeetupPlanner"] = await database.Resource.ConnectionStringExpression.GetValueAsync(CancellationToken.None) ?? string.Empty;
+    //})
     .WithExplicitStart();
 
 builder.Build().Run();

@@ -125,6 +125,10 @@ export default function Sidebar() {
           ))}
         </ul>
       </nav>
+
+      <div className='m-4'>
+        <img src="/assets/images/dotnetskanelogo.jpeg" alt="DotNetSkane Logo" />
+      </div>
     </div>
   );
 }

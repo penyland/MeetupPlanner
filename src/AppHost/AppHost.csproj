@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.Azure.Storage" Version="13.2.2" />
     <PackageReference Include="Aspire.Hosting.Javascript" Version="13.2.2" />
     <PackageReference Include="Aspire.Hosting.Keycloak" Version="13.2.2-preview.1.26207.2" />
     <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.2.2" />
