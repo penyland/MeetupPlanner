@@ -18,6 +18,7 @@ interface MeetupEditFormState {
   attendanceCount: number;
   totalSpots: number;
   status: 'Scheduled' | 'Cancelled' | 'Completed';
+  meetupLink: string;
 }
 
 function toDateTimeLocalValue(isoString: string): string {
@@ -55,7 +56,8 @@ export default function EditMeetup() {
     rsvpWaitlistCount: 0,
     attendanceCount: 0,
     totalSpots: 0,
-    status: 'Scheduled'
+    status: 'Scheduled',
+    meetupLink: ''
   });
   const [originalFormData, setOriginalFormData] = useState<MeetupEditFormState | null>(null);
   const [originalAgendaIds, setOriginalAgendaIds] = useState<string[]>([]);
@@ -107,7 +109,8 @@ export default function EditMeetup() {
           rsvpWaitlistCount: data.rsvp.rsvpWaitlistCount,
           attendanceCount: data.rsvp.attendanceCount,
           totalSpots: data.rsvp.totalSpots,
-          status: statusValue
+          status: statusValue,
+          meetupLink: '' // Assuming meetup.com link is not part of the API response and needs to be handled separately
         };
 
         setFormData(initialFormData);
@@ -234,7 +237,7 @@ export default function EditMeetup() {
 
       await MeetupsService.updateMeetup(meetupId!, request);
       await MeetupsService.updateMeetupRsvps(meetupId!, rsvpRequest);
-      
+
       if (meetup) {
         setMeetup({
           ...meetup,
@@ -253,7 +256,7 @@ export default function EditMeetup() {
           }
         });
       }
-      
+
       setOriginalFormData(formData);
       setOriginalAgendaIds(agendaItems.map(i => i.presentationId));
       setShowSaveToast(true);
@@ -506,17 +509,34 @@ export default function EditMeetup() {
               </div>
 
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1 text-left">
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleFormChange}
-                  rows={6}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <div>
+                  <label htmlFor="meetupLink" className="block text-sm font-medium text-gray-700 mb-1 text-left">
+                    Meetup.com link
+                  </label>
+                  <input
+                    type="text"
+                    id="meetupLink"
+                    name="meetupLink"
+                    value={formData.meetupLink}
+                    onChange={handleFormChange}
+                    // required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1 text-left">
+                    Description
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleFormChange}
+                    rows={6}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
               </div>
 
               <div className="flex gap-4">
