@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.2.1-preview.1.26180.6" />
+    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.2.2-preview.1.26207.2" />
     <PackageReference Include="Infinity.Toolkit.FeatureModules" Version="1.5.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.6" />
     <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.4.0" />
     <PackageReference Include="Microsoft.Identity.Web" Version="4.7.0" />
     <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.201" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.202" />
   </ItemGroup>
 
 </Project>
