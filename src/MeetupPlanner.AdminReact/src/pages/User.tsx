@@ -8,6 +8,11 @@ interface UserInfo {
   claims: Record<string, unknown>;
 }
 
+interface Claim {
+  type: string;
+  value: string;
+}
+
 interface SessionInfo {
   isAuthenticated: boolean;
   userName: string;
@@ -22,19 +27,19 @@ function User() {
 
   function handleLogin() {
     const redirectUri = encodeURIComponent(location.pathname);
-    window.location.href = `/bff/login?redirectUri=${redirectUri}`;
+    window.location.href = `/account/login?redirectUri=${redirectUri}`;
   }
 
   function handleLogout() {
     const redirectUri = encodeURIComponent(location.pathname);
-    window.location.href = `/bff/logout?redirectUri=${redirectUri}`;
+    window.location.href = `/account/logout?redirectUri=${redirectUri}`;
   }
 
   async function getUserInfo() {
     setError(null);
 
     try {
-      const result = await fetch('/bff/user')
+      const result = await fetch('/account')
 
       if (!result.ok) {
         throw new Error(`Error fetching user info: ${result.statusText}`);
@@ -51,11 +56,11 @@ function User() {
 
   const fetchSessionAsync = async () => {
     try {
-      const response = await fetch('/bff/session');
+      const response = await fetch('/account/userinfo');
       if (response.ok) {
         const sessionData = await response.json();
         setSession(sessionData);
-        console.log('Session Data:', sessionData);
+        console.log('Account Data:', sessionData);
       }
     } catch {
       setSession(null);
@@ -110,7 +115,7 @@ function User() {
                 </thead>
                 <tbody>
                   {Array.isArray(userInfo.claims) 
-                    ? userInfo.claims.map((claim: any, index: number) => (
+                    ? (userInfo.claims as Claim[]).map((claim: Claim, index: number) => (
                         <tr key={index} className="hover:bg-gray-100">
                           <td className="border border-gray-300 px-4 py-2 font-medium">{claim.type}</td>
                           <td className="border border-gray-300 px-4 py-2">{claim.value}</td>

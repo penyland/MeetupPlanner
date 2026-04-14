@@ -7,16 +7,16 @@ using System.Security.Claims;
 
 namespace MeetupPlanner.Bff.Features.User;
 
-public class UserModule : WebFeatureModule
+public class AccountModule : WebFeatureModule
 {
     public override IModuleInfo ModuleInfo { get; }
 
     public override void MapEndpoints(WebApplication app)
     {
-        var group = app.MapGroup("/bff")
-            .WithTags("BFF");
+        var group = app.MapGroup("account")
+            .WithTags("Account");
 
-        group.MapGet("user", (HttpContext context) =>
+        group.MapGet("", (HttpContext context) =>
         {
             if (!context.User.Identity?.IsAuthenticated ?? true)
             {
@@ -48,7 +48,7 @@ public class UserModule : WebFeatureModule
             return TypedResults.Challenge(properties);
         });
 
-        group.MapGet("/logout", async ([FromQuery] string? redirectUri, HttpContext context, IConfiguration configuration, IHttpClientFactory httpClientFactory) =>
+        group.MapGet("logout", async ([FromQuery] string? redirectUri, HttpContext context, IConfiguration configuration, IHttpClientFactory httpClientFactory) =>
         {
             //var provider = configuration.GetValue<string>("Authentication:Provider") ?? "EntraId";
             //if (provider.Equals("KeyCloak", StringComparison.OrdinalIgnoreCase))
@@ -62,17 +62,9 @@ public class UserModule : WebFeatureModule
             };
 
             return TypedResults.SignOut(properties, [CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme]);
-
-            //await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            //await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties
-            //{
-            //    RedirectUri = "/"
-            //});
-
-            //return Results.Ok();
         }).RequireAuthorization();
 
-        group.MapGet("session", async (HttpContext context) =>
+        group.MapGet("userinfo", async (HttpContext context) =>
         {
             var authResult = await context.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             //var identity = new
