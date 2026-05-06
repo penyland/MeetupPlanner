@@ -12,7 +12,7 @@
     <Authors>Peter Nylander</Authors>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Copyright>Copyright © 2025 Peter Nylander </Copyright>
+    <Copyright>Copyright © 2026 Peter Nylander </Copyright>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -51,7 +51,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.201" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.203" PrivateAssets="All"/>
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.2.2">
+<Project Sdk="Aspire.AppHost.Sdk/13.2.4">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -10,11 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.Azure.Storage" Version="13.2.2" />
-    <PackageReference Include="Aspire.Hosting.Javascript" Version="13.2.2" />
-    <PackageReference Include="Aspire.Hosting.Keycloak" Version="13.2.2-preview.1.26207.2" />
-    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.2.2" />
-    <PackageReference Include="Aspire.Hosting.Yarp" Version="13.2.2" />
+    <PackageReference Include="Aspire.Hosting.Azure.Storage" Version="13.2.4" />
+    <PackageReference Include="Aspire.Hosting.Javascript" Version="13.2.4" />
+    <PackageReference Include="Aspire.Hosting.Keycloak" Version="13.2.4-preview.1.26224.4" />
+    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.2.4" />
+    <PackageReference Include="Aspire.Hosting.Yarp" Version="13.2.4" />
   </ItemGroup>
 
   <ItemGroup Label="CommunityToolkit">
@@ -25,10 +25,6 @@
     <ProjectReference Include="..\MeetupPlanner.Api\MeetupPlanner.Api.csproj" />
     <ProjectReference Include="..\MeetupPlanner.Bff\MeetupPlanner.Bff.csproj" />
     <ProjectReference Include="..\MeetupPlanner.MigrationsWorker\MeetupPlanner.MigrationsWorker.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.202" />
   </ItemGroup>
 
 </Project>

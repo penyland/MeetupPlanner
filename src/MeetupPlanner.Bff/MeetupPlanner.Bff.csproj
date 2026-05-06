@@ -8,12 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="13.2.2" />
-    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.2.2-preview.1.26207.2" />
-    <PackageReference Include="Infinity.Toolkit.FeatureModules" Version="1.5.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.6" />
-    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.4.0" />
-    <PackageReference Include="Microsoft.Identity.Web" Version="4.7.0" />
+    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="13.2.4" />
+    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.2.4-preview.1.26224.4" />
+    <PackageReference Include="Infinity.Toolkit.FeatureModules" Version="1.5.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.7" />
+    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.5.0" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="4.9.0" />
     <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
   </ItemGroup>
 
@@ -25,10 +25,6 @@
     <None Update="wwwroot\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.202" />
   </ItemGroup>
 
 </Project>

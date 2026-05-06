@@ -26,7 +26,10 @@ keycloakdUsername.WithParentRelationship(keycloak);
 keycloakPassword.WithParentRelationship(keycloak);
 
 var storage = builder.AddAzureStorage("assetStorage")
-    .RunAsEmulator(c => c.WithLifetime(ContainerLifetime.Persistent))
+    .RunAsEmulator(c => {
+        c.WithDataVolume("meetupplanner-azurite")
+         .WithLifetime(ContainerLifetime.Persistent);
+    })
     .AddBlobs("assets");
 
 // Projects
