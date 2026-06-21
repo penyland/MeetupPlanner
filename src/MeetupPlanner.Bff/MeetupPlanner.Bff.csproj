@@ -8,12 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="13.3.5" />
-    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.3.5-preview.1.26270.6" />
-    <PackageReference Include="Infinity.Toolkit.FeatureModules" Version="1.5.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.7" />
-    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.5.0" />
-    <PackageReference Include="Microsoft.Identity.Web" Version="4.9.0" />
+    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="13.4.6" />
+    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.4.0-preview.1.26281.18" />
+    <PackageReference Include="Infinity.Toolkit.FeatureModules" Version="1.5.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.7.0" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="4.10.0" />
     <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
   </ItemGroup>
 
@@ -26,5 +26,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
 
 </Project>
