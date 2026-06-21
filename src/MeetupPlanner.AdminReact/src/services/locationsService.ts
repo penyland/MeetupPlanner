@@ -1,5 +1,5 @@
 import { apiClient } from './apiClient';
-import type { LocationResponse, LocationRequest, AddLocationResponse, LocationDetailedResponse } from '../types';
+import type { LocationResponse, LocationRequest, AddLocationResponse, LocationDetailedResponse, ApiResult } from '../types';
 
 export class LocationsService {
   static async getAllLocations(): Promise<LocationResponse[]> {
@@ -8,8 +8,8 @@ export class LocationsService {
   }
 
   static async getLocationById(locationId: string): Promise<LocationDetailedResponse> {
-    const response = await apiClient.get<LocationDetailedResponse>(`/api/meetupplanner/locations/${locationId}`);
-    return response.data;
+    const response = await apiClient.get<ApiResult<LocationDetailedResponse>>(`/api/meetupplanner/locations/${locationId}`);
+    return response.data.value!;
   }
 
   static async addLocation(location: LocationRequest): Promise<string> {

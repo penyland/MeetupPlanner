@@ -1,3 +1,13 @@
+export interface ApiError {
+  code: string;
+  details: string;
+}
+
+export interface ApiResult<T> {
+  value?: T;
+  errors?: ApiError[];
+}
+
 export interface MeetupResponse {
   meetupId: string;
   title: string;

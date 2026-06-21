@@ -25,7 +25,7 @@ public class LocationsModule : WebFeatureModule
         builder.Services.AddScoped<IValidator<AddLocation.Command>, AddLocation.CommandValidator>();
 
         builder.Services.AddRequestHandler<Result<GetLocations.Response>, GetLocations.Handler>();
-        builder.Services.AddRequestHandler<GetLocation.Query, Result<GetLocation.Response>, GetLocation.Handler>();
+        builder.Services.AddRequestHandler<GetLocation.Query, Result<LocationDetailedResponse>, GetLocation.Handler>();
 
         builder.Services.AddScoped<IValidator<UpdateLocation.Command>, UpdateLocation.UpdateLocationValidator>();
         builder.Services.AddRequestHandler<UpdateLocation.Command, Result<UpdateLocation.Response>, UpdateLocation.Handler>()

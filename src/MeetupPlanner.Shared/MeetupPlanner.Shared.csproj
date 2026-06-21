@@ -8,8 +8,18 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.1" />
+  </ItemGroup>
+
+  <!-- Debug: use local source -->
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <ProjectReference Include="..\..\..\infinity-toolkit\src\Infinity.Toolkit\Infinity.Toolkit.csproj" />
+    <ProjectReference Include="..\..\..\infinity-toolkit\src\Infinity.Toolkit.AspNetCore\Infinity.Toolkit.AspNetCore.csproj" />
+  </ItemGroup>
+
+  <!-- Release: use NuGet packages -->
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
     <PackageReference Include="Infinity.Toolkit" Version="1.4.3" />
     <PackageReference Include="Infinity.Toolkit.AspNetCore" Version="1.3.3" />
   </ItemGroup>
-  
+
 </Project>

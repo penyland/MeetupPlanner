@@ -10,10 +10,10 @@ namespace MeetupPlanner.Features.Locations.Queries;
 public static class GetLocation
 {
     public sealed record Query(Guid LocationId);
-    public sealed record Response(LocationDetailedResponse Location);
-    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Result<Response>>
+
+    internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Result<LocationDetailedResponse>>
     {
-        public async Task<Result<Response>> HandleAsync(IHandlerContext<Query> context, CancellationToken cancellationToken = default)
+        public async Task<Result<LocationDetailedResponse>> HandleAsync(IHandlerContext<Query> context, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -23,7 +23,7 @@ public static class GetLocation
 
                 if (location == null)
                 {
-                    return Result.Failure<Response>($"Location with ID {context.Request.LocationId} not found.");
+                    return Result.Failure<LocationDetailedResponse>($"Location with ID {context.Request.LocationId} not found.");
                 }
 
                 var locationResponse = new LocationDetailedResponse
@@ -40,17 +40,17 @@ public static class GetLocation
                     Link = new Uri("/temporary/" + location.LocationId, UriKind.Relative)
                 };
 
-                return Result.Success(new Response(locationResponse));
+                return Result.Success(locationResponse);
             }
             catch (Exception ex)
             {
-                return Result.Failure<Response>(ex);
+                return Result.Failure<LocationDetailedResponse>(ex);
             }
         }
     }
 
     public static void MapGetLocation(this RouteGroupBuilder builder, string path)
     {
-        builder.MapGetRequestHandlerWithResult<Query, Response, LocationDetailedResponse>(path, map => map.Location);
+        builder.MapGetRequestHandler<Query, Result<LocationDetailedResponse>>(path);
     }
 }
