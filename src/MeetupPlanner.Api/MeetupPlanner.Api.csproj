@@ -15,7 +15,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.4.6-preview.1.26319.6" />
+    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.5.0-preview.1.26417.10" />
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.5.1" />
     <PackageReference Include="Infinity.Toolkit.Azure" Version="1.1.5" />
     <PackageReference Include="Infinity.Toolkit.FeatureModules" Version="1.5.5" />

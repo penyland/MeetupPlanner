@@ -29,6 +29,8 @@ public class AccountModule : WebFeatureModule
                 .Distinct()
                 .ToArray();
 
+            //var accessToken = await context.GetTokenAsync("access_token");
+
             return Results.Json(new
             {
                 Name = context.User.FindFirstValue("name"),
