@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="13.5.2" />
-    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.5.2-preview.1.26421.6" />
+    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="13.5.3" />
+    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.5.3-preview.1.26425.3" />
     <PackageReference Include="Infinity.Toolkit.FeatureModules" Version="1.5.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.11" />
     <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.9.0" />
