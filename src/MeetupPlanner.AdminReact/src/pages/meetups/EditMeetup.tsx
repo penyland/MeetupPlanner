@@ -87,12 +87,12 @@ export default function EditMeetup() {
         const [data, loadedLocations, loadedPresentations] = await Promise.all([
           MeetupsService.getMeetupById(meetupId),
           LocationsService.getAllLocations(),
-          PresentationsService.getAllPresentations()
+          PresentationsService.getAllPresentationsOrderByCreatedDescending()
         ]);
 
         setMeetup(data);
         setLocations([...loadedLocations].sort((a, b) => a.name.localeCompare(b.name)));
-        setPresentations([...loadedPresentations].sort((a, b) => a.title.localeCompare(b.title)));
+        setPresentations([...loadedPresentations]);
 
         const statusValue = (['Scheduled', 'Cancelled', 'Completed'].includes(data.status)
           ? data.status

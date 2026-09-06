@@ -7,6 +7,11 @@ export class PresentationsService {
     return response.data;
   }
 
+  static async getAllPresentationsOrderByCreatedDescending(): Promise<PresentationResponse[]> {
+    const response = await apiClient.get<PresentationResponse[]>('/api/meetupplanner/presentations?orderBy=Created&sortOrder=Descending');
+    return response.data;
+  }
+
   static async getPresentationById(presentationId: string): Promise<PresentationResponse> {
     const response = await apiClient.get<PresentationResponse>(`/api/meetupplanner/presentations/${presentationId}`);
     return response.data;

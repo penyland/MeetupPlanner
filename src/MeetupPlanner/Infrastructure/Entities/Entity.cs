@@ -4,8 +4,8 @@ namespace MeetupPlanner.Infrastructure.Models;
 
 public class Entity
 {
-    //[JsonIgnore]
-    //public DateTimeOffset CreatedUtc { get; set; } = DateTimeOffset.UtcNow;
+    [JsonIgnore]
+    public DateTimeOffset CreatedUtc { get; set; } = DateTimeOffset.UtcNow;
 
     //[JsonIgnore]
     //public string CreatedBy { get; set; }

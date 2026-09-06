@@ -21,7 +21,7 @@ internal class PresentationsModule : WebFeatureModule
         builder.Services.RegisterAddPresentation();
         builder.Services.RegisterUpdatePresentation();
         builder.Services.RegisterDeletePresentation();
-        builder.Services.AddRequestHandler<Result<GetPresentations.Response>, GetPresentations.Handler>();
+        builder.Services.AddRequestHandler<GetPresentations.Query, Result<GetPresentations.Response>, GetPresentations.Handler>();
         builder.Services.AddRequestHandler<GetPresentation.Query, Result<GetPresentation.Response>, GetPresentation.Handler>();
     }
 
@@ -31,7 +31,12 @@ internal class PresentationsModule : WebFeatureModule
             .WithTags("Presentations");
 
         group.MapPostPresentation("/presentations");
-        group.MapGetRequestHandlerWithResult<GetPresentations.Response, IReadOnlyList<PresentationResponse>>("/presentations", map => map.Presentations);
+        group.MapGet("/presentations", async ([AsParameters] PresentationsQueryParameters parameters) =>
+        {
+            var result = await parameters.Handler.HandleAsync(HandlerContextExtensions.Create(new GetPresentations.Query(parameters)));
+            return result.Succeeded ? TypedResults.Ok(result.Value.Presentations) : Results.BadRequest(result.Errors);
+        });
+
         group.MapGetRequestHandlerWithResult<GetPresentation.Query, GetPresentation.Response, PresentationDetailedResponse>("/presentations/{presentationId}", map => map.Presentation);
 
         group.MapPut("/presentations/{presentationId}", async ([FromRoute] Guid presentationId, UpdatePresentation.UpdatePresentationRequest request, IRequestHandler<UpdatePresentation.Command, Result<UpdatePresentation.Response>> handler) =>
@@ -46,4 +51,13 @@ internal class PresentationsModule : WebFeatureModule
             return result.Succeeded ? TypedResults.NoContent() : Results.BadRequest(result.Errors);
         });
     }
+}
+
+public class PresentationsQueryParameters : BaseQueryParameters
+{
+    [FromQuery(Name = "speakerId")]
+    public Guid? SpeakerId { get; set; }
+
+    [FromServices]
+    public IRequestHandler<GetPresentations.Query, Result<GetPresentations.Response>> Handler { get; set; }
 }
