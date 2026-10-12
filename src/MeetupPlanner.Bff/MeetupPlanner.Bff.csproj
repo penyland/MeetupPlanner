@@ -8,12 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="13.5.3" />
-    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.5.3-preview.1.26425.3" />
-    <PackageReference Include="Infinity.Toolkit.FeatureModules" Version="1.5.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.11" />
-    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.9.0" />
-    <PackageReference Include="Microsoft.Identity.Web" Version="4.14.2" />
+    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="13.6.1" />
+    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.6.1-preview.1.26506.6" />
+    <PackageReference Include="Infinity.Toolkit.FeatureModules" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.10.0" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="4.16.0" />
     <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
   </ItemGroup>
 
