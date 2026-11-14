@@ -33,24 +33,24 @@ public class MeetupsModule : WebFeatureModule
 
     public override void MapEndpoints(WebApplication app)
     {
-        var group = app.MapGroup("/meetupplanner").WithTags("Meetups");
+        var group = app.MapGroup("/meetupplanner/meetups").WithTags("Meetups");
 
-        group.MapPostMeetup("/meetups");
-        group.MapPutMeetup("/meetups/{meetupId}");
+        group.MapPostMeetup("/");
+        group.MapPutMeetup("/{meetupId}");
 
-        group.MapPatch("/meetups/{meetupId}/rsvps", async ([FromRoute] Guid meetupId, UpdateRsvpRequest rsvpRequest, IRequestHandler<UpdateMeetupRsvps.Command, Result<UpdateMeetupRsvps.Response>> handler) =>
+        group.MapPatch("/{meetupId}/rsvps", async ([FromRoute] Guid meetupId, UpdateRsvpRequest rsvpRequest, IRequestHandler<UpdateMeetupRsvps.Command, Result<UpdateMeetupRsvps.Response>> handler) =>
         {
             var result = await handler.HandleAsync(HandlerContextExtensions.Create(new UpdateMeetupRsvps.Command(meetupId, rsvpRequest)));
             return result.Succeeded ? TypedResults.NoContent() : Results.BadRequest(result.Errors);
         });
 
-        group.MapPatch("/meetups/{meetupId}/agenda", async ([FromRoute] Guid meetupId, UpdateMeetupAgenda.UpdateAgendaRequest agendaRequest, IRequestHandler<UpdateMeetupAgenda.Command, Result<UpdateMeetupAgenda.Response>> handler) =>
+        group.MapPatch("/{meetupId}/agenda", async ([FromRoute] Guid meetupId, UpdateMeetupAgenda.UpdateAgendaRequest agendaRequest, IRequestHandler<UpdateMeetupAgenda.Command, Result<UpdateMeetupAgenda.Response>> handler) =>
         {
             var result = await handler.HandleAsync(HandlerContextExtensions.Create(new UpdateMeetupAgenda.Command(meetupId, agendaRequest)));
             return result.Succeeded ? TypedResults.NoContent() : Results.BadRequest(result.Errors);
         });
 
-        group.MapGet("/meetups", async (IRequestHandler<GetMeetups.Query, Result<GetMeetups.Response>> handler, [AsParameters] MeetupQueryParameters queryParams) =>
+        group.MapGet("/", async (IRequestHandler<GetMeetups.Query, Result<GetMeetups.Response>> handler, [AsParameters] MeetupQueryParameters queryParams) =>
         {
             var meetupStatus = MeetupStatus.All;
             if (queryParams.Status is not null && !queryParams.TryParseStatus(out meetupStatus))
@@ -67,11 +67,11 @@ public class MeetupsModule : WebFeatureModule
         .Produces<IReadOnlyList<MeetupResponse>>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status400BadRequest);
 
-        group.MapGetRequestHandlerWithResult<GetMeetup.Query, GetMeetup.Response, MeetupResponse>("/meetups/{meetupId}", map => map.Meetup);
-        group.MapGetRequestHandlerWithResult<GetMeetupLocation.Query, GetMeetupLocation.Response, LocationDetailedResponse>("/meetups/{meetupId}/location", map => map.Location);
-        group.MapGetRequestHandlerWithResult<GetMeetupPresentations.Query, GetMeetupPresentations.Response, IReadOnlyList<PresentationResponse>>("/meetups/{meetupId}/presentations", map => map.Presentations);
-        group.MapGetRequestHandlerWithResult<GetMeetupRsvps.Query, GetMeetupRsvps.Response, Rsvp>("/meetups/{meetupId}/rsvps", map => map.Rsvp);
-        group.MapGetRequestHandlerWithResult<GetRsvps.Query, GetRsvps.Response, IReadOnlyList<RsvpResponse>>("/meetups/rsvps", map => map.Rsvps);
+        group.MapGetRequestHandlerWithResult<GetMeetup.Query, GetMeetup.Response, MeetupResponse>("/{meetupId}", map => map.Meetup);
+        group.MapGetRequestHandlerWithResult<GetMeetupLocation.Query, GetMeetupLocation.Response, LocationDetailedResponse>("/{meetupId}/location", map => map.Location);
+        group.MapGetRequestHandlerWithResult<GetMeetupPresentations.Query, GetMeetupPresentations.Response, IReadOnlyList<PresentationResponse>>("/{meetupId}/presentations", map => map.Presentations);
+        group.MapGetRequestHandlerWithResult<GetMeetupRsvps.Query, GetMeetupRsvps.Response, Rsvp>("/{meetupId}/rsvps", map => map.Rsvp);
+        group.MapGetRequestHandlerWithResult<GetRsvps.Query, GetRsvps.Response, IReadOnlyList<RsvpResponse>>("/rsvps", map => map.Rsvps);
     }
 }
 

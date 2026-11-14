@@ -38,14 +38,14 @@ public class LocationsModule : WebFeatureModule
 
     public override void MapEndpoints(WebApplication app)
     {
-        var group = app.MapGroup("/meetupplanner")
+        var group = app.MapGroup("/meetupplanner/locations")
             .WithTags("Locations");
 
-        group.MapGetLocations("/locations");
-        group.MapGetLocation("/locations/{locationId}");
-        group.MapPostLocation("/locations");
+        group.MapGetLocations("/");
+        group.MapGetLocation("/{locationId}");
+        group.MapPostLocation("/");
 
-        group.MapPut("/locations/{locationId}", async (Guid locationId, [FromBody] AddLocation.LocationRequest request, [FromServices] IRequestHandler<UpdateLocation.Command, Result<UpdateLocation.Response>> handler) =>
+        group.MapPut("/{locationId}", async (Guid locationId, [FromBody] AddLocation.LocationRequest request, [FromServices] IRequestHandler<UpdateLocation.Command, Result<UpdateLocation.Response>> handler) =>
         {
             var context = HandlerContextExtensions.Create(new UpdateLocation.Command(locationId, request));
             var result = await handler.HandleAsync(context);

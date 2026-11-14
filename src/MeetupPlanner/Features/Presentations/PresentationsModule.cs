@@ -27,25 +27,25 @@ internal class PresentationsModule : WebFeatureModule
 
     public override void MapEndpoints(WebApplication app)
     {
-        var group = app.MapGroup("/meetupplanner")
+        var group = app.MapGroup("/meetupplanner/presentations")
             .WithTags("Presentations");
 
-        group.MapPostPresentation("/presentations");
-        group.MapGet("/presentations", async ([AsParameters] PresentationsQueryParameters parameters) =>
+        group.MapPostPresentation("/");
+        group.MapGet("/", async ([AsParameters] PresentationsQueryParameters parameters) =>
         {
             var result = await parameters.Handler.HandleAsync(HandlerContextExtensions.Create(new GetPresentations.Query(parameters)));
             return result.Succeeded ? TypedResults.Ok(result.Value.Presentations) : Results.BadRequest(result.Errors);
         });
 
-        group.MapGetRequestHandlerWithResult<GetPresentation.Query, GetPresentation.Response, PresentationDetailedResponse>("/presentations/{presentationId}", map => map.Presentation);
+        group.MapGetRequestHandlerWithResult<GetPresentation.Query, GetPresentation.Response, PresentationDetailedResponse>("/{presentationId}", map => map.Presentation);
 
-        group.MapPut("/presentations/{presentationId}", async ([FromRoute] Guid presentationId, UpdatePresentation.UpdatePresentationRequest request, IRequestHandler<UpdatePresentation.Command, Result<UpdatePresentation.Response>> handler) =>
+        group.MapPut("/{presentationId}", async ([FromRoute] Guid presentationId, UpdatePresentation.UpdatePresentationRequest request, IRequestHandler<UpdatePresentation.Command, Result<UpdatePresentation.Response>> handler) =>
         {
             var result = await handler.HandleAsync(HandlerContextExtensions.Create(new UpdatePresentation.Command(presentationId, request)));
             return result.Succeeded ? TypedResults.NoContent() : Results.BadRequest(result.Errors);
         });
 
-        group.MapDelete("/presentations/{presentationId}", async ([FromRoute] Guid presentationId, IRequestHandler<DeletePresentation.Command, Result<DeletePresentation.Response>> handler) =>
+        group.MapDelete("/{presentationId}", async ([FromRoute] Guid presentationId, IRequestHandler<DeletePresentation.Command, Result<DeletePresentation.Response>> handler) =>
         {
             var result = await handler.HandleAsync(HandlerContextExtensions.Create(new DeletePresentation.Command(presentationId)));
             return result.Succeeded ? TypedResults.NoContent() : Results.BadRequest(result.Errors);

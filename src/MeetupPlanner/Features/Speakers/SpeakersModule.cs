@@ -45,15 +45,15 @@ internal class SpeakersModule : WebFeatureModule
 
     public override void MapEndpoints(WebApplication app)
     {
-        var group = app.MapGroup("/meetupplanner")
+        var group = app.MapGroup("/meetupplanner/speakers")
             .WithTags("Speakers");
 
-        group.MapGetRequestHandlerWithResult<GetSpeakers.Response, IReadOnlyList<SpeakerResponse>>("/speakers", map => map.Speakers);
-        group.MapGetRequestHandlerWithResult<GetSpeaker.Query, GetSpeaker.Response, SpeakerDetailedResponse>("/speakers/{speakerId}", map => map.Speaker);
-        group.MapGetRequestHandlerWithResult<GetSpeakerBiographies.Query, GetSpeakerBiographies.Response, IReadOnlyList<SpeakerBiographyResponse>>("/speakers/{speakerId}/biographies", map => map.SpeakerBiographies);
-        group.MapGetRequestHandlerWithResult<GetSpeakerPresentations.Query, GetSpeakerPresentations.Response, IReadOnlyList<PresentationResponse>>("/speakers/{speakerId}/presentations", map => map.Presentations);
+        group.MapGetRequestHandlerWithResult<GetSpeakers.Response, IReadOnlyList<SpeakerResponse>>("/", map => map.Speakers);
+        group.MapGetRequestHandlerWithResult<GetSpeaker.Query, GetSpeaker.Response, SpeakerDetailedResponse>("/{speakerId}", map => map.Speaker);
+        group.MapGetRequestHandlerWithResult<GetSpeakerBiographies.Query, GetSpeakerBiographies.Response, IReadOnlyList<SpeakerBiographyResponse>>("/{speakerId}/biographies", map => map.SpeakerBiographies);
+        group.MapGetRequestHandlerWithResult<GetSpeakerPresentations.Query, GetSpeakerPresentations.Response, IReadOnlyList<PresentationResponse>>("/{speakerId}/presentations", map => map.Presentations);
 
-        group.MapPost("/speakers", async (SpeakerRequest request, [FromServices] IRequestHandler<AddSpeaker.Command, Result<AddSpeaker.Response>> handler) =>
+        group.MapPost("/", async (SpeakerRequest request, [FromServices] IRequestHandler<AddSpeaker.Command, Result<AddSpeaker.Response>> handler) =>
         {
             var context = HandlerContextExtensions.Create(new AddSpeaker.Command(request));
             var result = await handler.HandleAsync(context);
@@ -70,7 +70,7 @@ internal class SpeakersModule : WebFeatureModule
         })
         .Accepts<SpeakerRequest>("application/json");
 
-        group.MapPut("/speakers/{speakerId}", async (Guid speakerId, SpeakerRequest request, [FromServices] IRequestHandler<UpdateSpeaker.Command, Result<UpdateSpeaker.Response>> handler) =>
+        group.MapPut("/{speakerId}", async (Guid speakerId, SpeakerRequest request, [FromServices] IRequestHandler<UpdateSpeaker.Command, Result<UpdateSpeaker.Response>> handler) =>
         {
             var context = HandlerContextExtensions.Create(new UpdateSpeaker.Command(speakerId, request));
             var result = await handler.HandleAsync(context);
@@ -85,7 +85,7 @@ internal class SpeakersModule : WebFeatureModule
         })
         .Accepts<SpeakerRequest>("application/json");
 
-        group.MapPost("/speakers/{speakerId}/biographies", async (Guid speakerId, SpeakerBiographyRequest request, [FromServices] IRequestHandler<AddSpeakerBiography.Command, Result<AddSpeakerBiography.Response>> handler) =>
+        group.MapPost("/{speakerId}/biographies", async (Guid speakerId, SpeakerBiographyRequest request, [FromServices] IRequestHandler<AddSpeakerBiography.Command, Result<AddSpeakerBiography.Response>> handler) =>
         {
             var context = HandlerContextExtensions.Create(new AddSpeakerBiography.Command(speakerId, request.Biography, request.IsPrimary));
             var result = await handler.HandleAsync(context);
