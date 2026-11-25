@@ -1,30 +1,25 @@
-﻿<Project Sdk="Aspire.AppHost.Sdk/13.6.5">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net11.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <IsAspireHost>true</IsAspireHost>
     <UserSecretsId>MeetupPlanner.AppHost</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.Azure.Storage" Version="13.6.5" />
-    <PackageReference Include="Aspire.Hosting.Javascript" Version="13.6.5" />
-    <PackageReference Include="Aspire.Hosting.Keycloak" Version="13.6.5-preview.1.26559.7" />
-    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.6.5" />
-    <PackageReference Include="Aspire.Hosting.Yarp" Version="13.6.5" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="17.0.0" />
+    <PackageReference Include="Aspire.Hosting.Dotnet" Version="17.0.0" />
+    <PackageReference Include="Aspire.Hosting.Azure.Storage" Version="17.0.0" />
+    <PackageReference Include="Aspire.Hosting.Javascript" Version="17.0.0" />
+    <PackageReference Include="Aspire.Hosting.Keycloak" Version="17.0.0-preview.1.26567.5" />
+    <PackageReference Include="Aspire.Hosting.SqlServer" Version="17.0.0" />
+    <PackageReference Include="Aspire.Hosting.Yarp" Version="17.0.0" />
   </ItemGroup>
 
   <ItemGroup Label="CommunityToolkit">
-    <PackageReference Include="CommunityToolkit.Aspire.Hosting.McpInspector" Version="13.6.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MeetupPlanner.Api\MeetupPlanner.Api.csproj" />
-    <ProjectReference Include="..\MeetupPlanner.Bff\MeetupPlanner.Bff.csproj" />
-    <ProjectReference Include="..\MeetupPlanner.MigrationsWorker\MeetupPlanner.MigrationsWorker.csproj" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.McpInspector" Version="17.0.0" />
   </ItemGroup>
 
 </Project>

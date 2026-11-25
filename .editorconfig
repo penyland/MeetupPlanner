@@ -90,8 +90,6 @@ dotnet_style_readonly_field = true:suggestion
 dotnet_style_require_accessibility_modifiers = for_non_interface_members:silent
 
 [*.cs]
-max_line_length = 100
-
 # C# formatting
 csharp_indent_block_contents = true
 csharp_indent_braces = false

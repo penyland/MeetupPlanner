@@ -19,7 +19,7 @@ public sealed class ValidatorHandler<TCommand, TResponse>(IRequestHandler<TComma
     where TCommand : class
     where TResponse : class
 {
-    public async Task<Result<TResponse>> HandleAsync(IHandlerContext<TCommand> context, CancellationToken cancellationToken = default)
+    public async Task<Result<TResponse>> HandleAsync(IRequestHandlerContext<TCommand> context, CancellationToken cancellationToken = default)
     {
         var validationResult = await validator.ValidateAsync(context.Request, cancellationToken);
         if (!validationResult.IsValid)

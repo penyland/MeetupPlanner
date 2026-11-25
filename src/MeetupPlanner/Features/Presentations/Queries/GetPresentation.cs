@@ -13,7 +13,7 @@ public static class GetPresentation
 
     internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Query, Result<Response>>
     {
-        public async Task<Result<Response>> HandleAsync(IHandlerContext<Query> context, CancellationToken cancellationToken)
+        public async Task<Result<Response>> HandleAsync(IRequestHandlerContext<Query> context, CancellationToken cancellationToken)
         {
             try
             {

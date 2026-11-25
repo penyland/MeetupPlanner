@@ -4,12 +4,13 @@ namespace MeetupPlanner.Extensions;
 
 public static class HandlerContextExtensions
 {
-    public static HandlerContext<T> Create<T>(T request)
+    public static RequestHandlerContext<T> Create<T>(T request)
+        where T : class
     {
-        return new HandlerContext<T>
+        return new RequestHandlerContext<T>
         {
             Request = request,
-            Body = BinaryData.FromObjectAsJson(request)
+            Payload = BinaryData.FromObjectAsJson(request)
         };
     }
 }

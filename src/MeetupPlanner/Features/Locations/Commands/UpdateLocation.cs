@@ -13,7 +13,7 @@ public static class UpdateLocation
 
     internal sealed class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Command, Result<Response>>
     {
-        public async Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
+        public async Task<Result<Response>> HandleAsync(IRequestHandlerContext<Command> context, CancellationToken cancellationToken = default)
         {
             var location = await dbContext.Locations
                 .FirstOrDefaultAsync(l => l.LocationId == context.Request.LocationId, cancellationToken);

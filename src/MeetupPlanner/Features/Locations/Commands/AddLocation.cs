@@ -19,7 +19,7 @@ public static class AddLocation
 
     internal class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Command, Result<Response>>
     {
-        public async Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
+        public async Task<Result<Response>> HandleAsync(IRequestHandlerContext<Command> context, CancellationToken cancellationToken = default)
         {
             try
             {
@@ -50,7 +50,7 @@ public static class AddLocation
 
     internal class ValidatorHandler(IRequestHandler<AddLocation.Command, Result<AddLocation.Response>> innerHandler, IValidator<AddLocation.Command> validator, ILogger<ValidatorHandler> logger) : IRequestHandler<Command, Result<Response>>
     {
-        public Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
+        public Task<Result<Response>> HandleAsync(IRequestHandlerContext<Command> context, CancellationToken cancellationToken = default)
         {
             logger?.LogInformation("Validating AddLocation command for location: {LocationName}", context.Request.Location.Name);
 
@@ -120,9 +120,9 @@ public static class AddLocation
         {
             var command = new AddLocation.Command(request);
 
-            var context = new HandlerContext<AddLocation.Command>
+            var context = new RequestHandlerContext<AddLocation.Command>
             {
-                Body = BinaryData.FromObjectAsJson(command),
+                Payload = BinaryData.FromObjectAsJson(command),
                 Request = command
             };
 

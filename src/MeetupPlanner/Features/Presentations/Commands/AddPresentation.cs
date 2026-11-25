@@ -39,7 +39,7 @@ public static class AddPresentation
     internal sealed class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Command, Result<Response>>
     {
         public async Task<Result<Response>> HandleAsync(
-            IHandlerContext<Command> context,
+            IRequestHandlerContext<Command> context,
             CancellationToken cancellationToken = default)
         {
             var speaker = await dbContext.Speakers

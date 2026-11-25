@@ -33,7 +33,7 @@ var storage = builder.AddAzureStorage("assetStorage")
     .AddBlobs("assets");
 
 // Projects
-var api = builder.AddProject<Projects.MeetupPlanner_Api>("api")
+var api = builder.AddDotnetProject("api", "../MeetupPlanner.Api")
     .WaitFor(dbConnectionString)
     .WithReference(dbConnectionString)
     .WithReference(keycloak)
@@ -47,7 +47,7 @@ var web = builder.AddViteApp("web", "../Web")
 var adminWeb = builder.AddViteApp("admin-frontend", "../MeetupPlanner.AdminReact")
     .WithReference(api);
 
-var bff = builder.AddProject<Projects.MeetupPlanner_Bff>("bff")
+var bff = builder.AddDotnetProject("bff", "../MeetupPlanner.Bff")
     .WithReference(api)
     .WithReference(keycloak).WaitFor(keycloak)
     .WithReference(adminWeb)
@@ -57,7 +57,7 @@ var bff = builder.AddProject<Projects.MeetupPlanner_Bff>("bff")
 
 adminWeb.WithReference(bff);
 
-builder.AddProject<Projects.MeetupPlanner_MigrationsWorker>("meetupplanner-migrationsworker")
+builder.AddDotnetProject("meetupplanner-migrationsworker", "../MeetupPlanner.MigrationsWorker")
     .WaitFor(dbConnectionString)
     .WithReference(dbConnectionString)
     //.WithReference(database).WaitFor(database)

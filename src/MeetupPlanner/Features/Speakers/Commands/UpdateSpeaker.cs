@@ -13,7 +13,7 @@ public static class UpdateSpeaker
 
     internal sealed class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Command, Result<Response>>
     {
-        public async Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
+        public async Task<Result<Response>> HandleAsync(IRequestHandlerContext<Command> context, CancellationToken cancellationToken = default)
         {
             // Find existing speaker by ID
             var speaker = await dbContext.Speakers

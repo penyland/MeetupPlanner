@@ -35,7 +35,7 @@ public static class UpdateMeetupRsvps
 
     internal sealed class Handler(MeetupPlannerDbContext meetupPlannerDbContext) : IRequestHandler<Command, Result<Response>>
     {
-        public async Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
+        public async Task<Result<Response>> HandleAsync(IRequestHandlerContext<Command> context, CancellationToken cancellationToken = default)
         {
             var meetup = await meetupPlannerDbContext.Meetups.FindAsync([context.Request.MeetupId], cancellationToken);
             var request = context.Request.RsvpRequest;

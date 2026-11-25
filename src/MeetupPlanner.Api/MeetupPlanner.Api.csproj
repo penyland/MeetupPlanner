@@ -15,15 +15,13 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.6.5-preview.1.26559.7" />
+    <PackageReference Include="Aspire.Keycloak.Authentication" Version="17.0.0-preview.1.26567.5" />
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.5.2" />
-    <PackageReference Include="Infinity.Toolkit.Azure" Version="1.1.7" />
-    <PackageReference Include="Infinity.Toolkit.FeatureModules" Version="2.0.3" />
     <PackageReference Include="Infinity.Toolkit.LogFormatter" Version="1.1.0" Condition="'$(Configuration)' == 'Release'" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="11.0.0" />
     <PackageReference Include="Microsoft.Identity.Web" Version="4.18.0" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.21.0" />
+    <PackageReference Include="Scalar.AspNetCore" Version="3.2.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +32,12 @@
   <ItemGroup>
     <ProjectReference Include="..\MeetupPlanner.ServiceDefaults\MeetupPlanner.ServiceDefaults.csproj" />
     <ProjectReference Include="..\MeetupPlanner\MeetupPlanner.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Toolkit">
+    <ProjectReference Include="..\..\..\infinity-toolkit\src\Infinity.Toolkit.Azure\Infinity.Toolkit.Azure.csproj" />
+    <ProjectReference Include="..\..\..\infinity-toolkit\src\Infinity.Toolkit.FeatureModules\Infinity.Toolkit.FeatureModules.csproj" />
+    <ProjectReference Include="..\..\..\infinity-toolkit\src\Infinity.Toolkit.Handlers\Infinity.Toolkit.Handlers.csproj" />
   </ItemGroup>
   
 </Project>

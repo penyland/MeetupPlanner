@@ -8,17 +8,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="13.6.5" />
-    <PackageReference Include="Aspire.Keycloak.Authentication" Version="13.6.5-preview.1.26559.7" />
-    <PackageReference Include="Infinity.Toolkit.FeatureModules" Version="2.0.3" />
+    <PackageReference Include="Aspire.Azure.Storage.Blobs" Version="17.0.0" />
+    <PackageReference Include="Aspire.Keycloak.Authentication" Version="17.0.0-preview.1.26567.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="11.0.0" />
-    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="11.0.1" />
     <PackageReference Include="Microsoft.Identity.Web" Version="4.18.0" />
     <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MeetupPlanner.ServiceDefaults\MeetupPlanner.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Toolkit">
+    <ProjectReference Include="..\..\..\infinity-toolkit\src\Infinity.Toolkit.FeatureModules\Infinity.Toolkit.FeatureModules.csproj" />
   </ItemGroup>
 
   <ItemGroup>

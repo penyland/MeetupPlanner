@@ -15,7 +15,7 @@ public static class DeletePresentation
 
     internal sealed class Handler(MeetupPlannerDbContext dbContext) : IRequestHandler<Command, Result<Response>>
     {
-        public async Task<Result<Response>> HandleAsync(IHandlerContext<Command> context, CancellationToken cancellationToken = default)
+        public async Task<Result<Response>> HandleAsync(IRequestHandlerContext<Command> context, CancellationToken cancellationToken = default)
         {
             var presentation = await dbContext.Presentations.FindAsync([context.Request.PresentationId], cancellationToken);
 
